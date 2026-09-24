@@ -86,6 +86,7 @@ export interface CandidateProfile {
   /** Free-text support the candidate may request. Never auto-shared. */
   supportNotes: string;
   resumeFileName: string | null;
+  phone: string;
   privacy: {
     supportNotes: Visibility;
     hiringPreferences: Visibility;
@@ -158,6 +159,8 @@ export interface Job {
   /** Job-scope accessibility evidence, keyed by AccessFeature id. Overrides employer. */
   accessibility: Record<string, Evidence>;
   hiringOptions: HiringOptionId[];
+  /** 1–3 short questions the employer asks at apply time. */
+  screeningQuestions: string[];
   hiringStages: HiringStage[];
   decisionTimeframe: string;
   accommodationRoute: string;

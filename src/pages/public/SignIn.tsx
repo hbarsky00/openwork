@@ -54,7 +54,7 @@ export function SignIn() {
                       {SCENARIO[c.id] ?? c.headline}
                     </Text>
                   </BlockStack>
-                  <Button onClick={() => { dispatch({ type: 'signInCandidate', profile: c }); go('/home'); }}>Sign in as {c.name.split(' ')[0]}</Button>
+                  <Button onClick={() => { dispatch({ type: 'signInCandidate', profile: c }); go('/jobs'); }}>Sign in as {c.name.split(' ')[0]}</Button>
                 </InlineStack>
               ))}
               <Divider />

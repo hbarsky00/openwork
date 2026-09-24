@@ -21,10 +21,8 @@ export function SignUp() {
     if (Object.keys(e).length) return;
     dispatch({ type: 'signUpCandidate', name: name.trim(), email: email.trim() });
     const next = sp.get('next');
-    if (then === 'jobs') {
-      dispatch({ type: 'updateCandidate', patch: { onboardingComplete: true } });
-      navigate(next ?? '/jobs');
-    } else navigate(`/onboarding${next ? `?next=${encodeURIComponent(next)}` : ''}`);
+    if (then === 'jobs') navigate(next ?? '/jobs');
+    else navigate(`/onboarding${next ? `?next=${encodeURIComponent(next)}` : ''}`);
   };
 
   return (
@@ -35,20 +33,20 @@ export function SignUp() {
             Create your account
           </Text>
           <Text as="p" tone="subdued">
-            Two fields. Then a few one-tap questions about what you are good at and what you need — or skip them and browse.
+            Two fields. You can add a résumé and what you need at work later, when you apply.
           </Text>
         </BlockStack>
         <Card>
-          <Form onSubmit={() => submit('onboarding')}>
+          <Form onSubmit={() => submit('jobs')}>
             <FormLayout>
               <TextField label="Your name" value={name} onChange={setName} autoComplete="name" error={errors.name} requiredIndicator />
               <TextField label="Email" type="email" value={email} onChange={setEmail} autoComplete="email" error={errors.email} requiredIndicator helpText="For signing in and application updates. Never shared with employers unless you apply." />
               <InlineStack gap="300" wrap>
                 <Button submit variant="primary" size="large">
-                  Continue
+                  Create account
                 </Button>
-                <Button size="large" onClick={() => submit('jobs')}>
-                  Skip questions — just browse
+                <Button size="large" onClick={() => submit('onboarding')}>
+                  Create and tell us what you need
                 </Button>
               </InlineStack>
             </FormLayout>

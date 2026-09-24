@@ -57,6 +57,7 @@ export const JOBS: Job[] = [
       keyboardAlternatives: E('contact', '2026-06-11', 'Dragon has been used here before; we will confirm current compatibility.'),
     },
     hiringOptions: ['questionsInAdvance', 'workSample', 'structuredInterview', 'structuredOnboarding', 'quietWorkspaceAvailable', 'captionsAtInterview', 'interpreterAtInterview', 'supportPersonWelcome', 'accessibleInterviewLocation', 'videoInterview', 'extraTime', 'writtenResponse'],
+    screeningQuestions: ["Have you worked with patient records or other confidential information before? Tell us briefly.", "Are you able to work Monday to Friday, 8:00 to 4:30, on site in Columbus?"],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'We read every application. You hear back either way.', duration: 'within 5 business days' },
       { id: 's2', name: 'Work sample', description: 'A records verification exercise using sample records, done at home in an accessible spreadsheet. This replaces a technical interview.', duration: 'about 40 minutes, extra time on request' },
@@ -94,6 +95,7 @@ export const JOBS: Job[] = [
     environmentNotes: { customerInteraction: 'Phone contact is the job. Expect 50–70 calls a day.', noise: 'An open room with 14 coordinators. Headsets are provided.', workLocation: 'Two days at home once signed off, usually after eight weeks.' },
     accessibility: { accessibleWorkstation: E('confirmed', '2026-06-11'), accessibleDocuments: E('confirmed', '2026-06-11'), breakFlexibility: E('contact', '2026-06-11', 'Breaks are scheduled around call volume; we can discuss.'), highContrast: E('confirmed', '2026-06-11') },
     hiringOptions: ['questionsInAdvance', 'structuredInterview', 'structuredOnboarding', 'captionsAtInterview', 'videoInterview', 'accessibleInterviewLocation'],
+    screeningQuestions: ["Tell us about a time you stayed calm with a frustrated caller.", "Are you comfortable taking 50–70 phone calls a day?"],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'We read every application.', duration: 'within 5 business days' },
       { id: 's2', name: 'Structured interview', description: 'Six set questions, shared with you in advance.', duration: 'about 45 minutes' },
@@ -131,6 +133,7 @@ export const JOBS: Job[] = [
     environmentNotes: { schedulePredictability: 'Predictable May to December. January to April expect 50–55 hour weeks including some Saturdays. We say this plainly because people leave when it is a surprise.', noise: 'Private offices for accountants.' },
     accessibility: { accessibleWorkstation: E('contact', '2026-08-20', 'Offices are on the second floor with no elevator; a ground-floor arrangement would need to be discussed.'), highContrast: E('confirmed', '2026-08-20') },
     hiringOptions: ['questionsInAdvance', 'workSample', 'structuredInterview', 'writtenResponse', 'flexibleHours', 'videoInterview', 'phoneInterview'],
+    screeningQuestions: ["Which accounting software have you prepared financial statements in?", "Tax season means 50–55 hour weeks from January to April. Does that work for you?"],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'Reviewed by the partner who would manage you.', duration: 'within 1 week' },
       { id: 's2', name: 'Technical work sample', description: 'Prepare statements from a sample trial balance. Take it home, take your time.', duration: 'about 2 hours' },
@@ -168,6 +171,7 @@ export const JOBS: Job[] = [
     environmentNotes: { schedulePredictability: 'Monday to Friday, 9:00 to 5:00 all year. Not affected by tax season.' },
     accessibility: { accessibleDocuments: E('confirmed', '2026-08-20'), highContrast: E('confirmed', '2026-08-20'), breakFlexibility: E('confirmed', '2026-08-20') },
     hiringOptions: ['questionsInAdvance', 'workSample', 'structuredInterview', 'quietWorkspaceAvailable', 'flexibleHours', 'videoInterview'],
+    screeningQuestions: ["Have you matched invoices to purchase orders before? Where?"],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'We read every application.', duration: 'within 1 week' },
       { id: 's2', name: 'Work sample', description: 'Match 15 sample invoices to purchase orders.', duration: 'about 45 minutes' },
@@ -212,6 +216,7 @@ export const JOBS: Job[] = [
       notColorAlone: E('confirmed', '2026-08-02', 'Bin labels use text and barcodes.'),
     },
     hiringOptions: ['workSample', 'structuredInterview', 'supportPersonWelcome', 'structuredOnboarding', 'interpreterAtInterview', 'accessibleInterviewLocation', 'extraTime', 'questionsInAdvance'],
+    screeningQuestions: ["Have you used a handheld scanner or done stock counts before? Any setting counts.", "Can you work a fixed 6:00–14:30 shift, Monday to Friday?"],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'Reviewed by the shift supervisor.', duration: 'within 3 business days' },
       { id: 's2', name: 'Site visit and work sample', description: 'Walk the floor so you can hear and see it, then a short counting exercise. Bring anyone you want.', duration: 'about 90 minutes' },
@@ -249,6 +254,7 @@ export const JOBS: Job[] = [
     environmentNotes: { noise: 'A quiet office, but a few hours a week on the loud floor.', workLocation: 'Tuesday to Thursday on site, two days at home.' },
     accessibility: { accessibleWorkstation: E('confirmed', '2026-08-02'), accessibleDocuments: E('confirmed', '2026-08-02'), highContrast: E('confirmed', '2026-08-02'), breakFlexibility: E('confirmed', '2026-08-02') },
     hiringOptions: ['questionsInAdvance', 'workSample', 'structuredInterview', 'flexibleHours', 'videoInterview', 'captionsAtInterview', 'interpreterAtInterview'],
+    screeningQuestions: ["Which warehouse or ERP systems have you configured?", "Tell us about a system problem you investigated and what you found."],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'Reviewed by the systems manager.', duration: 'within 1 week' },
       { id: 's2', name: 'Technical work sample', description: 'Two SQL queries and a documented configuration change, done at home.', duration: 'about 90 minutes' },
@@ -286,6 +292,7 @@ export const JOBS: Job[] = [
     environmentNotes: { customerInteraction: 'Technical Services is a closed workroom. This role never covers a public desk.', noise: 'A separate workroom on the lower floor. Quiet enough that most people work without headphones.' },
     accessibility: { accessibleWorkstation: E('confirmed', '2026-07-01'), accessibleDocuments: E('confirmed', '2026-07-01'), advanceNotice: E('confirmed', '2026-07-01'), workplaceMentor: E('confirmed', '2026-07-01'), highContrast: E('confirmed', '2026-07-01'), breakFlexibility: E('confirmed', '2026-07-01'), audioInstructions: E('confirmed', '2026-07-01') },
     hiringOptions: ['questionsInAdvance', 'workSample', 'structuredInterview', 'writtenResponse', 'quietWorkspaceAvailable', 'structuredOnboarding', 'captionsAtInterview', 'interpreterAtInterview', 'accessibleInterviewLocation', 'supportPersonWelcome', 'extraTime'],
+    screeningQuestions: ["Have you worked with MARC records or another cataloguing standard?"],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'Reviewed by the Head of Technical Services.', duration: 'within 1 week' },
       { id: 's2', name: 'Cataloging work sample', description: 'Catalogue three sample items using our written standards, at home with no time limit.', duration: 'about 1 hour' },
@@ -323,6 +330,7 @@ export const JOBS: Job[] = [
     environmentNotes: { schedulePredictability: 'You pick three fixed days at the start and keep them. 24 hours a week.', noise: 'The digitisation lab is a single-occupancy room.' },
     accessibility: { accessibleWorkstation: E('confirmed', '2026-07-01'), partTime: E('confirmed', '2026-07-01'), breakFlexibility: E('confirmed', '2026-07-01'), highContrast: E('confirmed', '2026-07-01') },
     hiringOptions: ['questionsInAdvance', 'workSample', 'writtenResponse', 'quietWorkspaceAvailable', 'flexibleHours', 'videoInterview', 'accessibleInterviewLocation'],
+    screeningQuestions: ["Which three weekdays would you want to work?", "Tell us about any scanning or digitisation you have done."],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'Reviewed by the Special Collections Librarian.', duration: 'within 1 week' },
       { id: 's2', name: 'Work sample', description: 'Describe three sample items from supplied scans.', duration: 'about 1 hour' },
@@ -365,6 +373,7 @@ export const JOBS: Job[] = [
     environmentNotes: { meetingFrequency: 'One team meeting a week and one one-to-one a fortnight. Cameras optional.', instructions: 'Written-first is a company policy. Decisions live in documents.', customerInteraction: 'A customer call roughly every two weeks, always scheduled.', noise: 'You work from home, so this is yours to set.' },
     accessibility: { accessibleDocuments: E('confirmed', '2026-07-19', 'All docs are Google Docs; PDFs are tagged.', 'platformVerified'), highContrast: E('confirmed', '2026-07-19'), notColorAlone: E('confirmed', '2026-07-19', 'Dashboards use labels and patterns as well as colour.'), keyboardAlternatives: E('confirmed', '2026-07-19', 'Voice control and adaptive hardware are yours to choose; the workspace budget covers it.'), advanceNotice: E('confirmed', '2026-07-19'), workplaceMentor: E('confirmed', '2026-07-19'), breakFlexibility: E('confirmed', '2026-07-19'), aacFriendly: E('confirmed', '2026-07-19', 'Written-first means every conversation can happen in text.') },
     hiringOptions: ['questionsInAdvance', 'workSample', 'structuredInterview', 'writtenResponse', 'structuredOnboarding', 'flexibleHours', 'videoInterview', 'textInterview', 'captionsAtInterview', 'interpreterAtInterview', 'extraTime', 'supportPersonWelcome'],
+    screeningQuestions: ["Describe a data quality problem you found and how you documented it.", "Which SQL dialects and Python data tools have you used?"],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'Read by the hiring manager, not a filter.', duration: 'within 5 business days' },
       { id: 's2', name: 'Take-home work sample', description: 'Profile a sample dataset and write up what you find. Supplied as CSV and an accessible brief. We pay $150 for your time.', duration: 'about 2 hours, extra time on request' },
@@ -402,6 +411,7 @@ export const JOBS: Job[] = [
     environmentNotes: { taskSwitching: 'Release weeks are more interrupt-driven than the rest of the sprint.', meetingFrequency: 'Daily 15-minute written standup, plus two scheduled meetings a week.' },
     accessibility: { accessibleDocuments: E('confirmed', '2026-07-19'), highContrast: E('confirmed', '2026-07-19'), notColorAlone: E('confirmed', '2026-07-19'), keyboardAlternatives: E('confirmed', '2026-07-19'), workplaceMentor: E('confirmed', '2026-07-19'), breakFlexibility: E('confirmed', '2026-07-19') },
     hiringOptions: ['questionsInAdvance', 'workSample', 'structuredInterview', 'writtenResponse', 'structuredOnboarding', 'flexibleHours', 'videoInterview', 'textInterview', 'captionsAtInterview', 'extraTime'],
+    screeningQuestions: ["Which test frameworks have you written automated tests in?", "Describe a defect report you are proud of."],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'Read by the engineering manager.', duration: 'within 5 business days' },
       { id: 's2', name: 'Take-home work sample', description: 'Write test cases for a small supplied feature. Paid $150.', duration: 'about 2 hours' },
@@ -439,6 +449,7 @@ export const JOBS: Job[] = [
     environmentNotes: { noise: 'Mowers and blowers are loud. Ear protection is provided.', schedulePredictability: 'Start is 6:30 year round. Finish time moves with the season and weather.' },
     accessibility: {},
     hiringOptions: ['workSample', 'supportPersonWelcome'],
+    screeningQuestions: ["Do you hold a valid driver’s licence?", "Have you used mowers, blowers or other landscaping equipment before?"],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'Reviewed by the operations manager.', duration: 'within 1 week' },
       { id: 's2', name: 'Ride-along', description: 'A paid morning with a crew so you both can see if it fits.', duration: 'about 4 hours' },
@@ -475,6 +486,7 @@ export const JOBS: Job[] = [
     environmentNotes: { taskSwitching: 'You hold several issues at different stages and move between them through the day. The hardest part of the job — we would rather say so.', workLocation: 'Two fixed office days: Tuesday and Thursday.' },
     accessibility: { accessibleWorkstation: E('confirmed', '2026-08-15'), accessibleDocuments: E('confirmed', '2026-08-15'), highContrast: E('confirmed', '2026-08-15') },
     hiringOptions: ['questionsInAdvance', 'workSample', 'structuredInterview', 'videoInterview', 'captionsAtInterview', 'accessibleInterviewLocation'],
+    screeningQuestions: ["Which journals or publishers have you done production work for?", "How do you keep several deadlines on track at once?"],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'Reviewed by the Production Manager.', duration: 'within 1 week' },
       { id: 's2', name: 'Editing work sample', description: 'Mark up a sample proof against our house style.', duration: 'about 1 hour' },
@@ -512,6 +524,7 @@ export const JOBS: Job[] = [
     environmentNotes: { schedulePredictability: 'Volume varies month to month. We cannot guarantee fixed hours, and we would rather say that than surprise you.' },
     accessibility: { accessibleDocuments: E('confirmed', '2026-08-15'), partTime: E('confirmed', '2026-08-15'), breakFlexibility: E('confirmed', '2026-08-15'), highContrast: E('confirmed', '2026-08-15'), aacFriendly: E('confirmed', '2026-08-15', 'The whole job runs in writing.') },
     hiringOptions: ['workSample', 'writtenResponse', 'flexibleHours', 'textInterview', 'extraTime'],
+    screeningQuestions: ["Which house style guides have you worked to?"],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'Reviewed by the Reference Production Manager.', duration: 'within 1 week' },
       { id: 's2', name: 'Proofreading test', description: 'Proofread a sample page against our style guide.', duration: 'about 45 minutes' },
@@ -548,6 +561,7 @@ export const JOBS: Job[] = [
     environmentNotes: { instructions: 'Every job runs from a written traveller. Specifications are never given verbally alone.', noise: 'A machine shop floor. Hearing protection is mandatory and provided.', schedulePredictability: 'Fixed shift: first 6:00–14:30 or second 14:30–23:00. You pick one and keep it.' },
     accessibility: { accessibleWorkstation: E('contact', '2026-05-28', 'Stations have stools and adjustable benches; a seated setup for a full shift depends on the machine — talk to us.'), accessibleDocuments: E('confirmed', '2026-05-28', 'Travellers are also available as large-print or on a tablet.'), advanceNotice: E('confirmed', '2026-05-28'), workplaceMentor: E('confirmed', '2026-05-28', undefined, 'platformVerified'), notColorAlone: E('confirmed', '2026-05-28', 'Tolerance flags use text and shape, not just red/green.'), breakFlexibility: E('notAvailable', '2026-05-28', 'Machine cycles set the break rhythm.') },
     hiringOptions: ['workSample', 'structuredInterview', 'supportPersonWelcome', 'structuredOnboarding', 'quietWorkspaceAvailable', 'interpreterAtInterview', 'captionsAtInterview', 'textInterview', 'accessibleInterviewLocation', 'questionsInAdvance', 'extraTime'],
+    screeningQuestions: ["Have you read a written spec and measured a part to it before? Tell us where.", "Which shift would you want: 6:00–14:30 or 14:30–23:00?"],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'Reviewed by the shop supervisor.', duration: 'within 3 business days' },
       { id: 's2', name: 'Shop visit', description: 'Walk the floor during a running shift so you can judge the noise and pace yourself.', duration: 'about 1 hour' },
@@ -586,6 +600,7 @@ export const JOBS: Job[] = [
     environmentNotes: { noise: 'The inspection room is climate controlled and separated from the shop floor. It is quiet.', schedulePredictability: 'First shift only, 6:00 to 14:30, Monday to Friday.' },
     accessibility: { accessibleWorkstation: E('confirmed', '2026-05-28', 'Adjustable benches and stools at every inspection station.', 'platformVerified'), accessibleDocuments: E('confirmed', '2026-05-28'), advanceNotice: E('confirmed', '2026-05-28'), workplaceMentor: E('confirmed', '2026-05-28'), notColorAlone: E('confirmed', '2026-05-28'), highContrast: E('confirmed', '2026-05-28'), breakFlexibility: E('confirmed', '2026-05-28', 'Inspection is not tied to machine cycles.') },
     hiringOptions: ['questionsInAdvance', 'workSample', 'structuredInterview', 'supportPersonWelcome', 'quietWorkspaceAvailable', 'structuredOnboarding', 'interpreterAtInterview', 'captionsAtInterview', 'textInterview', 'accessibleInterviewLocation', 'extraTime', 'writtenResponse'],
+    screeningQuestions: ["Which CMM software and hand gauges have you used?", "Tell us about a non-conformance you found and wrote up."],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'Reviewed by the Quality Manager.', duration: 'within 3 business days' },
       { id: 's2', name: 'Measurement work sample', description: 'Inspect five parts against a supplied drawing.', duration: 'about 90 minutes' },
@@ -623,6 +638,7 @@ export const JOBS: Job[] = [
     environmentNotes: {},
     accessibility: {},
     hiringOptions: ['questionsInAdvance', 'workSample'],
+    screeningQuestions: ["Which coding certification do you hold?"],
     hiringStages: [{ id: 's1', name: 'Application review', description: 'We read every application.', duration: 'within 5 business days' }],
     decisionTimeframe: '',
     accommodationRoute: 'Email people@meridianhp.example.',

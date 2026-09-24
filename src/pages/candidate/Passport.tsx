@@ -49,7 +49,12 @@ export function Passport() {
               How you work best and what you need — in your words, under your control. Not a medical record. Employers see only what you choose, and only when you apply.
             </Text>
           </BlockStack>
-          <Button url="/passport/sharing">Sharing controls</Button>
+          <InlineStack gap="200">
+            <Button url="/onboarding" variant="primary">
+              Answer a few quick questions
+            </Button>
+            <Button url="/passport/sharing">Sharing controls</Button>
+          </InlineStack>
         </InlineStack>
 
         <Banner tone="info">

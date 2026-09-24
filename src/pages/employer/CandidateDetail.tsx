@@ -174,12 +174,19 @@ export function CandidateDetail() {
                   </BlockStack>
                 )}
                 {app.shared.resume && cand.resumeFileName && <Badge>{`Résumé: ${cand.resumeFileName}`}</Badge>}
-                {app.answers.note && (
-                  <BlockStack gap="100">
+                {Object.keys(app.answers).length > 0 && (
+                  <BlockStack gap="200">
                     <Text as="h3" variant="headingSm">
-                      Message from the candidate
+                      Their answers to your questions
                     </Text>
-                    <Text as="p">“{app.answers.note}”</Text>
+                    {Object.entries(app.answers).map(([q, a]) => (
+                      <BlockStack key={q} gap="050">
+                        <Text as="p" variant="bodySm" tone="subdued">
+                          {q === 'note' ? 'Message' : q}
+                        </Text>
+                        <Text as="p">“{a}”</Text>
+                      </BlockStack>
+                    ))}
                   </BlockStack>
                 )}
               </BlockStack>

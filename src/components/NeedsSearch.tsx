@@ -14,6 +14,8 @@ interface Props {
   needs: string[];
   practices: HiringOptionId[];
   onChange: (next: { needs: string[]; practices: HiringOptionId[] }) => void;
+  /** Filter-row mode: no label, no quick picks. */
+  compact?: boolean;
 }
 
 /**
@@ -21,7 +23,7 @@ interface Props {
  * a few quick picks. Replaces the wall of chips: type "capt" and choose
  * "Captions on meetings and video · 4 jobs". Selected items become tags.
  */
-export function NeedsSearch({ jobs, employers, needs, practices, onChange }: Props) {
+export function NeedsSearch({ jobs, employers, needs, practices, onChange, compact = false }: Props) {
   const [query, setQuery] = useState('');
   const employerById = useMemo(() => Object.fromEntries(employers.map((e) => [e.id, e])) as Record<string, Employer>, [employers]);
   const published = useMemo(() => jobs.filter((j) => j.status === 'published'), [jobs]);
@@ -76,7 +78,7 @@ export function NeedsSearch({ jobs, employers, needs, practices, onChange }: Pro
             Nothing matches “{query}”. Try another word — “step”, “quiet”, “interpreter”.
           </Text>
         }
-        textField={<Autocomplete.TextField label="What do you need at work?" value={query} onChange={setQuery} autoComplete="off" prefix={<Icon source={SearchIcon} />} placeholder="Type a need — captions, step-free, written instructions, job coach…" helpText="Only jobs where the employer has confirmed it. Unknown never counts." />}
+        textField={<Autocomplete.TextField label="Accessibility needs" labelHidden={compact} value={query} onChange={setQuery} autoComplete="off" prefix={<Icon source={SearchIcon} />} placeholder={compact ? (selected.length ? `${selected.length} need${selected.length === 1 ? '' : 's'} · add more` : 'Accessibility needs — captions, step-free, job coach…') : 'Type a need — captions, step-free, written instructions, job coach…'} helpText={compact ? undefined : 'Only jobs where the employer has confirmed it. Unknown never counts.'} />}
       />
 
       <InlineStack gap="200" wrap blockAlign="center">
@@ -92,7 +94,7 @@ export function NeedsSearch({ jobs, employers, needs, practices, onChange }: Pro
         )}
       </InlineStack>
 
-      {selected.length === 0 && (
+      {!compact && selected.length === 0 && (
         <InlineStack gap="200" wrap blockAlign="center">
           <Text as="span" variant="bodySm" tone="subdued">
             Common:

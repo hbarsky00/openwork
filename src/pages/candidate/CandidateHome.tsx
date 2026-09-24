@@ -1,6 +1,6 @@
 import { Badge, BlockStack, Button, Card, InlineGrid, InlineStack, Text } from '@shopify/polaris';
 import { useMemo } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { JobCard } from '../../components/JobCard';
 import { ACCESS_FEATURE_BY_ID } from '../../lib/access';
 import { DIMENSIONS } from '../../lib/dimensions';
@@ -27,7 +27,6 @@ export function CandidateHome() {
       .map((x) => x.j);
   }, [state.jobs, state.applications, state.employers, p, hasPassport]);
 
-  if (!p.onboardingComplete) return <Navigate to="/onboarding" replace />;
 
   const myApps = state.applications.filter((a) => a.candidateId === p.id && a.status !== 'withdrawn');
   const active = myApps.filter((a) => !['hired', 'notSelected'].includes(a.status));

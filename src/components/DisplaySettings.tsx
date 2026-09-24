@@ -1,4 +1,4 @@
-import { Box, Button, ChoiceList, Popover, Text, useBreakpoints } from '@shopify/polaris';
+import { Box, Button, ChoiceList, Popover, Text } from '@shopify/polaris';
 import { ViewIcon } from '@shopify/polaris-icons';
 import { useState } from 'react';
 import type { DisplayMode } from '../lib/types';
@@ -18,14 +18,12 @@ const MODES: { value: DisplayMode; label: string; helpText: string }[] = [
 export function DisplaySettings() {
   const { state, dispatch } = useStore();
   const [open, setOpen] = useState(false);
-  const { mdUp } = useBreakpoints();
   return (
     <Popover
       active={open}
       onClose={() => setOpen(false)}
       activator={
         <Button icon={ViewIcon} onClick={() => setOpen((o) => !o)} ariaExpanded={open} accessibilityLabel="Display settings">
-          {mdUp ? 'Display' : undefined}
         </Button>
       }
     >

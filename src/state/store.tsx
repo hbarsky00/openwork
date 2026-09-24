@@ -39,9 +39,9 @@ export interface AppState {
 }
 
 // v2: access-needs data model. Older v1 state is intentionally dropped.
-const STORAGE_KEY = 'openwork.v2';
+const STORAGE_KEY = 'openwork.v3';
 
-const SCHEMA = 2;
+const SCHEMA = 3;
 
 const initialState: AppState = {
   schema: SCHEMA,
@@ -104,7 +104,8 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, role: 'candidate', candidate: action.profile, employerId: null };
     case 'signUpCandidate': {
       const id = `c-${Date.now().toString(36)}`;
-      return { ...state, role: 'candidate', candidate: emptyProfile(id, action.name, action.email), employerId: null };
+      const candidate = emptyProfile(id, action.name, action.email);
+      return { ...state, role: 'candidate', candidate, candidates: [...state.candidates, candidate], employerId: null };
     }
     case 'signInEmployer':
       return { ...state, role: 'employer', employerId: action.employerId, candidate: null };
@@ -129,8 +130,10 @@ function reducer(state: AppState, action: Action): AppState {
     }
     case 'viewJob':
       return { ...state, recentlyViewed: [action.jobId, ...state.recentlyViewed.filter((j) => j !== action.jobId)].slice(0, 8) };
-    case 'submitApplication':
-      return { ...state, applications: [action.application, ...state.applications] };
+    case 'submitApplication': {
+      const candidateId = action.application.candidateId === 'pending' ? (state.candidate?.id ?? 'pending') : action.application.candidateId;
+      return { ...state, applications: [{ ...action.application, candidateId }, ...state.applications] };
+    }
     case 'withdrawApplication':
       return {
         ...state,
@@ -183,7 +186,7 @@ function load(): AppState {
     // Seed data is code, not storage: take jobs/employers from the seed and
     // merge in anything the user created or edited. A persisted copy that
     // predates the current shape is never trusted over the seed.
-    const wellFormed = (j: Job) => !!j.accessibility && !!j.physical && !!j.communication && Array.isArray(j.technology) && Array.isArray(j.hiringOptions);
+    const wellFormed = (j: Job) => !!j.accessibility && !!j.physical && !!j.communication && Array.isArray(j.technology) && Array.isArray(j.hiringOptions) && Array.isArray(j.screeningQuestions);
     const seedJobIds = new Set(JOBS.map((j) => j.id));
     const userJobs = (parsed.jobs ?? []).filter((j) => !seedJobIds.has(j.id) && wellFormed(j));
     const editedSeed = (parsed.jobs ?? []).filter((j) => seedJobIds.has(j.id) && wellFormed(j));

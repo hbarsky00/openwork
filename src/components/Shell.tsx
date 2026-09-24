@@ -12,19 +12,16 @@ interface NavItem {
 }
 
 const PUBLIC_NAV: NavItem[] = [
-  { label: 'Find work', to: '/jobs' },
+  { label: 'Jobs', to: '/jobs' },
   { label: 'How it works', to: '/how-it-works' },
   { label: 'For employers', to: '/for-employers' },
-  { label: 'Support', to: '/support' },
 ];
 
 const CANDIDATE_NAV: NavItem[] = [
-  { label: 'Home', to: '/home', end: true },
-  { label: 'Find work', to: '/jobs' },
+  { label: 'Jobs', to: '/jobs' },
   { label: 'Saved', to: '/saved' },
   { label: 'Applications', to: '/applications' },
-  { label: 'My passport', to: '/passport' },
-  { label: 'Support', to: '/support' },
+  { label: 'Profile', to: '/passport' },
 ];
 
 const EMPLOYER_NAV: NavItem[] = [
@@ -44,7 +41,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const nav = state.role === 'candidate' ? CANDIDATE_NAV : state.role === 'employer' ? EMPLOYER_NAV : state.role === 'admin' ? ADMIN_NAV : PUBLIC_NAV;
-  const home = state.role === 'candidate' ? '/home' : state.role === 'employer' ? '/employer' : state.role === 'admin' ? '/admin' : '/';
+  const home = state.role === 'employer' ? '/employer' : state.role === 'admin' ? '/admin' : '/jobs';
 
   const signOut = () => {
     dispatch({ type: 'signOut' });
@@ -88,14 +85,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <DisplaySettings />
             {state.role === 'visitor' ? (
               <span className="ow-desktop-only">
-                <InlineStack gap="200">
-                  <Button url={`/signin?next=${encodeURIComponent(location.pathname)}`} variant="tertiary">
-                    Sign in
-                  </Button>
-                  <Button url="/signup" variant="primary">
-                    Create account
-                  </Button>
-                </InlineStack>
+                <Button url={`/signin?next=${encodeURIComponent(location.pathname)}`}>Sign in</Button>
               </span>
             ) : (
               <span className="ow-desktop-only">
@@ -128,11 +118,13 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="ow-container">
           <InlineStack align="space-between" blockAlign="center" wrap gap="400">
             <Text as="p" variant="bodySm" tone="subdued">
-              Openwork · Find work built around what you can do.
+              Openwork · Jobs that tell you how they actually work.
             </Text>
             <InlineStack gap="400">
-              <Link to="/support">Support</Link>
+              <Link to="/about">About</Link>
               <Link to="/how-it-works">How it works</Link>
+              <Link to="/discover">Start from your strengths</Link>
+              <Link to="/support">Support</Link>
               <Link to="/for-employers">For employers</Link>
             </InlineStack>
           </InlineStack>

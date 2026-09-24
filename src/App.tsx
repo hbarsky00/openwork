@@ -68,7 +68,8 @@ export function App() {
     <Shell>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={<Jobs />} />
+        <Route path="/about" element={<Landing />} />
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/jobs/:id" element={<JobDetailPage />} />
         <Route path="/companies/:id" element={<Company />} />

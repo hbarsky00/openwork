@@ -21,7 +21,7 @@ const TECH_STATUS = [
 ];
 
 function blankJob(employerId: string): Job {
-  return { id: `j-${Date.now().toString(36)}`, employerId, title: '', department: '', family: 'records', location: '', employmentType: 'fullTime', experienceLevel: 'entry', salaryMin: 0, salaryMax: 0, salaryUnit: 'hour', postedOn: new Date().toISOString().slice(0, 10), status: 'draft', summary: '', tasks: [], essentialRequirements: [], preferredRequirements: [], skills: [], strengthsUsed: [], physical: {}, communication: {}, technology: [], environment: {}, environmentNotes: {}, accessibility: {}, hiringOptions: [], hiringStages: [{ id: 's1', name: 'Application review', description: 'We read every application.', duration: 'within 1 week' }, { id: 's2', name: 'Interview', description: '', duration: '' }, { id: 's3', name: 'Decision', description: 'Written decision.', duration: 'within 1 week' }], decisionTimeframe: '', accommodationRoute: '', supportAvailable: [] };
+  return { id: `j-${Date.now().toString(36)}`, employerId, title: '', department: '', family: 'records', location: '', employmentType: 'fullTime', experienceLevel: 'entry', salaryMin: 0, salaryMax: 0, salaryUnit: 'hour', postedOn: new Date().toISOString().slice(0, 10), status: 'draft', summary: '', tasks: [], essentialRequirements: [], preferredRequirements: [], skills: [], strengthsUsed: [], physical: {}, communication: {}, technology: [], environment: {}, environmentNotes: {}, accessibility: {}, hiringOptions: [], screeningQuestions: [], hiringStages: [{ id: 's1', name: 'Application review', description: 'We read every application.', duration: 'within 1 week' }, { id: 's2', name: 'Interview', description: '', duration: '' }, { id: 's3', name: 'Decision', description: 'Written decision.', duration: 'within 1 week' }], decisionTimeframe: '', accommodationRoute: '', supportAvailable: [] };
 }
 const lines = (s: string) => s.split('\n').map((l) => l.trim()).filter(Boolean);
 const today = () => new Date().toISOString().slice(0, 10);
@@ -275,6 +275,7 @@ export function JobBuilder() {
                 <InlineStack>
                   <Button onClick={() => set({ hiringStages: [...job.hiringStages, { id: `s${Date.now()}`, name: '', description: '', duration: '' }] })}>Add a step</Button>
                 </InlineStack>
+                <TextField label="Questions to ask when someone applies (one per line, up to 3)" value={job.screeningQuestions.join('\n')} onChange={(v) => set({ screeningQuestions: v.split('\n').slice(0, 3) })} onBlur={() => set({ screeningQuestions: lines(job.screeningQuestions.join('\n')).slice(0, 3) })} multiline={3} autoComplete="off" helpText="Short and answerable in a sentence or two. Candidates see them on the apply page." />
                 <TextField label="Overall timeframe" value={job.decisionTimeframe} onChange={(v) => set({ decisionTimeframe: v })} autoComplete="off" placeholder="About three weeks from application to decision." />
               </BlockStack>
             </Card>

@@ -896,3 +896,58 @@ ol.Polaris-BlockStack {
   outline-offset: var(--p-space-050);
   border-radius: var(--p-border-radius-100);
 }
+
+/* Search bar: what / where / button on one line; stacks on phone. */
+.ow-searchbar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--p-space-200);
+  padding: var(--p-space-300);
+  background: var(--p-color-bg-surface);
+  border: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  border-radius: var(--p-border-radius-300);
+}
+@media (min-width: 768px) {
+  .ow-searchbar {
+    grid-template-columns: 1.6fr 1fr auto;
+    align-items: start;
+  }
+}
+.ow-filterrow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--p-space-200);
+}
+@media (min-width: 1024px) {
+  .ow-filterrow {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(280px, 2fr);
+  }
+}
+.ow-filterrow__needs {
+  grid-column: 1 / -1;
+}
+@media (min-width: 1024px) {
+  .ow-filterrow__needs {
+    grid-column: auto;
+  }
+}
+.ow-jobcard--clickable {
+  cursor: pointer;
+}
+.ow-jobcard--clickable:hover {
+  border-color: var(--p-color-border-emphasis);
+}
+.ow-jobdetail {
+  max-width: 760px;
+}
+.ow-jobdetail--pane {
+  max-width: none;
+}
+
+/* Below the split layout there is no pane, so nothing is "selected". */
+@media (max-width: 1023px) {
+  .ow-jobcard--selected {
+    border-color: var(--p-color-border-secondary);
+    box-shadow: none;
+  }
+}

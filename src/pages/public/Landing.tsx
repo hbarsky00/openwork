@@ -33,8 +33,8 @@ export function Landing() {
                 </Text>
               </BlockStack>
               <InlineStack gap="300">
-                <Button url="/discover" variant="primary" size="large">
-                  Find the right work
+                <Button url="/jobs" variant="primary" size="large">
+                  Browse jobs
                 </Button>
                 <Button url="/for-employers" size="large">
                   I’m an employer
@@ -160,7 +160,7 @@ export function Landing() {
             </InlineStack>
             <InlineGrid columns={{ xs: 1, md: 3 }} gap="400">
               {featured.map((j) => (
-                <JobCard key={j.id} job={j} compact />
+                <JobCard key={j.id} job={j} />
               ))}
             </InlineGrid>
             <Box>

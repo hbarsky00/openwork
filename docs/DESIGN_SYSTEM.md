@@ -3,6 +3,32 @@
 Polaris underneath. Openwork on top. This document is the contract between the
 two.
 
+## 0. Candidate flow (the shape of the product)
+
+Jobs first. The front door (`/`) is the job list with What/Where search on first
+paint — no account, no questionnaire, no landing page. The marketing page lives
+at `/about`.
+
+- **Filters** are one row of plain Selects (Anywhere / Job type / Pay / Date
+  posted) plus one typeahead for accessibility needs. No quick-pick chips, no
+  popovers, no filter modal.
+- **Job card** is the link. One icon action (save). Title · company · pay ·
+  arrangement · type · at most three ✓ facts · posted. Desktop ≥1024 opens
+  the job in the right pane; below that it navigates.
+- **Job page** reads top-down: title/pay → **Apply now** → what you'd do →
+  what you need → how the job works (dimensions + physical, as tiles) →
+  employer-confirmed accessibility with dates → how hiring works → employer.
+  No jump nav, no "why this could work" for visitors.
+- **Apply** is one page: name, email, phone (optional), résumé upload or the
+  saved one, the employer's ≤3 screening questions, optional interview-need
+  note, Submit. Visitors get an account created from the same fields.
+  Employers see exactly this page's content and nothing else.
+- **Sign up** creates the account and goes to jobs. The needs questionnaire
+  is optional, offered from Profile.
+- **Nav**: visitor Jobs · How it works · For employers · Sign in; candidate
+  Jobs · Saved · Applications · Profile. Display settings is icon-only.
+  About, Discover, Support live in the footer.
+
 ## 1. Foundation: Shopify Polaris 13.9.5
 
 - Installed as `@shopify/polaris` + `@shopify/polaris-icons`. **Peer is React 18.**
