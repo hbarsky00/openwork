@@ -63,7 +63,7 @@ export function JobCard({ job, onSelect, selected = false, strengthsUsed }: Prop
 
   return (
     <article className={`ow-jobcard ow-jobcard--clickable${selected ? ' ow-jobcard--selected' : ''}`} onClick={open} aria-current={selected ? 'true' : undefined}>
-      <BlockStack gap="200">
+      <BlockStack gap="150">
         <InlineStack align="space-between" blockAlign="start" wrap={false} gap="300">
           <InlineStack gap="300" blockAlign="start" wrap={false}>
             {employer && <EmployerLogo employer={employer} size={44} />}
@@ -80,7 +80,7 @@ export function JobCard({ job, onSelect, selected = false, strengthsUsed }: Prop
                   {job.title}
                 </a>
               </h3>
-              <Text as="p" variant="bodyMd" tone="subdued">
+              <Text as="p" variant="bodySm" tone="subdued">
                 {employer?.name} · {job.location}
               </Text>
             </BlockStack>
@@ -117,13 +117,13 @@ export function JobCard({ job, onSelect, selected = false, strengthsUsed }: Prop
         )}
 
         {signals.length > 0 && (
-          <InlineStack gap="300" wrap>
+          <div className="ow-jobcard__signals">
             {signals.map((s) => (
               <Signal key={s.label} state={s.state}>
                 {s.label}
               </Signal>
             ))}
-          </InlineStack>
+          </div>
         )}
 
         <Text as="span" variant="bodySm" tone="subdued">

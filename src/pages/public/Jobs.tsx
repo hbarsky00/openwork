@@ -51,7 +51,7 @@ export function Jobs() {
 
   return (
     <div className="ow-container">
-      <BlockStack gap="500">
+      <BlockStack gap="400">
         <form onSubmit={(e) => { e.preventDefault(); update({ q: draftQ, where: draftWhere }); }} role="search" aria-label="Search jobs">
           <div className="ow-searchbar">
             <div className="ow-searchbar__what">

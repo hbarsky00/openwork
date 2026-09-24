@@ -41,6 +41,16 @@ at `/about`.
   components (`LegacyCard`, `LegacyStack`, `LegacyTabs`, `LegacyFilters`) are
   not used anywhere.
 
+## 1b. Colour (one accent)
+
+Polaris's brand tokens are monochrome admin black. The product remaps
+`--p-color-*-brand*` and `--p-color-bg-surface-selected` to Polaris's
+**emphasis** scale, so primary buttons, links, focus rings, active nav and the
+selected job card are one blue. Success badges are solid green with white
+text; neutral badges are outlined, not grey blobs. A selected card keeps a
+surface: tinted `bg-surface-emphasis` with a 4px accent edge, never the
+page-ground grey.
+
 ## 1a. Legibility layer (why the app does not look like Shopify admin)
 
 Polaris ships at admin density: 13px body, 12px small text, 32px buttons

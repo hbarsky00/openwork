@@ -40,9 +40,27 @@
   --p-text-heading-3xl-font-line-height: var(--p-font-line-height-1200);
   --p-font-weight-regular: 450;
 
-  /* Surfaces — roomier cards, flat buttons (no admin bevel) */
-  --p-space-card-padding: var(--p-space-500);
-  --p-space-card-gap: var(--p-space-500);
+  /* Colour — Polaris's brand tokens are monochrome (admin black). This
+     product uses Polaris's emphasis scale as its brand, so primary buttons,
+     selection, links and focus rings are one colour. */
+  --p-color-bg-fill-brand: var(--p-color-bg-fill-emphasis);
+  --p-color-bg-fill-brand-hover: var(--p-color-bg-fill-emphasis-hover);
+  --p-color-bg-fill-brand-active: var(--p-color-bg-fill-emphasis-active);
+  --p-color-bg-fill-brand-selected: var(--p-color-bg-fill-emphasis);
+  --p-color-text-brand-on-bg-fill: var(--p-color-text-emphasis-on-bg-fill);
+  --p-color-text-brand: var(--p-color-text-emphasis);
+  --p-color-text-brand-hover: var(--p-color-text-emphasis-hover);
+  --p-color-icon-brand: var(--p-color-icon-emphasis);
+  --p-color-border-brand: var(--p-color-border-emphasis);
+  --p-color-bg-surface-brand: var(--p-color-bg-surface-emphasis);
+  --p-color-bg-surface-brand-hover: var(--p-color-bg-surface-emphasis-hover);
+  --p-color-bg-surface-brand-selected: var(--p-color-bg-surface-emphasis-active);
+  --p-color-bg-surface-selected: var(--p-color-bg-surface-emphasis);
+  --p-color-bg-fill-selected: var(--p-color-bg-fill-emphasis);
+
+  /* Surfaces — flat buttons (no admin bevel); card padding is set below */
+  --p-space-card-padding: var(--p-space-400);
+  --p-space-card-gap: var(--p-space-400);
   --p-color-button-gradient-bg-fill: none;
   --p-shadow-button: 0 0 0 var(--p-border-width-025) var(--p-color-border) inset;
   --p-shadow-button-hover: 0 0 0 var(--p-border-width-025) var(--p-color-border-hover) inset;
@@ -64,8 +82,22 @@
 }
 @media (min-width: 768px) {
   :root {
-    --p-space-card-padding: var(--p-space-600);
+    --p-space-card-padding: var(--p-space-500);
   }
+}
+/* Success badges: solid green with white text instead of Polaris's neon mint. */
+.Polaris-Badge.Polaris-Badge--toneSuccess {
+  background-color: var(--p-color-bg-fill-success);
+  color: var(--p-color-text-success-on-bg-fill);
+}
+.Polaris-Badge.Polaris-Badge--toneSuccess svg {
+  fill: var(--p-color-text-success-on-bg-fill);
+}
+/* Neutral badges: quiet outline, not a grey blob. */
+.Polaris-Badge:not([class*='Polaris-Badge--tone']) {
+  background-color: var(--p-color-bg-surface);
+  box-shadow: inset 0 0 0 var(--p-border-width-025) var(--p-color-border);
+  color: var(--p-color-text);
 }
 
 /* Controls — 48px tall, 18px labels, 24px choice boxes */
@@ -407,7 +439,7 @@ body {
 .ow-container {
   max-width: var(--ow-container);
   margin: 0 auto;
-  padding: var(--p-space-800) var(--p-space-500);
+  padding: var(--p-space-500) var(--p-space-400);
 }
 .ow-container--narrow {
   max-width: var(--ow-container-narrow);
@@ -417,7 +449,7 @@ body {
 }
 @media (min-width: 768px) {
   .ow-container {
-    padding: var(--p-space-1200) var(--p-space-800);
+    padding: var(--p-space-800) var(--p-space-600);
   }
 }
 
@@ -483,26 +515,34 @@ body {
   border: var(--p-border-width-025) solid var(--p-color-border-secondary);
   border-radius: var(--p-border-radius-300);
   background: var(--p-color-bg-surface);
-  padding: var(--p-space-500);
+  padding: var(--p-space-400);
   color: inherit;
   text-decoration: none;
-  transition: border-color var(--p-motion-duration-100) var(--p-motion-ease);
+  transition: border-color var(--p-motion-duration-100) var(--p-motion-ease), box-shadow var(--p-motion-duration-100) var(--p-motion-ease);
 }
 .ow-jobcard:hover {
-  border-color: var(--p-color-border-hover);
-  background: var(--p-color-bg-surface-hover);
+  border-color: var(--p-color-border-emphasis);
+  box-shadow: var(--p-shadow-100);
 }
 .ow-jobcard:focus-visible {
   outline: var(--p-border-width-050) solid var(--p-color-border-focus);
   outline-offset: var(--p-space-050);
 }
-.ow-jobcard--selected {
+.ow-jobcard--selected,
+.ow-jobcard--selected:hover {
+  /* Keeps its surface: a tinted card with a solid accent edge, never the
+     page-ground grey that made the selected job disappear. */
   border-color: var(--p-color-border-emphasis);
-  box-shadow: inset 0 0 0 var(--p-border-width-025) var(--p-color-border-emphasis);
-  background: var(--p-color-bg-surface-selected);
+  box-shadow: inset var(--p-space-100) 0 0 var(--p-color-border-emphasis);
+  background: var(--p-color-bg-surface-emphasis);
+}
+.ow-jobcard__signals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--p-space-100) var(--p-space-400);
 }
 .ow-jobcard__title {
-  font-size: var(--p-font-size-550);
+  font-size: var(--p-font-size-500);
   font-weight: var(--p-font-weight-semibold);
   line-height: var(--p-font-line-height-700);
   color: var(--p-color-text);
@@ -934,20 +974,20 @@ ol.Polaris-BlockStack {
 .ow-jobcard--clickable {
   cursor: pointer;
 }
-.ow-jobcard--clickable:hover {
-  border-color: var(--p-color-border-emphasis);
-}
 .ow-jobdetail {
   max-width: 760px;
 }
 .ow-jobdetail--pane {
   max-width: none;
+  padding: var(--p-space-500);
 }
 
 /* Below the split layout there is no pane, so nothing is "selected". */
 @media (max-width: 1023px) {
-  .ow-jobcard--selected {
+  .ow-jobcard--selected,
+  .ow-jobcard--selected:hover {
     border-color: var(--p-color-border-secondary);
     box-shadow: none;
+    background: var(--p-color-bg-surface);
   }
 }
