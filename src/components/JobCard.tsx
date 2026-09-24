@@ -17,6 +17,8 @@ interface Props {
   onSelect?: (id: string) => void;
   selected?: boolean;
   compact?: boolean;
+  /** Discover page: the candidate's strengths this job lists. */
+  strengthsUsed?: string[];
 }
 
 function shortLabel(reason: MatchReason, job: Job): string {
@@ -46,7 +48,7 @@ function factSignals(job: Job, employer: Employer): { state: MatchState; label: 
   return out.slice(0, 5);
 }
 
-export function JobCard({ job, onSelect, selected = false, compact = false }: Props) {
+export function JobCard({ job, onSelect, selected = false, compact = false, strengthsUsed }: Props) {
   const { state } = useStore();
   const navigate = useNavigate();
   const employer = state.employers.find((e) => e.id === job.employerId);
@@ -91,6 +93,12 @@ export function JobCard({ job, onSelect, selected = false, compact = false }: Pr
           <Text as="span" variant="bodyMd" tone="subdued">·</Text>
           <Text as="span" variant="bodyMd">{EMPLOYMENT_TYPE_LABEL[job.employmentType]}</Text>
         </InlineStack>
+
+        {strengthsUsed && strengthsUsed.length > 0 && (
+          <Text as="p" variant="bodySm">
+            Uses {strengthsUsed.length} of your strengths: <strong>{strengthsUsed.join(', ')}</strong>
+          </Text>
+        )}
 
         {result ? (
           <BlockStack gap="200">

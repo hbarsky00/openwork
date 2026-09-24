@@ -1,4 +1,4 @@
-import { Banner, BlockStack, Box, Button, Card, Checkbox, Collapsible, Form, FormLayout, InlineGrid, InlineStack, List, Text, TextField } from '@shopify/polaris';
+import { Banner, BlockStack, Box, Button, Card, Checkbox, Form, FormLayout, InlineGrid, InlineStack, List, Text, TextField } from '@shopify/polaris';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AccommodationRequest, type AccommodationRequestValue } from '../../components/AccommodationRequest';
@@ -92,7 +92,6 @@ function ApplyForm({ job, employer }: { job: NonNullable<ReturnType<typeof useJo
   const [sharedNeeds, setSharedNeeds] = useState<string[]>(Object.entries(p.accessNeeds).filter(([, n]) => n.visibility === 'shared').map(([k]) => k));
   const [sharedHiring, setSharedHiring] = useState(p.privacy.hiringPreferences === 'shared' ? p.hiringPreferences.filter((h) => job.hiringOptions.includes(h)) : []);
   const [accommodation, setAccommodation] = useState<AccommodationRequestValue>({ options: [], custom: p.privacy.supportNotes === 'shared' ? p.supportNotes : '' });
-  const [open, setOpen] = useState<'message' | 'share' | 'accommodation' | null>(null);
   const [sentId, setSentId] = useState<string | null>(null);
 
   if (job.status !== 'published' && !sentId) return <div className="ow-container ow-container--narrow"><Banner tone="warning" title="This job is no longer accepting applications"><p><Link to={`/companies/${employer.id}`}>See other jobs at {employer.name}</Link>.</p></Banner></div>;
@@ -101,7 +100,6 @@ function ApplyForm({ job, employer }: { job: NonNullable<ReturnType<typeof useJo
   const needChoices = Object.entries(p.accessNeeds).filter(([, n]) => n.visibility !== 'private');
   const prefChoices = DIMENSIONS.filter((d) => p.workPreferences[d.id] && p.workPreferences[d.id]!.visibility !== 'private');
   const hasAccommodation = accommodation.options.length > 0 || accommodation.custom.trim().length > 0;
-  const toggle = (k: typeof open) => setOpen(open === k ? null : k);
 
   const submit = () => {
     const today = new Date().toISOString().slice(0, 10);
@@ -169,7 +167,7 @@ function ApplyForm({ job, employer }: { job: NonNullable<ReturnType<typeof useJo
             Apply to {job.title}
           </Text>
           <Text as="p" tone="subdued">
-            {employer.name} · Below is the complete list of what they will receive. Change anything in place, then submit.
+            {employer.name} · Everything below is what they will receive — nothing more. Adjust anything, then submit.
           </Text>
         </BlockStack>
 
@@ -201,11 +199,11 @@ function ApplyForm({ job, employer }: { job: NonNullable<ReturnType<typeof useJo
                   </InlineStack>
                 </BlockStack>
 
-                <Section title="A message" summary={note.trim() ? `“${note.trim().slice(0, 80)}${note.trim().length > 80 ? '…' : ''}”` : 'None (optional)'} open={open === 'message'} onToggle={() => toggle('message')} id="apply-message">
+                <Section title="A message" summary={note.trim() ? `“${note.trim().slice(0, 80)}${note.trim().length > 80 ? '…' : ''}”` : 'None (optional)'} id="apply-message">
                   <TextField label="Anything you want them to know" value={note} onChange={setNote} multiline={3} autoComplete="off" maxLength={600} showCharacterCount />
                 </Section>
 
-                <Section title="What you need" summary={sharedNeeds.length + sharedPrefs.length === 0 ? 'Nothing — your needs stay private' : [...sharedNeeds.map((n) => ACCESS_FEATURE_BY_ID[n]?.label), ...sharedPrefs.map((d) => DIMENSION_BY_ID[d].label)].join(' · ')} open={open === 'share'} onToggle={() => toggle('share')} id="apply-share">
+                <Section title="What you need" summary={sharedNeeds.length + sharedPrefs.length === 0 ? 'Nothing — your needs stay private' : [...sharedNeeds.map((n) => ACCESS_FEATURE_BY_ID[n]?.label), ...sharedPrefs.map((d) => DIMENSION_BY_ID[d].label)].join(' · ')} id="apply-share">
                   <BlockStack gap="400">
                     <Text as="p" variant="bodySm" tone="subdued">
                       Sharing lets the employer plan for you. Not sharing changes nothing about how you are judged here.
@@ -222,7 +220,7 @@ function ApplyForm({ job, employer }: { job: NonNullable<ReturnType<typeof useJo
                   </BlockStack>
                 </Section>
 
-                <Section title="Interview accommodation request" summary={hasAccommodation ? [...accommodation.options.map((o) => HIRING_OPTION_BY_ID[o].label), accommodation.custom.trim() && `“${accommodation.custom.trim().slice(0, 60)}”`].filter(Boolean).join(' · ') : 'None (optional)'} open={open === 'accommodation'} onToggle={() => toggle('accommodation')} id="apply-acc">
+                <Section title="Interview accommodation request" summary={hasAccommodation ? [...accommodation.options.map((o) => HIRING_OPTION_BY_ID[o].label), accommodation.custom.trim() && `“${accommodation.custom.trim().slice(0, 60)}”`].filter(Boolean).join(' · ') : 'None (optional)'} id="apply-acc">
                   <AccommodationRequest job={job} employer={employer} value={accommodation} onChange={setAccommodation} bare />
                 </Section>
 
@@ -279,26 +277,19 @@ function ApplyForm({ job, employer }: { job: NonNullable<ReturnType<typeof useJo
   );
 }
 
-function Section({ title, summary, open, onToggle, id, children }: { title: string; summary: string; open: boolean; onToggle: () => void; id: string; children: React.ReactNode }) {
+function Section({ title, summary, id, children }: { title: string; summary: string; id: string; children: React.ReactNode }) {
   return (
-    <Box borderBlockStartWidth="025" borderColor="border-secondary" paddingBlockStart="300">
+    <Box borderBlockStartWidth="025" borderColor="border-secondary" paddingBlockStart="300" id={id}>
       <BlockStack gap="300">
-        <InlineStack align="space-between" blockAlign="start" wrap gap="200">
-          <BlockStack gap="050">
-            <Text as="h3" variant="headingSm">
-              {title}
-            </Text>
-            <Text as="p" variant="bodySm" tone="subdued">
-              {summary}
-            </Text>
-          </BlockStack>
-          <Button onClick={onToggle} ariaExpanded={open} ariaControls={id} disclosure={open ? 'up' : 'down'}>
-            {open ? 'Done' : 'Change'}
-          </Button>
-        </InlineStack>
-        <Collapsible id={id} open={open} transition={false}>
-          <Box paddingBlockEnd="200">{children}</Box>
-        </Collapsible>
+        <BlockStack gap="050">
+          <Text as="h3" variant="headingSm">
+            {title}
+          </Text>
+          <Text as="p" variant="bodySm" tone="subdued">
+            {summary}
+          </Text>
+        </BlockStack>
+        {children}
       </BlockStack>
     </Box>
   );

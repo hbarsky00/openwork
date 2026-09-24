@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Shell } from './components/Shell';
 import type { Role } from './lib/types';
 import { useStore } from './state/store';
@@ -46,12 +46,27 @@ function RequireRole({ role, children }: { role: Role; children: ReactNode }) {
   return <>{children}</>;
 }
 
+/** Every route change starts at the top. Hash links and query-only changes (filters) keep their position. */
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    if (hash) {
+      document.getElementById(hash.slice(1))?.scrollIntoView();
+      return;
+    }
+    window.scrollTo({ top: 0 });
+    document.getElementById('main')?.focus({ preventScroll: true });
+  }, [pathname, hash]);
+  return null;
+}
+
 const C = ({ children }: { children: ReactNode }) => <RequireRole role="candidate">{children}</RequireRole>;
 const E = ({ children }: { children: ReactNode }) => <RequireRole role="employer">{children}</RequireRole>;
 
 export function App() {
   return (
     <Shell>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/jobs" element={<Jobs />} />

@@ -1,6 +1,4 @@
-import { BlockStack, Box, Button, Collapsible, InlineStack, Text } from '@shopify/polaris';
-import { ChevronDownIcon, ChevronUpIcon } from '@shopify/polaris-icons';
-import { useState } from 'react';
+import { BlockStack, Box, InlineGrid, InlineStack, Text } from '@shopify/polaris';
 import { ACCESS_CATEGORIES, ACCESS_FEATURE_BY_ID, featuresIn, type AccessCategoryId } from '../lib/access';
 import { IMPORTANCE_LABEL, VISIBILITY_LABEL } from '../lib/format';
 import type { AccessNeeds, Importance, Visibility } from '../lib/types';
@@ -25,7 +23,6 @@ interface Props {
  */
 export function AccessNeedsForm({ value, onChange, showVisibility = true, only, hero = false }: Props) {
   const cats = ACCESS_CATEGORIES.filter((c) => !only || only.includes(c.id));
-  const [open, setOpen] = useState<Record<string, boolean>>(() => Object.fromEntries(cats.map((c) => [c.id, hero || featuresIn(c.id).some((f) => value[f.id])])));
 
   const setCategory = (cat: AccessCategoryId, picked: string[]) => {
     const next = { ...value };
@@ -36,16 +33,12 @@ export function AccessNeedsForm({ value, onChange, showVisibility = true, only, 
     onChange(next);
   };
 
-  return (
-    <BlockStack gap="300">
-      {cats.map((c) => {
+  const blocks = cats.map((c) => {
         const features = featuresIn(c.id);
         const picked = features.filter((f) => value[f.id]).map((f) => f.id);
-        const isOpen = hero || !!open[c.id];
-        const panelId = `needs-${c.id}`;
         const inner = (
           <BlockStack gap="400">
-            <ChoiceChips label={hero ? c.label : `${c.label} — pick any`} labelHidden={hero} helpText={c.intro} multiple options={features.map((f) => ({ value: f.id, label: f.label }))} value={picked} size={hero ? 'large' : 'medium'} onChange={(v) => setCategory(c.id, v as string[])} />
+            <ChoiceChips label={c.label} labelHidden={hero} helpText={c.intro} multiple options={features.map((f) => ({ value: f.id, label: f.label }))} value={picked} size={hero ? 'large' : 'medium'} onChange={(v) => setCategory(c.id, v as string[])} />
             {picked.length > 0 && (
               <BlockStack gap="300">
                 <Text as="h4" variant="headingSm">
@@ -73,18 +66,15 @@ export function AccessNeedsForm({ value, onChange, showVisibility = true, only, 
         );
         if (hero) return <div key={c.id}>{inner}</div>;
         return (
-          <Box key={c.id} borderColor="border-secondary" borderWidth="025" borderRadius="300" background="bg-surface">
-            <Button variant="monochromePlain" fullWidth textAlign="left" icon={isOpen ? ChevronUpIcon : ChevronDownIcon} onClick={() => setOpen((o) => ({ ...o, [c.id]: !isOpen }))} ariaExpanded={isOpen} ariaControls={panelId}>
-              {`${c.label}${picked.length ? ` · ${picked.length} selected` : ''}`}
-            </Button>
-            <Collapsible id={panelId} open={isOpen} transition={false}>
-              <Box padding="400" paddingBlockStart="0">
-                {inner}
-              </Box>
-            </Collapsible>
+          <Box key={c.id} padding="400" borderColor="border-secondary" borderWidth="025" borderRadius="300" background="bg-surface">
+            {inner}
           </Box>
         );
-      })}
-    </BlockStack>
+      });
+  if (hero) return <BlockStack gap="300">{blocks}</BlockStack>;
+  return (
+    <InlineGrid columns={{ xs: 1, lg: 2 }} gap="400" alignItems="start">
+      {blocks}
+    </InlineGrid>
   );
 }
