@@ -126,7 +126,7 @@
   line-height: var(--p-text-body-sm-font-line-height);
 }
 .Polaris-Choice {
-  padding-block: var(--p-space-300);
+  padding-block: var(--p-space-150);
 }
 .Polaris-Choice__Control {
   width: var(--ow-choice-size);
@@ -713,6 +713,36 @@ ol.Polaris-BlockStack {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* Filter popovers: content decides the width, capped to the viewport. */
+.ow-filter-pop {
+  width: min(1120px, calc(100vw - var(--p-space-800)));
+}
+/* Polaris pins the popover to a computed inline height (~500px). Our filter
+   panes are laid out to fit, so let them size to content within the viewport. */
+.Polaris-Popover__Content:has(.ow-filter-pop) {
+  height: auto !important;
+  max-height: calc(100vh - 220px) !important;
+}
+.Polaris-Popover__Pane:has(.ow-filter-pop) {
+  max-height: calc(100vh - 220px) !important;
+}
+.ow-filter-pop--narrow {
+  width: min(420px, calc(100vw - var(--p-space-800)));
+}
+
+/* Uneven groups packed into columns by height (native CSS multicol). */
+.ow-packed {
+  columns: 1;
+  column-gap: var(--p-space-600);
+}
+@media (min-width: 640px) { .ow-packed { columns: 2; } }
+@media (min-width: 900px) { .ow-packed { columns: 3; } }
+@media (min-width: 1180px) { .ow-packed { columns: 4; } }
+.ow-packed__item {
+  break-inside: avoid;
+  padding-block-end: var(--p-space-400);
 }
 
 /* On-this-page jump list ------------------------------------------------- */

@@ -1,6 +1,7 @@
-import { Badge, Banner, BlockStack, Button, Card, ChoiceList, FormLayout, InlineGrid, InlineStack, Select, Tag, Text, TextField } from '@shopify/polaris';
+import { Badge, Banner, BlockStack, Button, Card, FormLayout, InlineGrid, InlineStack, Select, Tag, Text, TextField } from '@shopify/polaris';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ChoiceChips } from '../../components/ChoiceChips';
 import { StrengthsPicker } from '../../components/StrengthsPicker';
 import { ACCESS_CATEGORIES, ACCESS_FEATURE_BY_ID, HIRING_OPTION_BY_ID, featuresIn } from '../../lib/access';
 import { DIMENSIONS, optionOf } from '../../lib/dimensions';
@@ -77,7 +78,7 @@ export function Passport() {
                     <TextField label="Location" value={p.location} onChange={(v) => patch({ location: v })} autoComplete="address-level2" />
                     <TextField label="About you" value={p.about} onChange={(v) => patch({ about: v })} multiline={4} autoComplete="off" helpText="What you are good at and what you are looking for. Plain words are fine." />
                     <TextField label="Availability" value={p.availability} onChange={(v) => patch({ availability: v })} autoComplete="off" placeholder="e.g. Immediately, weekday mornings" />
-                    <ChoiceList title="Kind of work" allowMultiple choices={Object.entries(EMPLOYMENT_TYPE_LABEL).map(([value, label]) => ({ value, label }))} selected={p.employmentTypes} onChange={(v) => patch({ employmentTypes: v as EmploymentType[] })} />
+                    <ChoiceChips label="Kind of work" multiple size="slim" options={Object.entries(EMPLOYMENT_TYPE_LABEL).map(([value, label]) => ({ value, label }))} value={p.employmentTypes} onChange={(v) => patch({ employmentTypes: v as EmploymentType[] })} />
                     <TextField label="Minimum pay you would consider (per hour, optional)" type="number" value={p.desiredSalaryMin?.toString() ?? ''} onChange={(v) => patch({ desiredSalaryMin: v ? Number(v) : null })} autoComplete="off" prefix="$" helpText="Private to you." />
                   </FormLayout>
                 ) : (

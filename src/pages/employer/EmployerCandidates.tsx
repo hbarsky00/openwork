@@ -1,5 +1,6 @@
-import { Badge, BlockStack, Card, ChoiceList, EmptyState, InlineGrid, InlineStack, Page, Select, Text } from '@shopify/polaris';
+import { Badge, BlockStack, Card, EmptyState, InlineGrid, InlineStack, Page, Select, Text } from '@shopify/polaris';
 import { Link, useSearchParams } from 'react-router-dom';
+import { ChoiceChips } from '../../components/ChoiceChips';
 import { APPLICATION_STATUS_LABEL, longDate } from '../../lib/format';
 import type { ApplicationStatus } from '../../lib/types';
 import { useTitle } from '../../lib/useTitle';
@@ -35,15 +36,16 @@ export function EmployerCandidates() {
                 setSp(n);
               }}
             />
-            <ChoiceList
-              title="Status"
-              allowMultiple
-              choices={(Object.keys(APPLICATION_STATUS_LABEL) as ApplicationStatus[]).map((s) => ({ value: s, label: APPLICATION_STATUS_LABEL[s] }))}
-              selected={statusFilter}
+            <ChoiceChips
+              label="Status"
+              multiple
+              size="slim"
+              options={(Object.keys(APPLICATION_STATUS_LABEL) as ApplicationStatus[]).map((st) => ({ value: st, label: APPLICATION_STATUS_LABEL[st] }))}
+              value={statusFilter}
               onChange={(v) => {
                 const n = new URLSearchParams(sp);
                 n.delete('status');
-                v.forEach((s) => n.append('status', s));
+                (v as string[]).forEach((st) => n.append('status', st));
                 setSp(n);
               }}
             />

@@ -1,7 +1,8 @@
-import { Badge, Banner, BlockStack, Box, Button, Checkbox, ChoiceList, EmptySearchResult, InlineStack, Modal, Popover, Select, Tag, Text, TextField } from '@shopify/polaris';
+import { Badge, Banner, BlockStack, Box, Button, EmptySearchResult, InlineStack, Modal, Popover, Select, Tag, Text, TextField } from '@shopify/polaris';
 import { FilterIcon, SearchIcon } from '@shopify/polaris-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { ChoiceChips } from '../../components/ChoiceChips';
 import { JobCard } from '../../components/JobCard';
 import { JobDetailContent } from '../../components/JobDetailContent';
 import { ACCESS_CATEGORIES, ACCESS_FEATURES, ACCESS_FEATURE_BY_ID, HIRING_OPTIONS, HIRING_OPTION_BY_ID, type HiringOptionId } from '../../lib/access';
@@ -20,6 +21,21 @@ export function Jobs() {
   const [draftQ, setDraftQ] = useState(params.q);
   const [draftWhere, setDraftWhere] = useState(params.where);
   const [allOpen, setAllOpen] = useState(false);
+  const [modalFocus, setModalFocus] = useState<string | null>(null);
+  // Below the split breakpoint a popover is the wrong container: open the
+  // full-screen filter sheet scrolled to the section the pill names.
+  const openFilter = (id: string) => {
+    if (window.matchMedia('(min-width: 1024px)').matches) setOpenPopover(openPopover === id ? null : id);
+    else {
+      setModalFocus(id);
+      setAllOpen(true);
+    }
+  };
+  useEffect(() => {
+    if (!allOpen || !modalFocus) return;
+    const t = window.setTimeout(() => document.getElementById(`filt-${modalFocus}`)?.scrollIntoView({ block: 'start' }), 80);
+    return () => window.clearTimeout(t);
+  }, [allOpen, modalFocus]);
   const [openPopover, setOpenPopover] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -36,10 +52,6 @@ export function Jobs() {
   }, [results, selectedId]);
 
   const update = (patch: Partial<SearchParams>) => setSp(writeSearch({ ...params, ...patch }));
-  const toggleIn = (key: 'arrangement' | 'type' | 'level' | 'practice' | 'need', value: string) => {
-    const list = params[key] as string[];
-    update({ [key]: list.includes(value) ? list.filter((v) => v !== value) : [...list, value] } as Partial<SearchParams>);
-  };
   const clearAll = () => {
     setDraftQ('');
     setDraftWhere('');
@@ -51,35 +63,47 @@ export function Jobs() {
   const hasPassport = !!profile && (Object.keys(profile.accessNeeds).length > 0 || Object.keys(profile.workPreferences).length > 0);
   const requiredNeeds = profile ? Object.entries(profile.accessNeeds).filter(([, n]) => n.importance === 'required').map(([id]) => id) : [];
 
-  const pill = (id: string, label: string, count: number, content: React.ReactNode) => (
-    <Popover key={id} active={openPopover === id} onClose={() => setOpenPopover(null)} activator={<Button disclosure pressed={count > 0} onClick={() => setOpenPopover(openPopover === id ? null : id)} ariaExpanded={openPopover === id}>{count > 0 ? `${label} · ${count}` : label}</Button>}>
-      <Box padding="400" minWidth="280px" maxWidth="420px">
-        {content}
-      </Box>
+  const pill = (id: string, label: string, count: number, content: React.ReactNode, narrow = false) => (
+    <Popover key={id} fluidContent active={openPopover === id} onClose={() => setOpenPopover(null)} activator={<Button disclosure pressed={count > 0} onClick={() => openFilter(id)} ariaExpanded={openPopover === id}>{count > 0 ? `${label} · ${count}` : label}</Button>}>
+      <div className={narrow ? 'ow-filter-pop ow-filter-pop--narrow' : 'ow-filter-pop'}>
+        <Box padding="400">{content}</Box>
+      </div>
     </Popover>
   );
 
   const needsFilterContent = (
-    <BlockStack gap="300">
+    <BlockStack gap="400">
       <Text as="p" variant="bodySm" tone="subdued">
-        Shows only jobs where the employer has <strong>confirmed</strong> each need. Unknown never counts.
+        Only jobs where the employer has <strong>confirmed</strong> each one. Unknown never counts.
       </Text>
-      {ACCESS_CATEGORIES.map((c) => {
-        const items = FILTER_FEATURES.filter((f) => f.category === c.id);
-        if (!items.length) return null;
-        return (
-          <BlockStack key={c.id} gap="100">
-            <Text as="h3" variant="headingSm">
-              {c.label}
-            </Text>
-            {items.map((f) => (
-              <Checkbox key={f.id} label={f.label} checked={params.need.includes(f.id)} onChange={() => toggleIn('need', f.id)} />
-            ))}
-          </BlockStack>
-        );
+      <div className="ow-packed">
+        {ACCESS_CATEGORIES.map((c) => {
+          const items = FILTER_FEATURES.filter((f) => f.category === c.id);
+          if (!items.length) return null;
+          return (
+            <div key={c.id} className="ow-packed__item">
+              <ChoiceChips label={c.label} multiple size="slim" options={items.map((f) => ({ value: f.id, label: f.label }))} value={params.need.filter((n) => items.some((f) => f.id === n))} onChange={(v) => update({ need: [...params.need.filter((n) => !items.some((f) => f.id === n)), ...(v as string[])] })} />
+            </div>
+          );
+        })}
+      </div>
+    </BlockStack>
+  );
+
+  const hiringFilterContent = (
+    <BlockStack gap="400">
+      {(['demonstrate', 'interview', 'workplace'] as const).map((g) => {
+        const items = HIRING_OPTIONS.filter((h) => h.group === g);
+        return <ChoiceChips key={g} label={g === 'demonstrate' ? 'Ways to show your skills' : g === 'interview' ? 'Interview accessibility' : 'Workplace flexibility'} multiple size="slim" options={items.map((h) => ({ value: h.id, label: h.filterLabel }))} value={params.practice.filter((x) => items.some((h) => h.id === x))} onChange={(v) => update({ practice: [...params.practice.filter((x) => !items.some((h) => h.id === x)), ...(v as HiringOptionId[])] })} />;
       })}
     </BlockStack>
   );
+
+  const whereContent = <ChoiceChips label="Where the work happens" multiple size="slim" options={Object.entries(WORK_LOCATION_LABEL).map(([value, label]) => ({ value, label }))} value={params.arrangement} onChange={(v) => update({ arrangement: v as string[] })} />;
+  const typeContent = <ChoiceChips label="Employment type" multiple size="slim" options={Object.entries(EMPLOYMENT_TYPE_LABEL).map(([value, label]) => ({ value, label }))} value={params.type} onChange={(v) => update({ type: v as string[] })} />;
+  const levelContent = <ChoiceChips label="Experience level" multiple size="slim" options={Object.entries(EXPERIENCE_LEVEL_LABEL).map(([value, label]) => ({ value, label }))} value={params.level} onChange={(v) => update({ level: v as string[] })} />;
+  const postedContent = <ChoiceChips label="Date posted" size="slim" allowNone={false} options={[{ value: '', label: 'Any time' }, { value: '7', label: 'Past week' }, { value: '14', label: 'Past two weeks' }, { value: '30', label: 'Past month' }]} value={params.posted} onChange={(v) => update({ posted: (v as string) ?? '' })} />;
+  const payContent = <ChoiceChips label="Minimum pay (hourly equivalent)" size="slim" allowNone={false} options={[{ value: '', label: 'Any' }, { value: '20', label: '$20+/hr' }, { value: '25', label: '$25+/hr' }, { value: '30', label: '$30+/hr · ~$62k' }, { value: '40', label: '$40+/hr · ~$83k' }]} value={params.minPay} onChange={(v) => update({ minPay: (v as string) ?? '' })} />;
 
   return (
     <div className="ow-container">
@@ -125,21 +149,10 @@ export function Jobs() {
 
         <InlineStack gap="200" wrap blockAlign="center">
           {pill('need', 'What you need', params.need.length, needsFilterContent)}
-          {pill(
-            'hiring',
-            'Hiring options',
-            params.practice.length,
-            <BlockStack gap="200">
-              <Text as="h3" variant="headingSm">
-                Accessible hiring
-              </Text>
-              {HIRING_OPTIONS.map((p) => (
-                <Checkbox key={p.id} label={p.filterLabel} checked={params.practice.includes(p.id)} onChange={() => toggleIn('practice', p.id)} />
-              ))}
-            </BlockStack>,
-          )}
-          {pill('arrangement', 'Where', params.arrangement.length, <ChoiceList title="Where the work happens" allowMultiple choices={Object.entries(WORK_LOCATION_LABEL).map(([value, label]) => ({ value, label }))} selected={params.arrangement} onChange={(v) => update({ arrangement: v })} />)}
-          {pill('type', 'Job type', params.type.length, <ChoiceList title="Employment type" allowMultiple choices={Object.entries(EMPLOYMENT_TYPE_LABEL).map(([value, label]) => ({ value, label }))} selected={params.type} onChange={(v) => update({ type: v })} />)}
+          {pill('hiring', 'Hiring options', params.practice.length, hiringFilterContent)}
+          {pill('arrangement', 'Where', params.arrangement.length, whereContent, true)}
+          {pill('type', 'Job type', params.type.length, typeContent, true)}
+          {pill('posted', 'Date posted', params.posted ? 1 : 0, postedContent, true)}
           <Button icon={FilterIcon} onClick={() => setAllOpen(true)}>
             All filters
           </Button>
@@ -156,12 +169,12 @@ export function Jobs() {
               Confirmed by employer:
             </Text>
             {params.need.map((id) => (
-              <Tag key={id} onRemove={() => toggleIn('need', id)}>
+              <Tag key={id} onRemove={() => update({ need: params.need.filter((n) => n !== id) })}>
                 {ACCESS_FEATURE_BY_ID[id]?.label ?? id}
               </Tag>
             ))}
             {params.practice.map((id) => (
-              <Tag key={id} onRemove={() => toggleIn('practice', id)}>
+              <Tag key={id} onRemove={() => update({ practice: params.practice.filter((n) => n !== id) })}>
                 {HIRING_OPTION_BY_ID[id as HiringOptionId]?.filterLabel ?? id}
               </Tag>
             ))}
@@ -224,10 +237,10 @@ export function Jobs() {
         )}
       </BlockStack>
 
-      <Modal open={allOpen} onClose={() => setAllOpen(false)} title="All filters" primaryAction={{ content: `Show ${results.length} job${results.length === 1 ? '' : 's'}`, onAction: () => setAllOpen(false) }} secondaryActions={[{ content: 'Clear all', onAction: clearAll }]}>
+      <Modal open={allOpen} onClose={() => { setAllOpen(false); setModalFocus(null); }} title="Filters" size="large" primaryAction={{ content: `Show ${results.length} job${results.length === 1 ? '' : 's'}`, onAction: () => setAllOpen(false) }} secondaryActions={[{ content: 'Clear all', onAction: clearAll }]}>
         <Modal.Section>
           <BlockStack gap="300">
-            <Text as="h3" variant="headingMd">
+            <Text as="h3" variant="headingMd" id="filt-need">
               What you need
             </Text>
             {needsFilterContent}
@@ -235,21 +248,19 @@ export function Jobs() {
         </Modal.Section>
         <Modal.Section>
           <BlockStack gap="300">
-            <Text as="h3" variant="headingMd">
+            <Text as="h3" variant="headingMd" id="filt-hiring">
               Accessible hiring
             </Text>
-            {HIRING_OPTIONS.map((p) => (
-              <Checkbox key={p.id} label={p.filterLabel} helpText={p.description} checked={params.practice.includes(p.id)} onChange={() => toggleIn('practice', p.id)} />
-            ))}
+            {hiringFilterContent}
           </BlockStack>
         </Modal.Section>
         <Modal.Section>
           <BlockStack gap="500">
-            <ChoiceList title="Where the work happens" allowMultiple choices={Object.entries(WORK_LOCATION_LABEL).map(([value, label]) => ({ value, label }))} selected={params.arrangement} onChange={(v) => update({ arrangement: v })} />
-            <ChoiceList title="Employment type" allowMultiple choices={Object.entries(EMPLOYMENT_TYPE_LABEL).map(([value, label]) => ({ value, label }))} selected={params.type} onChange={(v) => update({ type: v })} />
-            <ChoiceList title="Experience level" allowMultiple choices={Object.entries(EXPERIENCE_LEVEL_LABEL).map(([value, label]) => ({ value, label }))} selected={params.level} onChange={(v) => update({ level: v })} />
-            <Select label="Minimum pay (hourly equivalent)" options={[{ label: 'Any', value: '' }, { label: '$20/hr or more', value: '20' }, { label: '$25/hr or more', value: '25' }, { label: '$30/hr or more (about $62k/yr)', value: '30' }, { label: '$40/hr or more (about $83k/yr)', value: '40' }]} value={params.minPay} onChange={(v) => update({ minPay: v })} />
-            <ChoiceList title="Date posted" choices={[{ value: '', label: 'Any time' }, { value: '7', label: 'Past week' }, { value: '14', label: 'Past two weeks' }, { value: '30', label: 'Past month' }]} selected={[params.posted]} onChange={(v) => update({ posted: v[0] ?? '' })} />
+            <div id="filt-arrangement">{whereContent}</div>
+            <div id="filt-type">{typeContent}</div>
+            {levelContent}
+            {payContent}
+            <div id="filt-posted">{postedContent}</div>
           </BlockStack>
         </Modal.Section>
       </Modal>

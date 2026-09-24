@@ -184,6 +184,16 @@ grid to one column, hides the split-view pane, and raises controls to 56px;
 `largeText` moves every semantic type token one step up. Neither removes a
 feature. Browser zoom, contrast and reduced-motion settings apply on top.
 
+## 9a′. Filters
+
+Filter options are chips, never checkbox lists. On desktop each pill opens a
+`Popover` with `fluidContent`; uneven groups (the nine need categories) are
+packed with CSS multicol (`.ow-packed`) so 24 options fit in four columns
+without scrolling, and the popover's inline height cap is lifted for
+`.ow-filter-pop`. Below 1024px the same pill opens the full-screen Filters
+sheet (`Modal size="large"`) scrolled to that section — a popover is the
+wrong container on a phone.
+
 ## 9b. Action bars
 
 Every wizard (`Stepper`, job builder, apply, workplace accessibility) ends in
