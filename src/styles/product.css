@@ -1,0 +1,877 @@
+/*
+ * Openwork product layer on top of Polaris.
+ *
+ * Every value here is a Polaris token or a semantic alias of one. No raw
+ * colours, spacing or radii. Product-specific selectors exist only where
+ * Polaris has no primitive (split-view layout, nav links, timeline rail).
+ */
+
+/*
+ * LEGIBILITY LAYER
+ * Polaris defaults are admin density: 13px body text, 32px buttons, 18px
+ * checkboxes. This product is for people who need clarity most, so the
+ * semantic type tokens and control sizes are set here to a consumer,
+ * accessibility-first scale (18px body, 48px controls). Everything below still
+ * references Polaris tokens; only the values change.
+ */
+:root {
+  /* Type — 18px base, generous line-height */
+  --p-text-body-xs-font-size: var(--p-font-size-350);        /* 14 */
+  --p-text-body-xs-font-line-height: var(--p-font-line-height-500);
+  --p-text-body-sm-font-size: var(--p-font-size-400);        /* 16 */
+  --p-text-body-sm-font-line-height: var(--p-font-line-height-600);
+  --p-text-body-md-font-size: var(--p-font-size-450);        /* 18 */
+  --p-text-body-md-font-line-height: var(--p-font-line-height-700);
+  --p-text-body-lg-font-size: var(--p-font-size-500);        /* 20 */
+  --p-text-body-lg-font-line-height: var(--p-font-line-height-800);
+  --p-text-heading-xs-font-size: var(--p-font-size-400);     /* 16 */
+  --p-text-heading-xs-font-line-height: var(--p-font-line-height-600);
+  --p-text-heading-sm-font-size: var(--p-font-size-450);     /* 18 */
+  --p-text-heading-sm-font-line-height: var(--p-font-line-height-700);
+  --p-text-heading-md-font-size: var(--p-font-size-500);     /* 20 */
+  --p-text-heading-md-font-line-height: var(--p-font-line-height-700);
+  --p-text-heading-lg-font-size: var(--p-font-size-600);     /* 24 */
+  --p-text-heading-lg-font-line-height: var(--p-font-line-height-800);
+  --p-text-heading-xl-font-size: var(--p-font-size-750);     /* 30 */
+  --p-text-heading-xl-font-line-height: var(--p-font-line-height-1000);
+  --p-text-heading-2xl-font-size: var(--p-font-size-900);    /* 36 */
+  --p-text-heading-2xl-font-line-height: var(--p-font-line-height-1000);
+  --p-text-heading-3xl-font-size: var(--p-font-size-1000);   /* 40 */
+  --p-text-heading-3xl-font-line-height: var(--p-font-line-height-1200);
+  --p-font-weight-regular: 450;
+
+  /* Surfaces — roomier cards, flat buttons (no admin bevel) */
+  --p-space-card-padding: var(--p-space-500);
+  --p-space-card-gap: var(--p-space-500);
+  --p-color-button-gradient-bg-fill: none;
+  --p-shadow-button: 0 0 0 var(--p-border-width-025) var(--p-color-border) inset;
+  --p-shadow-button-hover: 0 0 0 var(--p-border-width-025) var(--p-color-border-hover) inset;
+  --p-shadow-button-inset: 0 0 0 var(--p-border-width-025) var(--p-color-border) inset;
+  --p-shadow-button-primary: none;
+  --p-shadow-button-primary-hover: none;
+  --p-shadow-button-primary-inset: none;
+  --p-shadow-button-primary-critical: none;
+  --p-shadow-button-primary-critical-hover: none;
+  --p-shadow-button-primary-critical-inset: none;
+  --p-shadow-bevel-100: 0 0 0 var(--p-border-width-025) var(--p-color-border-secondary);
+
+  /* Product semantic sizes */
+  --ow-control-height: var(--p-height-1200);      /* 48px — buttons, inputs, selects */
+  --ow-control-height-slim: var(--p-height-1000); /* 40px — secondary buttons on cards */
+  --ow-choice-size: var(--p-space-600);           /* 24px — checkbox / radio */
+  --ow-display-size: 2.75rem;                     /* landing headline, mobile */
+  --ow-display-size-lg: 3.5rem;                   /* landing headline, desktop */
+}
+@media (min-width: 768px) {
+  :root {
+    --p-space-card-padding: var(--p-space-600);
+  }
+}
+
+/* Controls — 48px tall, 18px labels, 24px choice boxes */
+/* Doubled class: Polaris shrinks slim/medium to 28px inside a ≥48em media
+   query that would otherwise outrank a single-class override. */
+.Polaris-Button.Polaris-Button--sizeMedium,
+.Polaris-Button.Polaris-Button--sizeLarge {
+  min-height: var(--ow-control-height);
+  min-width: var(--ow-control-height);
+  --pc-button-padding-block: var(--p-space-200);
+  --pc-button-padding-inline: var(--p-space-500);
+}
+.Polaris-Button.Polaris-Button--sizeSlim {
+  min-height: var(--ow-control-height-slim);
+  min-width: var(--ow-control-height-slim);
+  --pc-button-padding-inline: var(--p-space-400);
+}
+.Polaris-Button.Polaris-Button--sizeMicro {
+  min-height: var(--p-height-800);
+}
+.Polaris-Button .Polaris-Text--bodySm {
+  font-size: var(--p-text-body-md-font-size);
+  line-height: var(--p-text-body-md-font-line-height);
+}
+.Polaris-Button--sizeSlim .Polaris-Text--bodySm,
+.Polaris-Button--sizeMicro .Polaris-Text--bodySm {
+  font-size: var(--p-text-body-sm-font-size);
+  line-height: var(--p-text-body-sm-font-line-height);
+}
+.Polaris-Button.Polaris-Button--variantPlain {
+  min-height: 0;
+  min-width: 0;
+}
+.Polaris-TextField {
+  font-size: var(--p-text-body-md-font-size);
+  line-height: var(--p-text-body-md-font-line-height);
+}
+.Polaris-TextField__Input {
+  min-height: var(--ow-control-height);
+  font-size: var(--p-text-body-md-font-size);
+  padding-block: var(--p-space-300);
+}
+.Polaris-Select__Content {
+  min-height: var(--ow-control-height);
+  font-size: var(--p-text-body-md-font-size);
+  padding-block: var(--p-space-300);
+}
+.Polaris-Label__Text,
+.Polaris-Choice__Label,
+.Polaris-Labelled__HelpText {
+  font-size: var(--p-text-body-md-font-size);
+  line-height: var(--p-text-body-md-font-line-height);
+}
+.Polaris-Labelled__HelpText,
+.Polaris-Choice__HelpText,
+.Polaris-InlineError {
+  font-size: var(--p-text-body-sm-font-size);
+  line-height: var(--p-text-body-sm-font-line-height);
+}
+.Polaris-Choice {
+  padding-block: var(--p-space-300);
+}
+.Polaris-Choice__Control {
+  width: var(--ow-choice-size);
+  height: var(--ow-choice-size);
+  margin-block-start: var(--p-space-050);
+}
+.Polaris-Choice__Control > * {
+  width: var(--ow-choice-size);
+  height: var(--ow-choice-size);
+}
+.Polaris-Badge {
+  --pc-badge-vertical-padding: var(--p-space-100);
+  --pc-badge-horizontal-padding: var(--p-space-300);
+}
+.Polaris-Tag {
+  min-height: var(--p-height-800);
+  font-size: var(--p-text-body-sm-font-size);
+}
+.Polaris-ActionList__Item {
+  --pc-action-list-item-min-height: var(--ow-control-height);
+  font-size: var(--p-text-body-md-font-size);
+}
+.Polaris-Icon {
+  width: var(--p-space-600);
+  height: var(--p-space-600);
+}
+.Polaris-Banner {
+  font-size: var(--p-text-body-md-font-size);
+  line-height: var(--p-text-body-md-font-line-height);
+}
+.Polaris-List {
+  font-size: var(--p-text-body-md-font-size);
+  line-height: var(--p-text-body-md-font-line-height);
+}
+.Polaris-List__Item {
+  margin-block-end: var(--p-space-200);
+}
+.Polaris-DescriptionList__Term,
+.Polaris-DescriptionList__Description {
+  font-size: var(--p-text-body-md-font-size);
+  line-height: var(--p-text-body-md-font-line-height);
+}
+
+
+:root {
+  /* Semantic match tokens — the only product-specific colour vocabulary. */
+  --ow-match-confirmed-fg: var(--p-color-text-success);
+  --ow-match-confirmed-bg: var(--p-color-bg-surface-success);
+  --ow-match-confirmed-border: var(--p-color-border-success);
+  --ow-match-review-fg: var(--p-color-text-caution);
+  --ow-match-review-bg: var(--p-color-bg-surface-caution);
+  --ow-match-review-border: var(--p-color-border-caution);
+  --ow-match-different-fg: var(--p-color-text-warning);
+  --ow-match-different-bg: var(--p-color-bg-surface-warning);
+  --ow-match-different-border: var(--p-color-border-warning);
+  --ow-match-unknown-fg: var(--p-color-text-secondary);
+  --ow-match-unknown-bg: var(--p-color-bg-surface-secondary);
+  --ow-match-unknown-border: var(--p-color-border-secondary);
+
+  /* Marketplace layout. Polaris Page caps at 998px; a split view needs more. */
+  --ow-container: 1280px;
+  --ow-container-narrow: 960px;
+  --ow-header-height: 72px;
+  --ow-results-width: 460px;
+}
+
+html,
+body {
+  margin: 0;
+  /* Page ground is one step off white so content columns and cards read as
+     surfaces on wide screens instead of floating in a white void. */
+  background: var(--p-color-bg-surface-secondary);
+  color: var(--p-color-text);
+  font-family: var(--p-font-family-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Skip link — visible on focus only. */
+.ow-skip {
+  position: absolute;
+  inset-block-start: var(--p-space-200);
+  inset-inline-start: var(--p-space-200);
+  transform: translateY(-200%);
+  padding: var(--p-space-200) var(--p-space-300);
+  background: var(--p-color-bg-fill-brand);
+  color: var(--p-color-text-brand-on-bg-fill);
+  border-radius: var(--p-border-radius-200);
+  z-index: var(--p-z-index-12);
+  font-weight: var(--p-font-weight-semibold);
+}
+.ow-skip:focus {
+  transform: none;
+  outline: var(--p-border-width-050) solid var(--p-color-border-focus);
+  outline-offset: var(--p-space-050);
+}
+
+/* Header ------------------------------------------------------------------ */
+.ow-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--p-z-index-6);
+  background: var(--p-color-bg-surface);
+  border-block-end: var(--p-border-width-025) solid var(--p-color-border-secondary);
+}
+.ow-header__inner {
+  max-width: var(--ow-container);
+  margin: 0 auto;
+  min-height: var(--ow-header-height);
+  padding: 0 var(--p-space-400);
+  display: flex;
+  align-items: center;
+  gap: var(--p-space-400);
+  /* Last resort: if the nav still cannot fit, it wraps to a second row.
+     Nothing in the header is ever clipped. */
+  flex-wrap: wrap;
+  row-gap: 0;
+}
+.ow-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--p-space-200);
+  text-decoration: none;
+  color: var(--p-color-text);
+  font-weight: var(--p-font-weight-bold);
+  font-size: var(--p-font-size-550);
+  letter-spacing: -0.01em;
+  border-radius: var(--p-border-radius-100);
+}
+.ow-brand__mark {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--p-border-radius-150);
+  background: var(--p-color-bg-fill-brand);
+  display: grid;
+  place-items: center;
+}
+.ow-brand__mark::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: var(--p-border-radius-full);
+  border: var(--p-border-width-050) solid var(--p-color-text-brand-on-bg-fill);
+}
+.ow-nav {
+  display: flex;
+  gap: var(--p-space-100);
+  margin-inline-start: var(--p-space-400);
+}
+.ow-nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ow-control-height-slim);
+  padding: 0 var(--p-space-300);
+  border-radius: var(--p-border-radius-200);
+  color: var(--p-color-text-secondary);
+  text-decoration: none;
+  font-size: var(--p-font-size-400);
+  font-weight: var(--p-font-weight-medium);
+}
+.ow-nav__link:hover {
+  background: var(--p-color-bg-surface-hover);
+  color: var(--p-color-text);
+}
+.ow-nav__link[aria-current='page'] {
+  background: var(--p-color-bg-surface-selected);
+  color: var(--p-color-text);
+}
+.ow-header__actions {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--p-space-200);
+}
+.ow-header__menu {
+  display: none;
+}
+.ow-nav__link {
+  white-space: nowrap;
+}
+
+/* Account name only where there is room for it. */
+.ow-header__name { display: none; }
+@media (min-width: 1600px) { .ow-header__name { display: inline; } }
+
+/* The inline nav collapses to a menu BEFORE it can collide with the actions:
+   at 1151px in standard, and at 1599px when text is one size up. */
+@media (max-width: 1151px) {
+  .ow-nav,
+  .ow-header__actions .ow-desktop-only {
+    display: none;
+  }
+  .ow-header__menu {
+    display: block;
+  }
+}
+@media (max-width: 1599px) {
+  :root[data-display='largeText'] .ow-nav,
+  :root[data-display='largeText'] .ow-header__actions .ow-desktop-only,
+  :root[data-display='simplified'] .ow-nav,
+  :root[data-display='simplified'] .ow-header__actions .ow-desktop-only {
+    display: none;
+  }
+  :root[data-display='largeText'] .ow-header__menu,
+  :root[data-display='simplified'] .ow-header__menu {
+    display: block;
+  }
+}
+/* Never let the brand or actions shrink into the nav. */
+.ow-brand,
+.ow-header__actions {
+  flex: none;
+}
+.ow-nav {
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+/* Containers -------------------------------------------------------------- */
+.ow-main {
+  flex: 1;
+  /* Content never touches the footer, whatever the page's own layout does. */
+  padding-block-end: var(--p-space-800);
+}
+
+/* Wizard action bar: Back / Save / Continue. Static on desktop; sticky at the
+   bottom of the viewport on phone and tablet so the next step is always one
+   tap away without scrolling past the footer. */
+.ow-actionbar {
+  padding-block-start: var(--p-space-400);
+}
+.ow-actionbar__row {
+  display: flex;
+  gap: var(--p-space-300);
+  align-items: center;
+}
+.ow-actionbar__primary {
+  flex: 1 1 auto;
+}
+@media (min-width: 1024px) {
+  .ow-actionbar__row {
+    justify-content: space-between;
+  }
+  .ow-actionbar__primary {
+    flex: 0 0 auto;
+    min-width: 240px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .ow-actionbar {
+    position: sticky;
+    bottom: 0;
+    z-index: var(--p-z-index-2);
+    margin-inline: calc(-1 * var(--p-space-500));
+    padding: var(--p-space-300) var(--p-space-500);
+    background: var(--p-color-bg-surface);
+    border-block-start: var(--p-border-width-025) solid var(--p-color-border-secondary);
+    box-shadow: var(--p-shadow-300);
+  }
+}
+/* Inside a Polaris Page the gutters are Polaris's, so the bar stays flush
+   with the content instead of bleeding past the viewport. */
+@media (max-width: 1023px) {
+  .Polaris-Page .ow-actionbar {
+    margin-inline: 0;
+    padding-inline: 0;
+    border-block-start: 0;
+    box-shadow: none;
+    background: var(--p-color-bg-surface-secondary);
+  }
+}
+.ow-container {
+  max-width: var(--ow-container);
+  margin: 0 auto;
+  padding: var(--p-space-800) var(--p-space-500);
+}
+.ow-container--narrow {
+  max-width: var(--ow-container-narrow);
+}
+.ow-container--flush {
+  padding-block: 0;
+}
+@media (min-width: 768px) {
+  .ow-container {
+    padding: var(--p-space-1200) var(--p-space-800);
+  }
+}
+
+/* Landing ------------------------------------------------------------------ */
+.ow-hero {
+  background: var(--p-color-bg-surface);
+  border-block-end: var(--p-border-width-025) solid var(--p-color-border-secondary);
+}
+.ow-hero__grid {
+  display: grid;
+  gap: var(--p-space-800);
+  align-items: center;
+}
+@media (min-width: 1024px) {
+  .ow-hero__grid {
+    grid-template-columns: 1.1fr 1fr;
+    gap: var(--p-space-1200);
+  }
+}
+.ow-hero h1 {
+  font-size: var(--ow-display-size);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: var(--p-font-weight-bold);
+  margin: 0;
+}
+@media (min-width: 768px) {
+  .ow-hero h1 {
+    font-size: var(--ow-display-size-lg);
+  }
+}
+
+/* Split view --------------------------------------------------------------- */
+.ow-split {
+  display: grid;
+  gap: var(--p-space-400);
+}
+@media (min-width: 1024px) {
+  .ow-split {
+    grid-template-columns: var(--ow-results-width) minmax(0, 1fr);
+    gap: var(--p-space-600);
+    align-items: start;
+  }
+  .ow-split__detail {
+    position: sticky;
+    top: calc(var(--ow-header-height) + var(--p-space-400));
+    max-height: calc(100vh - var(--ow-header-height) - var(--p-space-800));
+    overflow: auto;
+    border: var(--p-border-width-025) solid var(--p-color-border-secondary);
+    border-radius: var(--p-border-radius-300);
+    background: var(--p-color-bg-surface);
+  }
+}
+@media (max-width: 1023px) {
+  .ow-split__detail {
+    display: none;
+  }
+}
+
+/* Job card ----------------------------------------------------------------- */
+.ow-jobcard {
+  display: block;
+  border: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  border-radius: var(--p-border-radius-300);
+  background: var(--p-color-bg-surface);
+  padding: var(--p-space-500);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color var(--p-motion-duration-100) var(--p-motion-ease);
+}
+.ow-jobcard:hover {
+  border-color: var(--p-color-border-hover);
+  background: var(--p-color-bg-surface-hover);
+}
+.ow-jobcard:focus-visible {
+  outline: var(--p-border-width-050) solid var(--p-color-border-focus);
+  outline-offset: var(--p-space-050);
+}
+.ow-jobcard--selected {
+  border-color: var(--p-color-border-emphasis);
+  box-shadow: inset 0 0 0 var(--p-border-width-025) var(--p-color-border-emphasis);
+  background: var(--p-color-bg-surface-selected);
+}
+.ow-jobcard__title {
+  font-size: var(--p-font-size-550);
+  font-weight: var(--p-font-weight-semibold);
+  line-height: var(--p-font-line-height-700);
+  color: var(--p-color-text);
+  margin: 0;
+}
+.ow-jobcard__title a,
+.ow-jobcard__title button {
+  /* 40px+ tap target for the card's primary link (WCAG 2.5.8). */
+  display: inline-block;
+  padding-block: var(--p-space-150);
+  margin-block: calc(-1 * var(--p-space-150));
+  color: inherit;
+  text-decoration: none;
+}
+.ow-jobcard__title a:hover {
+  text-decoration: underline;
+}
+
+/* Match state rows ---------------------------------------------------------- */
+.ow-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--p-space-150);
+  font-size: var(--p-font-size-400);
+  line-height: var(--p-font-line-height-600);
+  color: var(--p-color-text);
+}
+.ow-signal__icon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.ow-signal__icon svg {
+  width: 20px;
+  height: 20px;
+}
+.ow-signal--confirmed .ow-signal__icon { color: var(--ow-match-confirmed-fg); fill: var(--ow-match-confirmed-fg); }
+.ow-signal--review .ow-signal__icon { color: var(--ow-match-review-fg); fill: var(--ow-match-review-fg); }
+.ow-signal--different .ow-signal__icon { color: var(--ow-match-different-fg); fill: var(--ow-match-different-fg); }
+.ow-signal--needsConfirmation .ow-signal__icon,
+.ow-signal--notImportant .ow-signal__icon { color: var(--ow-match-unknown-fg); fill: var(--ow-match-unknown-fg); }
+
+.ow-reason {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: var(--p-space-400);
+  padding: var(--p-space-400) 0;
+  border-block-end: var(--p-border-width-025) solid var(--p-color-border-secondary);
+}
+.ow-reason:last-child {
+  border-block-end: 0;
+}
+.ow-reason__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--p-border-radius-full);
+  display: grid;
+  place-items: center;
+}
+.ow-reason__icon svg {
+  width: 20px;
+  height: 20px;
+}
+.ow-reason--confirmed .ow-reason__icon { background: var(--ow-match-confirmed-bg); fill: var(--ow-match-confirmed-fg); }
+.ow-reason--review .ow-reason__icon { background: var(--ow-match-review-bg); fill: var(--ow-match-review-fg); }
+.ow-reason--different .ow-reason__icon { background: var(--ow-match-different-bg); fill: var(--ow-match-different-fg); }
+.ow-reason--needsConfirmation .ow-reason__icon,
+.ow-reason--notImportant .ow-reason__icon { background: var(--ow-match-unknown-bg); fill: var(--ow-match-unknown-fg); }
+
+/* Work environment grid ----------------------------------------------------- */
+.ow-env {
+  display: grid;
+  gap: var(--p-space-300);
+}
+@media (min-width: 640px) {
+  .ow-env {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+}
+.ow-env__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--p-space-150);
+  padding: var(--p-space-400) var(--p-space-500);
+  border: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  border-radius: var(--p-border-radius-200);
+  background: var(--p-color-bg-surface);
+}
+.ow-env__item dd {
+  margin: 0;
+}
+.ow-env__item--unknown {
+  background: var(--p-color-bg-surface-secondary);
+  border-style: dashed;
+}
+
+/* Timeline rail ------------------------------------------------------------- */
+.ow-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ow-timeline__item {
+  position: relative;
+  padding-inline-start: var(--p-space-1000);
+  padding-block-end: var(--p-space-600);
+}
+.ow-timeline__item::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 15px;
+  inset-block-start: 32px;
+  inset-block-end: 0;
+  width: var(--p-border-width-025);
+  background: var(--p-color-border-secondary);
+}
+.ow-timeline__item:last-child::before {
+  display: none;
+}
+.ow-timeline__marker {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--p-border-radius-full);
+  border: var(--p-border-width-050) solid var(--p-color-border);
+  background: var(--p-color-bg-surface);
+  display: grid;
+  place-items: center;
+  font-size: var(--p-font-size-400);
+  font-weight: var(--p-font-weight-semibold);
+  color: var(--p-color-text-secondary);
+}
+.ow-timeline__item--done .ow-timeline__marker {
+  background: var(--p-color-bg-fill-brand);
+  border-color: var(--p-color-bg-fill-brand);
+  color: var(--p-color-text-brand-on-bg-fill);
+  fill: var(--p-color-text-brand-on-bg-fill);
+}
+.ow-timeline__item--current .ow-timeline__marker {
+  border-color: var(--p-color-border-emphasis);
+  color: var(--p-color-text-emphasis);
+}
+.ow-timeline__marker svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Employer logo tile -------------------------------------------------------- */
+.ow-logo {
+  display: grid;
+  place-items: center;
+  border-radius: var(--p-border-radius-200);
+  color: var(--p-color-text-inverse);
+  font-weight: var(--p-font-weight-bold);
+  flex: none;
+}
+
+/* Step progress (onboarding, job builder) ---------------------------------- */
+.ow-steps {
+  display: flex;
+  gap: var(--p-space-100);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ow-steps__item {
+  flex: 1;
+  height: 6px;
+  border-radius: var(--p-border-radius-full);
+  background: var(--p-color-border-secondary);
+}
+.ow-steps__item--done,
+.ow-steps__item--current {
+  background: var(--p-color-bg-fill-brand);
+}
+
+/* Landing demo card wrapper ------------------------------------------------ */
+.ow-demo {
+  border: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  border-radius: var(--p-border-radius-400);
+  background: var(--p-color-bg-surface);
+  box-shadow: var(--p-shadow-200);
+  overflow: hidden;
+}
+
+/* Footer ------------------------------------------------------------------- */
+.ow-footer {
+  border-block-start: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  background: var(--p-color-bg-surface-secondary);
+}
+
+/* Polaris BlockStack rendered as a list */
+ul.Polaris-BlockStack,
+ol.Polaris-BlockStack {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Utility ------------------------------------------------------------------- */
+.ow-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* On-this-page jump list ------------------------------------------------- */
+.ow-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--p-space-200);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ow-jump a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ow-control-height-slim);
+  padding: 0 var(--p-space-300);
+  border-radius: var(--p-border-radius-200);
+  background: var(--p-color-bg-surface);
+  border: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  color: var(--p-color-text);
+  text-decoration: none;
+  font-size: var(--p-font-size-350);
+}
+.ow-jump a:hover { border-color: var(--p-color-border-hover); }
+.ow-jump a:focus-visible { outline: var(--p-border-width-050) solid var(--p-color-border-focus); outline-offset: var(--p-space-050); }
+/* Headings targeted by the jump list clear the sticky header. */
+[id]:target { scroll-margin-top: calc(var(--ow-header-height) + var(--p-space-400)); }
+
+/* Evidence rows ------------------------------------------------------------ */
+.ow-evidence {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--p-space-200);
+}
+.ow-evidence__row {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: var(--p-space-300);
+  align-items: start;
+  padding: var(--p-space-300) var(--p-space-400);
+  border: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  border-radius: var(--p-border-radius-200);
+  background: var(--p-color-bg-surface);
+}
+.ow-evidence__row--needsConfirmation {
+  border-style: dashed;
+  background: var(--p-color-bg-surface-secondary);
+}
+.ow-symbol {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--p-border-radius-full);
+  font-weight: var(--p-font-weight-bold);
+  font-size: var(--p-font-size-400);
+  line-height: 1;
+  flex: none;
+}
+.ow-symbol--confirmed { background: var(--ow-match-confirmed-bg); color: var(--ow-match-confirmed-fg); }
+.ow-symbol--review { background: var(--ow-match-review-bg); color: var(--ow-match-review-fg); }
+.ow-symbol--different { background: var(--ow-match-different-bg); color: var(--ow-match-different-fg); }
+.ow-symbol--needsConfirmation,
+.ow-symbol--notImportant { background: var(--ow-match-unknown-bg); color: var(--ow-match-unknown-fg); }
+
+/* Need chips on the landing page — real links to filtered results */
+.ow-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--p-space-200);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ow-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ow-control-height-slim);
+  padding: 0 var(--p-space-400);
+  border: var(--p-border-width-025) solid var(--p-color-border);
+  border-radius: var(--p-border-radius-full);
+  background: var(--p-color-bg-surface);
+  color: var(--p-color-text);
+  text-decoration: none;
+  font-size: var(--p-font-size-400);
+  font-weight: var(--p-font-weight-medium);
+}
+.ow-chip:hover { background: var(--p-color-bg-surface-hover); border-color: var(--p-color-border-hover); }
+.ow-chip:focus-visible { outline: var(--p-border-width-050) solid var(--p-color-border-focus); outline-offset: var(--p-space-050); }
+
+/* Display modes ------------------------------------------------------------ */
+/* Large text: everything one step up again. Same layout, same functionality. */
+:root[data-display='largeText'] {
+  --p-text-body-sm-font-size: var(--p-font-size-450);
+  --p-text-body-sm-font-line-height: var(--p-font-line-height-700);
+  --p-text-body-md-font-size: var(--p-font-size-500);
+  --p-text-body-md-font-line-height: var(--p-font-line-height-800);
+  --p-text-body-lg-font-size: var(--p-font-size-550);
+  --p-text-body-lg-font-line-height: var(--p-font-line-height-800);
+  --p-text-heading-sm-font-size: var(--p-font-size-500);
+  --p-text-heading-md-font-size: var(--p-font-size-550);
+  --p-text-heading-md-font-line-height: var(--p-font-line-height-800);
+  --p-text-heading-lg-font-size: var(--p-font-size-750);
+  --p-text-heading-lg-font-line-height: var(--p-font-line-height-1000);
+  --p-text-heading-xl-font-size: var(--p-font-size-900);
+  --p-text-heading-2xl-font-size: var(--p-font-size-1000);
+  --p-text-heading-2xl-font-line-height: var(--p-font-line-height-1200);
+  --ow-control-height: 3.5rem;
+  --ow-control-height-slim: var(--p-height-1200);
+  --ow-choice-size: var(--p-space-800);
+}
+/* Simplified: one column, one thing at a time, nothing hidden behind hover. */
+:root[data-display='simplified'] {
+  --ow-control-height: 3.5rem;
+  --ow-control-height-slim: var(--p-height-1200);
+  --ow-choice-size: var(--p-space-800);
+  --ow-container: 880px;
+}
+:root[data-display='simplified'] .Polaris-InlineGrid,
+:root[data-display='simplified'] .ow-split,
+:root[data-display='simplified'] .ow-hero__grid,
+:root[data-display='simplified'] .ow-env {
+  grid-template-columns: 1fr !important;
+}
+:root[data-display='simplified'] .ow-split__detail,
+:root[data-display='simplified'] .ow-simplified-hide {
+  display: none !important;
+}
+:root[data-display='simplified'] .Polaris-Layout__Section--oneThird {
+  flex: 1 1 100%;
+  min-width: 100%;
+}
+
+/* Motion ------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Card title rendered as a button in the split view: reset, then the same
+   padded tap target as the link version. */
+.ow-jobcard__title button {
+  all: unset;
+  cursor: pointer;
+  font: inherit;
+  display: inline-block;
+  padding-block: var(--p-space-150);
+  margin-block: calc(-1 * var(--p-space-150));
+}
+.ow-jobcard__title button:focus-visible {
+  outline: var(--p-border-width-050) solid var(--p-color-border-focus);
+  outline-offset: var(--p-space-050);
+  border-radius: var(--p-border-radius-100);
+}

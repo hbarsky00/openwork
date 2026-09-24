@@ -1,0 +1,97 @@
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import type { ReactNode } from 'react';
+import { Shell } from './components/Shell';
+import type { Role } from './lib/types';
+import { useStore } from './state/store';
+
+import { Landing } from './pages/public/Landing';
+import { Jobs } from './pages/public/Jobs';
+import { JobDetailPage } from './pages/public/JobDetailPage';
+import { Company } from './pages/public/Company';
+import { HowItWorks } from './pages/public/HowItWorks';
+import { ForEmployers } from './pages/public/ForEmployers';
+import { Support } from './pages/public/Support';
+import { SignIn } from './pages/public/SignIn';
+import { SignUp } from './pages/public/SignUp';
+import { NotFound } from './pages/public/NotFound';
+
+import { Onboarding } from './pages/candidate/Onboarding';
+import { Discover } from './pages/candidate/Discover';
+import { CandidateHome } from './pages/candidate/CandidateHome';
+import { Saved } from './pages/candidate/Saved';
+import { Applications } from './pages/candidate/Applications';
+import { ApplicationDetail } from './pages/candidate/ApplicationDetail';
+import { Passport } from './pages/candidate/Passport';
+import { WorkPreferences } from './pages/candidate/WorkPreferences';
+import { AccessNeedsPage } from './pages/candidate/AccessNeedsPage';
+import { Privacy } from './pages/candidate/Privacy';
+import { Apply } from './pages/candidate/Apply';
+
+import { EmployerDashboard } from './pages/employer/EmployerDashboard';
+import { EmployerJobs } from './pages/employer/EmployerJobs';
+import { JobBuilder } from './pages/employer/JobBuilder';
+import { JobPreview } from './pages/employer/JobPreview';
+import { EmployerCandidates } from './pages/employer/EmployerCandidates';
+import { CandidateDetail } from './pages/employer/CandidateDetail';
+import { EmployerCompany } from './pages/employer/EmployerCompany';
+import { EmployerAccessibility } from './pages/employer/EmployerAccessibility';
+import { EmployerSignUp } from './pages/employer/EmployerSignUp';
+
+import { Admin } from './pages/admin/Admin';
+
+function RequireRole({ role, children }: { role: Role; children: ReactNode }) {
+  const { state } = useStore();
+  const location = useLocation();
+  if (state.role !== role) return <Navigate to={`/signin?next=${encodeURIComponent(location.pathname)}&role=${role}`} replace />;
+  return <>{children}</>;
+}
+
+const C = ({ children }: { children: ReactNode }) => <RequireRole role="candidate">{children}</RequireRole>;
+const E = ({ children }: { children: ReactNode }) => <RequireRole role="employer">{children}</RequireRole>;
+
+export function App() {
+  return (
+    <Shell>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/jobs" element={<Jobs />} />
+        <Route path="/jobs/:id" element={<JobDetailPage />} />
+        <Route path="/companies/:id" element={<Company />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/for-employers" element={<ForEmployers />} />
+        <Route path="/support" element={<Support />} />
+        <Route path="/discover" element={<Discover />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/employers/signup" element={<EmployerSignUp />} />
+
+        <Route path="/onboarding" element={<C><Onboarding /></C>} />
+        <Route path="/home" element={<C><CandidateHome /></C>} />
+        <Route path="/saved" element={<C><Saved /></C>} />
+        <Route path="/applications" element={<C><Applications /></C>} />
+        <Route path="/applications/:id" element={<C><ApplicationDetail /></C>} />
+        <Route path="/passport" element={<C><Passport /></C>} />
+        <Route path="/passport/how-i-work" element={<C><WorkPreferences /></C>} />
+        <Route path="/passport/access-needs" element={<C><AccessNeedsPage /></C>} />
+        <Route path="/passport/sharing" element={<C><Privacy /></C>} />
+        <Route path="/profile" element={<Navigate to="/passport" replace />} />
+        <Route path="/profile/work-preferences" element={<Navigate to="/passport/how-i-work" replace />} />
+        <Route path="/profile/privacy" element={<Navigate to="/passport/sharing" replace />} />
+        <Route path="/jobs/:id/apply" element={<Apply />} />
+
+        <Route path="/employer" element={<E><EmployerDashboard /></E>} />
+        <Route path="/employer/jobs" element={<E><EmployerJobs /></E>} />
+        <Route path="/employer/jobs/new" element={<E><JobBuilder /></E>} />
+        <Route path="/employer/jobs/:id/edit" element={<E><JobBuilder /></E>} />
+        <Route path="/employer/jobs/:id/preview" element={<E><JobPreview /></E>} />
+        <Route path="/employer/candidates" element={<E><EmployerCandidates /></E>} />
+        <Route path="/employer/candidates/:id" element={<E><CandidateDetail /></E>} />
+        <Route path="/employer/accessibility" element={<E><EmployerAccessibility /></E>} />
+        <Route path="/employer/company" element={<E><EmployerCompany /></E>} />
+
+        <Route path="/admin" element={<RequireRole role="admin"><Admin /></RequireRole>} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Shell>
+  );
+}
