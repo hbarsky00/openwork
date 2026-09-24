@@ -2,8 +2,8 @@ import { BlockStack, Button, Card, InlineGrid, InlineStack, Text } from '@shopif
 import { useTitle } from '../../lib/useTitle';
 
 const STEPS = [
-  { title: 'Start with what you can do', body: 'Pick strengths from a plain list — organising, working with numbers, following a process, helping customers, building things. Add job titles if you know them. No résumé needed to begin.' },
-  { title: 'Say what makes work accessible for you', body: 'Nine categories of need — vision, hearing, mobility, dexterity, communication, focus, colour, schedule, support — in any combination. “I need captions”, never “I am Deaf”. Every answer has an importance and a privacy setting.' },
+  { title: 'Start with what you can do', body: 'Pick strengths from a plain list — organizing, working with numbers, following a process, helping customers, building things. Add job titles if you know them. No résumé needed to begin.' },
+  { title: 'Say what makes work accessible for you', body: 'Nine categories of need — vision, hearing, mobility, dexterity, communication, focus, color, schedule, support — in any combination. “I need captions”, never “I am Deaf”. Every answer has an importance and a privacy setting.' },
   { title: 'See what each job actually requires', body: 'A typical day as a task list. Standing, lifting, walking, driving. Phone calls, meetings, presentations. The actual software and whether it works with a screen reader or keyboard. Noise, interruptions, schedule.' },
   { title: 'See what each workplace has confirmed', body: 'Step-free entrance, accessible restroom, interpreters, visual alarms, job coach welcome — each marked ✓ △ ✗ or ?, with who confirmed it and when. An unknown is never shown as a match.' },
   { title: 'Compare, line by line', body: '“Why this could work for you” puts your needs next to the employer’s answers, in sentences, with sources. Where the employer has not said, one click asks them. You decide.' },

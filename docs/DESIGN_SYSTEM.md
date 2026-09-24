@@ -41,15 +41,15 @@ at `/about`.
   components (`LegacyCard`, `LegacyStack`, `LegacyTabs`, `LegacyFilters`) are
   not used anywhere.
 
-## 1b. Colour (one accent)
+## 1b. Color (one accent)
 
 Polaris's brand tokens are monochrome admin black. The product remaps
 `--p-color-*-brand*` and `--p-color-bg-surface-selected` to Polaris's
 **emphasis** scale, so primary buttons, links, focus rings, active nav and the
 selected job card are one blue. Success badges are solid green with white
-text; neutral badges are outlined, not grey blobs. A selected card keeps a
+text; neutral badges are outlined, not gray blobs. A selected card keeps a
 surface: tinted `bg-surface-emphasis` with a 4px accent edge, never the
-page-ground grey.
+page-ground gray.
 
 ## 1a. Legibility layer (why the app does not look like Shopify admin)
 
@@ -95,7 +95,7 @@ Defined in `src/styles/product.css`. Every value is a Polaris token.
 | `--ow-header-height` | 60px | Sticky header, used for sticky offsets |
 
 Rule: no raw hex, px spacing, radius or shadow anywhere in a component. The one
-exception is `EmployerLogo`, whose colour is employer **data**, not a token.
+exception is `EmployerLogo`, whose color is employer **data**, not a token.
 
 ## 3. Typography
 
@@ -159,7 +159,7 @@ are split into steps with `.ow-steps` progress and autosave to the store.
 | Component | Built from | Purpose |
 |---|---|---|
 | `JobCard` | `article` + `BlockStack`/`InlineStack`/`Badge`/`Button` | Scannable listing: title, employer, pay, arrangement, type, 2–4 signals, save |
-| `Signal` / `ReasonIcon` | Polaris icons + `--ow-match-*` | Icon + text state marker; never colour alone |
+| `Signal` / `ReasonIcon` | Polaris icons + `--ow-match-*` | Icon + text state marker; never color alone |
 | `MatchSummaryBadge` / `MatchStateBadge` | `Badge` | "Strong alignment" etc. Tone maps to state |
 | `WhyThisMatches` | `Card` + `ul.ow-reason` | Grouped, sentence-level explanations |
 | `WorkEnvironmentProfile` | `Card` + `dl.ow-env` | All 11 dimensions, gaps shown as gaps |
@@ -198,7 +198,7 @@ Implemented and visible in the prototype:
 - **Empty search:** `EmptySearchResult` + "Clear all filters".
 - **Empty saved / applications:** `EmptyState` with a single next action.
 - **Selected** result in split view: `.ow-jobcard--selected`.
-- **Withdrawn / not selected:** neutral badge, no colour of blame.
+- **Withdrawn / not selected:** neutral badge, no color of blame.
 
 ## 9. Accessibility
 
@@ -211,7 +211,7 @@ Implemented and visible in the prototype:
 - Focus rings come from Polaris tokens; `.ow-jobcard:focus-visible` adds one for
   the card link.
 - Document titles are set per page (`useTitle`).
-- Colour pairs use Polaris text/surface tokens, which meet AA by construction.
+- Color pairs use Polaris text/surface tokens, which meet AA by construction.
 
 ## 9a. Display modes
 

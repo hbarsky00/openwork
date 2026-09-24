@@ -145,7 +145,7 @@ sharing review.
 ## 7. Access-needs taxonomy
 
 Nine **need** categories (not diagnoses): Vision · Hearing · Mobility ·
-Dexterity & motor · Communication · Cognitive & focus · Colour & visual
+Dexterity & motor · Communication · Cognitive & focus · Color & visual
 presentation · Schedule & energy · Support. ~55 features. Every feature is
 usable in any combination. Wording is always "I need captions", never "I am
 Deaf". Full table: `src/lib/access.ts`.

@@ -353,7 +353,7 @@ export const DIMENSIONS: Dimension[] = [
     label: 'Independent or collaborative',
     candidateQuestion: 'Do you prefer working independently or with others?',
     employerQuestion: 'Is this job done independently or with others?',
-    employerHelp: 'Describe how the work is actually organised day to day.',
+    employerHelp: 'Describe how the work is actually organized day to day.',
     ordered: true,
     options: [
       {

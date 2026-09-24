@@ -3,7 +3,7 @@ import type { Employer } from '../lib/types';
 
 /**
  * Employers in the seed have no logo files, so the tile is a monogram on the
- * employer's brand colour. That colour is employer data, not a design token.
+ * employer's brand color. That color is employer data, not a design token.
  */
 export function EmployerLogo({ employer, size = 40 }: { employer: Employer; size?: number }) {
   return (

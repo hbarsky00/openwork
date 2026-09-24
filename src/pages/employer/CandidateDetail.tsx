@@ -26,7 +26,7 @@ const NEXT: Record<ApplicationStatus, ApplicationStatus[]> = {
 const NOTE_HINT: Partial<Record<ApplicationStatus, string>> = {
   assessment: 'Say what the work sample is, how long it takes, the format and the due date. Confirm any accommodation the candidate requested. Candidates see this word for word.',
   interview: 'Format, length, who will be there, and — if requested — confirm the interpreter, captions, questions in advance or support person.',
-  offer: 'Summarise the offer and when you need an answer.',
+  offer: 'Summarize the offer and when you need an answer.',
   notSelected: 'A sentence of real feedback. Candidates on Openwork are told you will say why.',
   hired: 'Confirm the start date, who they will meet on day one, and how the accommodations they asked for will be in place.',
 };

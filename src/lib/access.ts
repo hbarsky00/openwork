@@ -235,7 +235,7 @@ export const ACCESS_CATEGORIES: { id: AccessCategoryId; label: string; intro: st
   { id: 'dexterity', label: 'Dexterity and motor', intro: 'How you operate equipment and software.' },
   { id: 'communication', label: 'Communication', intro: 'How you exchange information with colleagues and managers.' },
   { id: 'cognitive', label: 'Cognitive and focus', intro: 'Instructions, predictability, interruptions and expectations.' },
-  { id: 'colorVisual', label: 'Colour and visual presentation', intro: 'How information is shown on screen and on paper.' },
+  { id: 'colorVisual', label: 'Color and visual presentation', intro: 'How information is shown on screen and on paper.' },
   { id: 'schedule', label: 'Schedule and energy', intro: 'Hours, breaks and where you work from.' },
   { id: 'support', label: 'Support', intro: 'People and structures that help you do the job.' },
 ];
@@ -325,9 +325,9 @@ export const ACCESS_FEATURES: AccessFeature[] = [
   { id: 'regularCheckins', category: 'cognitive', label: 'Regular check-ins', need: 'you need regular scheduled check-ins', provided: 'feedback is given in scheduled one-to-ones', resolve: { kind: 'dimension', dimension: 'feedbackStyle', acceptable: ['scheduled'] } },
   { id: 'alternativeInterview', category: 'cognitive', label: 'Alternative to a standard interview', need: 'you need an alternative to a standard interview', provided: 'a work sample can replace the interview', resolve: { kind: 'hiring', option: 'workSample' }, filter: true },
 
-  // COLOUR / VISUAL ----------------------------------------------------
-  { id: 'notColorAlone', category: 'colorVisual', label: 'Information not shown by colour alone', need: 'you need information not to rely on colour alone', provided: 'work systems and signage do not rely on colour alone', employerQuestion: 'Do the job’s systems and any colour-coded processes also use labels, patterns or text?', resolve: ev('job') },
-  { id: 'highContrast', category: 'colorVisual', label: 'High-contrast display', need: 'you need to be able to set high contrast on your screen', provided: 'display settings can be customised on work devices', employerQuestion: 'Can the person change display settings (contrast, zoom, colours) on work devices?', resolve: ev('job') },
+  // COLOR / VISUAL ----------------------------------------------------
+  { id: 'notColorAlone', category: 'colorVisual', label: 'Information not shown by color alone', need: 'you need information not to rely on color alone', provided: 'work systems and signage do not rely on color alone', employerQuestion: 'Do the job’s systems and any color-coded processes also use labels, patterns or text?', resolve: ev('job') },
+  { id: 'highContrast', category: 'colorVisual', label: 'High-contrast display', need: 'you need to be able to set high contrast on your screen', provided: 'display settings can be customized on work devices', employerQuestion: 'Can the person change display settings (contrast, zoom, colors) on work devices?', resolve: ev('job') },
 
   // SCHEDULE -----------------------------------------------------------
   { id: 'flexibleHours', category: 'schedule', label: 'Flexible start and finish', need: 'you need flexible start and finish times', provided: 'start and finish times can shift within agreed limits', resolve: { kind: 'hiring', option: 'flexibleHours' }, filter: true },
@@ -396,10 +396,10 @@ export interface JobFamily {
 
 export const JOB_FAMILIES: JobFamily[] = [
   { id: 'records', label: 'Records and data', description: 'Filing, entering and checking information. Usually seated, usually quiet.' },
-  { id: 'warehouse', label: 'Warehouse and stock', description: 'Receiving, counting, moving and organising goods. On your feet, often busy.' },
+  { id: 'warehouse', label: 'Warehouse and stock', description: 'Receiving, counting, moving and organizing goods. On your feet, often busy.' },
   { id: 'finance', label: 'Accounting and finance', description: 'Working with numbers, invoices and reports. Detail-heavy, mostly independent.' },
-  { id: 'library', label: 'Libraries and archives', description: 'Organising and describing books, documents and images. Quiet, methodical.' },
-  { id: 'software', label: 'Software and data quality', description: 'Testing, analysing and documenting technical systems. Usually remote.' },
+  { id: 'library', label: 'Libraries and archives', description: 'Organizing and describing books, documents and images. Quiet, methodical.' },
+  { id: 'software', label: 'Software and data quality', description: 'Testing, analyzing and documenting technical systems. Usually remote.' },
   { id: 'outdoors', label: 'Outdoors and grounds', description: 'Planting, maintaining and building outside. Physical, in all weather.' },
   { id: 'publishing', label: 'Editing and publishing', description: 'Reading, correcting and producing written work. Deadline-driven.' },
   { id: 'manufacturing', label: 'Manufacturing and inspection', description: 'Making and measuring parts to a specification. Precise, structured.' },

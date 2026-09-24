@@ -16,7 +16,7 @@ export function EmployerSignUp() {
 
   const submit = () => {
     const e: Record<string, string> = {};
-    if (!name.trim()) e.name = 'Enter the organisation name.';
+    if (!name.trim()) e.name = 'Enter the organization name.';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) e.email = 'Enter a work email address.';
     setErrors(e);
     if (Object.keys(e).length) return;
@@ -39,7 +39,7 @@ export function EmployerSignUp() {
         <Card>
           <Form onSubmit={submit}>
             <FormLayout>
-              <TextField label="Organisation name" value={name} onChange={setName} autoComplete="organization" error={errors.name} requiredIndicator />
+              <TextField label="Organization name" value={name} onChange={setName} autoComplete="organization" error={errors.name} requiredIndicator />
               <TextField label="Your work email" type="email" value={email} onChange={setEmail} autoComplete="email" error={errors.email} requiredIndicator helpText="Becomes your accessibility contact until you name someone else." />
               <Button submit variant="primary" size="large">
                 Create account

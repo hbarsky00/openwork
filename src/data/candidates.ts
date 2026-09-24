@@ -194,7 +194,7 @@ export const SAMPLE_CANDIDATES: CandidateProfile[] = [
     id: 'c-tyler',
     name: 'Tyler Brooks',
     email: 'tyler.brooks@example.com',
-    headline: 'Reliable, organised and good with my hands — looking for my first regular job',
+    headline: 'Reliable, organized and good with my hands — looking for my first regular job',
     location: 'Sparks, NV',
     about: 'I finished a two-year work-readiness program in June. I like sorting, counting and putting things where they belong, and I am proud of doing a job the same careful way every time.',
     strengths: ['Stocking and sorting', 'Organizing', 'Following a process', 'Repeating a task accurately', 'Working in a team', 'Cleaning'],

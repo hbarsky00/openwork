@@ -236,7 +236,7 @@ export interface Report {
 
 export type DisplayMode = 'standard' | 'simplified' | 'largeText';
 
-/** Modelled for phase 2. Deliberately not built in MVP. */
+/** Modeled for phase 2. Deliberately not built in MVP. */
 export interface JobCoachRelationship {
   id: string;
   candidateId: string;

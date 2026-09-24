@@ -2,7 +2,7 @@
  * Openwork product layer on top of Polaris.
  *
  * Every value here is a Polaris token or a semantic alias of one. No raw
- * colours, spacing or radii. Product-specific selectors exist only where
+ * colors, spacing or radii. Product-specific selectors exist only where
  * Polaris has no primitive (split-view layout, nav links, timeline rail).
  */
 
@@ -40,9 +40,9 @@
   --p-text-heading-3xl-font-line-height: var(--p-font-line-height-1200);
   --p-font-weight-regular: 450;
 
-  /* Colour — Polaris's brand tokens are monochrome (admin black). This
+  /* Color — Polaris's brand tokens are monochrome (admin black). This
      product uses Polaris's emphasis scale as its brand, so primary buttons,
-     selection, links and focus rings are one colour. */
+     selection, links and focus rings are one color. */
   --p-color-bg-fill-brand: var(--p-color-bg-fill-emphasis);
   --p-color-bg-fill-brand-hover: var(--p-color-bg-fill-emphasis-hover);
   --p-color-bg-fill-brand-active: var(--p-color-bg-fill-emphasis-active);
@@ -93,7 +93,7 @@
 .Polaris-Badge.Polaris-Badge--toneSuccess svg {
   fill: var(--p-color-text-success-on-bg-fill);
 }
-/* Neutral badges: quiet outline, not a grey blob. */
+/* Neutral badges: quiet outline, not a gray blob. */
 .Polaris-Badge:not([class*='Polaris-Badge--tone']) {
   background-color: var(--p-color-bg-surface);
   box-shadow: inset 0 0 0 var(--p-border-width-025) var(--p-color-border);
@@ -204,7 +204,7 @@
 
 
 :root {
-  /* Semantic match tokens — the only product-specific colour vocabulary. */
+  /* Semantic match tokens — the only product-specific color vocabulary. */
   --ow-match-confirmed-fg: var(--p-color-text-success);
   --ow-match-confirmed-bg: var(--p-color-bg-surface-success);
   --ow-match-confirmed-border: var(--p-color-border-success);
@@ -531,7 +531,7 @@ body {
 .ow-jobcard--selected,
 .ow-jobcard--selected:hover {
   /* Keeps its surface: a tinted card with a solid accent edge, never the
-     page-ground grey that made the selected job disappear. */
+     page-ground gray that made the selected job disappear. */
   border-color: var(--p-color-border-emphasis);
   box-shadow: inset var(--p-space-100) 0 0 var(--p-color-border-emphasis);
   background: var(--p-color-bg-surface-emphasis);

@@ -133,7 +133,7 @@ no nested menus, no hidden navigation (PRD §11: predictable navigation).
 `Skill` · `Experience` · `Employer` (+ `verification`) · `WorkplaceProfile` ·
 `Job` (+ `environment` + `hiring` + `requirements`) · `HiringStage` ·
 `SavedJob` · `Application` (+ `sharedData` + `statusHistory`) · `Report` ·
-`JobCoachRelationship` (modelled, unused).
+`JobCoachRelationship` (modeled, unused).
 
 A candidate preference is `{ value, importance }` where importance is
 `required | preferred | dontMatter`. A job environment value is
@@ -172,7 +172,7 @@ tracker.
 
 ## 10. Employer golden path
 
-Create account → organisation → company profile → workplace profile → create job
+Create account → organization → company profile → workplace profile → create job
 (Part One: the job / Part Two: how this job actually works) → vague-language
 check → hiring process → candidate-view preview → publish → review applicants →
 advance through configured stages.
@@ -208,7 +208,7 @@ the product.
 
 WCAG 2.2 AA target. Polaris supplies focus rings, contrast and labelling
 foundations; the product adds: one decision per onboarding step, visible step
-progress, autosave, status communicated by text + icon (never colour alone),
+progress, autosave, status communicated by text + icon (never color alone),
 errors adjacent to their field, `prefers-reduced-motion` respected globally,
 skip link, semantic landmarks, and literal button labels.
 

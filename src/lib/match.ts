@@ -42,7 +42,7 @@ export const MATCH_STATE_LABEL: Record<MatchState, string> = {
   notImportant: 'Not important to you',
 };
 
-/** Text symbol paired with every state so meaning never depends on colour. */
+/** Text symbol paired with every state so meaning never depends on color. */
 export const MATCH_STATE_SYMBOL: Record<MatchState, string> = {
   confirmed: '✓',
   review: '△',

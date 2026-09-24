@@ -11,7 +11,7 @@ const ICON: Record<MatchState, React.FunctionComponent<React.SVGProps<SVGSVGElem
 
 /**
  * Compact icon + text state marker for job cards. Meaning never depends on
- * colour: the state name is read out, and the icon shapes differ.
+ * color: the state name is read out, and the icon shapes differ.
  */
 export function Signal({ state, children }: { state: MatchState; children: React.ReactNode }) {
   const Icon = ICON[state];

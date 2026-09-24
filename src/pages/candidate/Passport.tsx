@@ -79,7 +79,7 @@ export function Passport() {
                 </InlineStack>
                 {editBasics ? (
                   <FormLayout>
-                    <TextField label="Headline" value={p.headline} onChange={(v) => patch({ headline: v })} autoComplete="off" placeholder="e.g. Reliable, organised and good with my hands" helpText="One line. Does not have to be a job title." />
+                    <TextField label="Headline" value={p.headline} onChange={(v) => patch({ headline: v })} autoComplete="off" placeholder="e.g. Reliable, organized and good with my hands" helpText="One line. Does not have to be a job title." />
                     <TextField label="Location" value={p.location} onChange={(v) => patch({ location: v })} autoComplete="address-level2" />
                     <TextField label="About you" value={p.about} onChange={(v) => patch({ about: v })} multiline={4} autoComplete="off" helpText="What you are good at and what you are looking for. Plain words are fine." />
                     <TextField label="Availability" value={p.availability} onChange={(v) => patch({ availability: v })} autoComplete="off" placeholder="e.g. Immediately, weekday mornings" />
