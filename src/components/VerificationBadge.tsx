@@ -13,7 +13,7 @@ export function VerificationBadge({ level, detailed = false }: { level: Verifica
     return (
       <BlockStack gap="100">
         <div>
-          <Badge tone={TONE[level]}>{VERIFICATION_LABEL[level]}</Badge>
+          <Badge tone={TONE[level]} toneAndProgressLabelOverride={VERIFICATION_LABEL[level]}>{VERIFICATION_LABEL[level]}</Badge>
         </div>
         <Text as="p" variant="bodySm" tone="subdued">
           {VERIFICATION_DESCRIPTION[level]}
@@ -23,7 +23,7 @@ export function VerificationBadge({ level, detailed = false }: { level: Verifica
   }
   return (
     <Tooltip content={VERIFICATION_DESCRIPTION[level]}>
-      <Badge tone={TONE[level]}>{VERIFICATION_LABEL[level]}</Badge>
+      <Badge tone={TONE[level]} toneAndProgressLabelOverride={VERIFICATION_LABEL[level]}>{VERIFICATION_LABEL[level]}</Badge>
     </Tooltip>
   );
 }

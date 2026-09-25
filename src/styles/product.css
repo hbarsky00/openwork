@@ -991,3 +991,52 @@ ol.Polaris-BlockStack {
     background: var(--p-color-bg-surface);
   }
 }
+
+/* Apply bar: pinned to the top of whatever scrolls (the pane, or the page
+   under the header). The one thing on a job page that must never be lost. */
+.ow-applybar {
+  position: sticky;
+  top: 0;
+  z-index: var(--p-z-index-2);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--p-space-300);
+  margin-inline: calc(-1 * var(--p-space-500));
+  padding: var(--p-space-300) var(--p-space-500);
+  background: var(--p-color-bg-surface);
+  border-block-end: var(--p-border-width-025) solid var(--p-color-border-secondary);
+}
+.ow-jobdetail:not(.ow-jobdetail--pane) .ow-applybar {
+  top: var(--ow-header-height);
+  margin-inline: 0;
+  padding-inline: 0;
+  background: var(--p-color-bg-surface-secondary);
+}
+
+/* Job details: label / value rows, two columns when there is room. */
+.ow-details {
+  margin: 0;
+  display: grid;
+  gap: var(--p-space-100) var(--p-space-600);
+}
+@media (min-width: 640px) {
+  .ow-details {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.ow-details__row {
+  display: grid;
+  grid-template-columns: minmax(120px, 40%) 1fr;
+  gap: var(--p-space-300);
+  padding-block: var(--p-space-150);
+  border-block-end: var(--p-border-width-025) solid var(--p-color-border-secondary);
+}
+.ow-details dt {
+  color: var(--p-color-text-secondary);
+  font-size: var(--p-text-body-sm-font-size);
+}
+.ow-details dd {
+  margin: 0;
+  font-weight: var(--p-font-weight-medium);
+}

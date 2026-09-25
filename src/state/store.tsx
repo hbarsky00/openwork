@@ -39,9 +39,9 @@ export interface AppState {
 }
 
 // v2: access-needs data model. Older v1 state is intentionally dropped.
-const STORAGE_KEY = 'openwork.v3';
+const STORAGE_KEY = 'openwork.v4';
 
-const SCHEMA = 3;
+const SCHEMA = 4;
 
 const initialState: AppState = {
   schema: SCHEMA,
