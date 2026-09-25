@@ -5,8 +5,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { EmployerLogo } from '../../components/EmployerLogo';
 import { JobCard } from '../../components/JobCard';
 import { ACCESS_FEATURE_BY_ID } from '../../lib/access';
+import { buildApplication } from '../../lib/apply';
 import { salary } from '../../lib/format';
-import type { Application } from '../../lib/types';
 import { useTitle } from '../../lib/useTitle';
 import { useJob, useMyApplication, useStore } from '../../state/store';
 import { NotFound } from '../public/NotFound';
@@ -101,17 +101,7 @@ export function Apply() {
     if (!p) dispatch({ type: 'signUpCandidate', name: name.trim(), email: email.trim() });
     dispatch({ type: 'updateCandidate', patch: { name: name.trim(), email: email.trim(), phone: phone.trim(), resumeFileName: resume, onboardingComplete: true } });
 
-    const today = new Date().toISOString().slice(0, 10);
-    const app: Application = {
-      id: `app-${Date.now().toString(36)}`,
-      jobId: job.id,
-      candidateId: p?.id ?? 'pending',
-      submittedOn: today,
-      status: 'applied',
-      history: [{ status: 'applied', on: today, note: 'Application submitted.' }],
-      answers: Object.fromEntries(job.screeningQuestions.map((q, i) => [q, answers[i].trim()])),
-      shared: { profile: true, resume: !!resume, workExamples: false, sharedPreferences: [], sharedAccessNeeds: sharedNeeds, hiringPreferences: [], accommodationRequest: need.trim() ? { options: [], custom: need.trim() } : null },
-    };
+    const app = buildApplication(job, p, Object.fromEntries(job.screeningQuestions.map((q, i) => [q, answers[i].trim()])), need);
     dispatch({ type: 'submitApplication', application: app });
     setSentId(app.id);
     window.scrollTo({ top: 0 });

@@ -1392,3 +1392,18 @@ ol.Polaris-BlockStack {
 .ow-jobdetail > .Polaris-BlockStack > .ow-foryou {
   border-block-start: 0;
 }
+
+/* Fit panel on a card: tinted strip, count line, check/cross lines. */
+.ow-fit {
+  display: grid;
+  gap: var(--p-space-100);
+  padding: var(--p-space-200) var(--p-space-300);
+  border-radius: var(--p-border-radius-200);
+  background: var(--ow-paper-2);
+}
+.ow-fit--good {
+  background: #e9f7ee;
+}
+.ow-fit--mixed {
+  background: #fff6dc;
+}

@@ -3,11 +3,12 @@ import { StarFilledIcon, StarIcon } from '@shopify/polaris-icons';
 import { useNavigate } from 'react-router-dom';
 import { ACCESS_FEATURE_BY_ID } from '../lib/access';
 import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL, postedAgo, salary } from '../lib/format';
-import { cardSignals, matchJob } from '../lib/match';
+import { matchJob } from '../lib/match';
 import type { Employer, Job } from '../lib/types';
 import { useIsSaved, useStore } from '../state/store';
 import { EmployerLogo } from './EmployerLogo';
-import { MatchSummaryBadge } from './MatchStateBadge';
+import { FitPanel } from './FitPanel';
+import { QuickApplyButton } from './QuickApplyButton';
 import { Signal } from './Signal';
 
 interface Props {
@@ -55,11 +56,8 @@ export function JobCard({ job, onSelect, selected = false, strengthsUsed }: Prop
     dispatch({ type: 'toggleSave', jobId: job.id });
   };
 
-  const signals: { state: CardState; label: string }[] = result
-    ? cardSignals(result, 3).map((r) => ({ state: r.state as CardState, label: r.kind === 'need' ? ACCESS_FEATURE_BY_ID[r.id]?.label ?? r.label : r.label }))
-    : employer
-      ? facts(job, employer)
-      : [];
+  const signals: { state: CardState; label: string }[] = result || !employer ? [] : facts(job, employer);
+  const quick = job.screeningQuestions.length === 0 && job.status === 'published';
 
   return (
     <article className={`ow-jobcard ow-jobcard--clickable${selected ? ' ow-jobcard--selected' : ''}`} onClick={open} aria-current={selected ? 'true' : undefined}>
@@ -94,9 +92,15 @@ export function JobCard({ job, onSelect, selected = false, strengthsUsed }: Prop
           <Badge>{salary(job)}</Badge>
           <Badge>{WORK_LOCATION_LABEL[job.environment.workLocation ?? ''] ?? 'On-site'}</Badge>
           <Badge>{EMPLOYMENT_TYPE_LABEL[job.employmentType]}</Badge>
-          {applied && <Badge tone="info">Applied</Badge>}
-          {result && <MatchSummaryBadge result={result} />}
+          {quick && !applied && <Badge tone="info">Quick apply</Badge>}
+          {applied && (
+            <Badge tone="success" toneAndProgressLabelOverride="Applied">
+              Applied
+            </Badge>
+          )}
         </InlineStack>
+
+        {result && <FitPanel result={result} compact />}
 
         {strengthsUsed && strengthsUsed.length > 0 && (
           <Text as="p" variant="bodySm">
@@ -114,9 +118,16 @@ export function JobCard({ job, onSelect, selected = false, strengthsUsed }: Prop
           </div>
         )}
 
-        <Text as="span" variant="bodySm" tone="subdued">
-          {postedAgo(job.postedOn)}
-        </Text>
+        <InlineStack align="space-between" blockAlign="center" gap="200" wrap>
+          <Text as="span" variant="bodySm" tone="subdued">
+            {postedAgo(job.postedOn)}
+          </Text>
+          {profile && quick && !applied && (
+            <span onClick={(e) => e.stopPropagation()}>
+              <QuickApplyButton job={job} size="medium" />
+            </span>
+          )}
+        </InlineStack>
       </BlockStack>
     </article>
   );

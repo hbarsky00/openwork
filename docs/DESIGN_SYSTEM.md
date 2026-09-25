@@ -41,6 +41,22 @@ at `/about`.
   components (`LegacyCard`, `LegacyStack`, `LegacyTabs`, `LegacyFilters`) are
   not used anywhere.
 
+## 0a. Apply control (one button, learned once)
+
+`QuickApplyButton` is the only apply control. Signed in and the job has no
+employer questions → **Quick apply**, sends in one tap from the card, the
+pane or the sidebar. Otherwise **Apply now** → the apply page. Already
+applied → **Applied · view**. Cards for no-question jobs carry a "Quick
+apply" pill for everyone. `lib/apply.ts` builds the application in one place
+for both paths.
+
+## 0b. Fit panel
+
+Signed-in candidates with stated needs see a tinted `FitPanel` on every card:
+"Matches 6 of 9 things you need", then two matching lines and the one that
+differs (the cross is the useful line). Green tint for strong/good, yellow for
+mixed, grey otherwise. The job page shows the fuller "For you" block.
+
 ## 1c. Page system (three templates, nothing else)
 
 1. **Rail + list + pane** (`.ow-jobs` → `.ow-rail`, `.ow-split`): jobs.

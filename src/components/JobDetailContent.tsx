@@ -1,6 +1,6 @@
-import { Badge, Banner, BlockStack, Button, InlineStack, List, Text } from '@shopify/polaris';
+import { Badge, Banner, BlockStack, InlineStack, List, Text } from '@shopify/polaris';
 import { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ACCESS_FEATURES, HIRING_OPTION_BY_ID, PHYSICAL_REQUIREMENTS } from '../lib/access';
 import { DIMENSIONS, optionOf } from '../lib/dimensions';
 import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL, postedAgo, salary } from '../lib/format';
@@ -9,6 +9,7 @@ import type { Job } from '../lib/types';
 import { useMyApplication, useStore } from '../state/store';
 import { AskEmployerButton } from './AskEmployerModal';
 import { EmployerLogo } from './EmployerLogo';
+import { QuickApplyButton, applyHint } from './QuickApplyButton';
 import { SaveButton } from './SaveButton';
 import { VerificationBadge } from './VerificationBadge';
 import { WhyThisCouldWork } from './WhyThisCouldWork';
@@ -28,7 +29,6 @@ const KEY_DIMENSIONS = ['workLocation', 'schedulePredictability', 'noise', 'meet
  */
 export function JobDetailContent({ job, pane = false }: Props) {
   const { state, dispatch } = useStore();
-  const navigate = useNavigate();
   const employer = state.employers.find((e) => e.id === job.employerId);
   const profile = state.role === 'candidate' ? state.candidate : null;
   const hasPassport = !!profile && (Object.keys(profile.accessNeeds).length > 0 || Object.keys(profile.workPreferences).length > 0);
@@ -95,23 +95,11 @@ export function JobDetailContent({ job, pane = false }: Props) {
             full page has its own sidebar card instead. */}
         {pane && (
         <div className="ow-applybar">
-          {myApplication ? (
-            <Button url={`/applications/${myApplication.id}`} variant="primary" size="large">
-              View your application
-            </Button>
-          ) : closed ? (
-            <Button disabled size="large">
-              Closed
-            </Button>
-          ) : (
-            <Button variant="primary" size="large" onClick={() => navigate(`/jobs/${job.id}/apply`)}>
-              Apply now
-            </Button>
-          )}
+          <QuickApplyButton job={job} />
           <SaveButton jobId={job.id} size="large" />
           {!myApplication && !closed && (
             <Text as="span" variant="bodySm" tone="subdued">
-              Résumé{job.screeningQuestions.length ? ` + ${job.screeningQuestions.length} required question${job.screeningQuestions.length === 1 ? '' : 's'}` : ''}. A few minutes.
+              {applyHint(job, !!profile)}
             </Text>
           )}
         </div>

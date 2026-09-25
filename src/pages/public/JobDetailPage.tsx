@@ -1,7 +1,8 @@
 import { BlockStack, Button, InlineStack, Text } from '@shopify/polaris';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { EmployerLogo } from '../../components/EmployerLogo';
 import { JobDetailContent } from '../../components/JobDetailContent';
+import { QuickApplyButton, applyHint } from '../../components/QuickApplyButton';
 import { SaveButton } from '../../components/SaveButton';
 import { VerificationBadge } from '../../components/VerificationBadge';
 import { salary } from '../../lib/format';
@@ -18,7 +19,6 @@ export function JobDetailPage() {
   const { id } = useParams();
   const job = useJob(id);
   const { state } = useStore();
-  const navigate = useNavigate();
   const myApplication = useMyApplication(id ?? '');
   useTitle(job ? job.title : 'Job not found');
   if (!job) return <NotFound message="This job may have been removed or the link is wrong." />;
@@ -27,7 +27,6 @@ export function JobDetailPage() {
 
   const back = state.lastSearch ? `/jobs?${state.lastSearch}` : '/jobs';
   const closed = job.status !== 'published';
-  const q = job.screeningQuestions.length;
 
   return (
     <div className="ow-container">
@@ -51,23 +50,11 @@ export function JobDetailPage() {
                   {job.location}
                 </Text>
               </BlockStack>
-              {myApplication ? (
-                <Button url={`/applications/${myApplication.id}`} variant="primary" size="large" fullWidth>
-                  View your application
-                </Button>
-              ) : closed ? (
-                <Button disabled size="large" fullWidth>
-                  No longer accepting applications
-                </Button>
-              ) : (
-                <Button variant="primary" size="large" fullWidth onClick={() => navigate(`/jobs/${job.id}/apply`)}>
-                  Apply now
-                </Button>
-              )}
+              <QuickApplyButton job={job} fullWidth />
               <SaveButton jobId={job.id} size="large" fullWidth />
               {!myApplication && !closed && (
                 <Text as="p" variant="bodySm" tone="subdued" alignment="center">
-                  Résumé{q ? ` + ${q} required question${q === 1 ? '' : 's'}` : ''}. A few minutes.
+                  {applyHint(job, state.role === 'candidate')}
                 </Text>
               )}
             </BlockStack>
