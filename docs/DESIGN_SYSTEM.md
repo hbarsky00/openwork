@@ -49,8 +49,8 @@ as the component foundation; the reference supplies the look and the IA.
 
 - **Look:** the reference's *structure* (sheets, 12–16px radius, faint
   shadow, tint panels, match labels) rendered in Openwork's own identity,
-  which the user chose to keep: Atkinson Hyperlegible Next, warm paper
-  `#f7f5f0`, ink `#1c1a17`, deep violet `#4c2e8a` for primary buttons, links,
+  which the user chose to keep: Atkinson Hyperlegible Next, white ground
+  (`#f7f7f7` only behind subdued boxes), ink `#1a1a1a`, hairlines `#e6e6e6`, deep violet `#4c2e8a` for primary buttons, links,
   active nav, focus and selection; tints `#efeaf7`; muted green/amber for
   success/warning. Not the export's Inter + slate + blue.
 - **IA:** Matches is home. Candidate nav Matches · Search jobs · Applications ·

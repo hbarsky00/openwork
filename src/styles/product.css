@@ -49,13 +49,13 @@
   --p-font-family-sans: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   /* Openwork identity: warm paper, ink, one deep violet accent. */
-  --ow-ink: #1c1a17;
-  --ow-ink-2: #56524b;
-  --ow-ink-3: #8f8a80;
-  --ow-paper: #f7f5f0;
-  --ow-paper-2: #eeebe4;
-  --ow-line: #e1dcd1;
-  --ow-line-2: #c9c2b4;
+  --ow-ink: #1a1a1a;
+  --ow-ink-2: #5e5e5e;
+  --ow-ink-3: #8a8a8a;
+  --ow-paper: #ffffff;
+  --ow-paper-2: #f3f3f3;
+  --ow-line: #e6e6e6;
+  --ow-line-2: #d4d4d4;
   --ow-accent: #4c2e8a;
   --ow-accent-hover: #3c2370;
   --ow-accent-active: #2c1955;
@@ -73,9 +73,9 @@
   --p-color-text: var(--ow-ink);
   --p-color-text-secondary: var(--ow-ink-2);
   --p-color-bg: var(--ow-paper);
-  --p-color-bg-surface-secondary: var(--ow-paper);
+  --p-color-bg-surface-secondary: #f7f7f7;
   --p-color-bg-surface-tertiary: var(--ow-paper-2);
-  --p-color-bg-surface-hover: var(--ow-paper);
+  --p-color-bg-surface-hover: #fafafa;
   --p-color-bg-fill-secondary: var(--ow-paper-2);
   --p-color-bg-fill-tertiary: var(--ow-line);
   --p-color-border: var(--ow-line-2);
