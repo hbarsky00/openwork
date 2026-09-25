@@ -259,6 +259,11 @@ export function Apply() {
                     <DropZone accept=".pdf,.doc,.docx,.txt" type="file" allowMultiple={false} onDrop={(_d, accepted) => accepted[0] && setResume(accepted[0].name)}>
                       <DropZone.FileUpload actionTitle="Upload your résumé" actionHint={`PDF or Word. No résumé? Skip this — ${job.screeningQuestions.length ? 'your answers below count' : 'your name and email are enough to start'}.`} />
                     </DropZone>
+                    {p && (
+                      <Text as="p" variant="bodySm" tone="subdued">
+                        Or <Link to="/resume">build one from your profile</Link> in two minutes.
+                      </Text>
+                    )}
                   </div>
                 )}
               </BlockStack>

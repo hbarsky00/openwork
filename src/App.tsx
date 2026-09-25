@@ -19,6 +19,7 @@ import { Onboarding } from './pages/candidate/Onboarding';
 import { Discover } from './pages/candidate/Discover';
 import { Matches } from './pages/candidate/Matches';
 import { AssistSettings } from './pages/candidate/AssistSettings';
+import { ResumeBuilder } from './pages/candidate/ResumeBuilder';
 import { Saved } from './pages/candidate/Saved';
 import { Applications } from './pages/candidate/Applications';
 import { ApplicationDetail } from './pages/candidate/ApplicationDetail';
@@ -101,6 +102,7 @@ export function App() {
         <Route path="/passport/access-needs" element={<C><AccessNeedsPage /></C>} />
         <Route path="/passport/sharing" element={<C><Privacy /></C>} />
         <Route path="/passport/assist" element={<C><AssistSettings /></C>} />
+        <Route path="/resume" element={<C><ResumeBuilder /></C>} />
         <Route path="/profile" element={<Navigate to="/passport" replace />} />
         <Route path="/profile/work-preferences" element={<Navigate to="/passport/how-i-work" replace />} />
         <Route path="/profile/privacy" element={<Navigate to="/passport/sharing" replace />} />

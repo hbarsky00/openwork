@@ -83,6 +83,17 @@ Employers can opt a job out (`Job.acceptsAutoApply`); anything Openwork sends
 is marked "sent by Openwork" on both sides. The run happens once per day when
 Matches loads; the Matches page shows the digest.
 
+## 0f. Résumé builder (`/resume`)
+
+Two panes like Enhancv: editor left, the résumé live on the right. The
+editor edits the profile itself (one source of truth: name, headline,
+summary, experience, skills, strengths, education). Two templates, Modern
+(sans, accent bar, two columns) and Classic (serif, one column, safest for
+screening software). "Tailor to a job" reorders skills and strengths so the
+ones the job lists come first and never invents content. Download = print to
+PDF via `@media print` (only `#cv` prints, Letter, 0.5in margins) and saves
+the file name as the profile résumé. Sections can be shown or hidden.
+
 ## 0a. Apply control (one button, learned once)
 
 `QuickApplyButton` is the only apply control. Signed in and the job has no

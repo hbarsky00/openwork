@@ -1780,3 +1780,74 @@ ol.Polaris-BlockStack {
 /* Builder: question blocks separated by hairlines instead of nested cards */
 .ow-qblock { padding-block: var(--p-space-400); border-block-start: 1px solid var(--ow-line); }
 .ow-qblock:first-child { border-block-start: 0; padding-block-start: 0; }
+
+/* RÉSUMÉ BUILDER ---------------------------------------------------------- */
+.ow-resume__cols {
+  display: grid;
+  gap: var(--p-space-500);
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .ow-resume__cols {
+    grid-template-columns: minmax(360px, 440px) minmax(0, 1fr);
+  }
+  .ow-resume__preview {
+    position: sticky;
+    top: calc(var(--ow-header-height) + var(--p-space-400));
+  }
+}
+.ow-resume__editor .ow-aside__card { padding: var(--p-space-500); }
+/* The page itself: US Letter proportions, white, print-safe type. */
+.ow-cv {
+  background: #fff;
+  color: #111;
+  width: 100%;
+  max-width: 816px;
+  min-height: 1056px;
+  margin: 0 auto;
+  padding: 56px 64px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--ow-line);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 11.5pt;
+  line-height: 1.45;
+}
+.ow-cv h1 { font-size: 24pt; margin: 0 0 4px; letter-spacing: -0.01em; font-weight: 700; }
+.ow-cv h2 { font-size: 10pt; text-transform: uppercase; letter-spacing: 0.08em; margin: 18px 0 8px; padding-bottom: 4px; border-bottom: 1px solid #ccc; font-weight: 700; }
+.ow-cv p { margin: 0 0 6px; }
+.ow-cv ul { margin: 0; padding-left: 16px; }
+.ow-cv li { margin: 0 0 3px; }
+.ow-cv__headline { font-size: 12pt; color: #333; margin: 0 0 4px; }
+.ow-cv__contact { font-size: 10pt; color: #444; }
+.ow-cv__item { margin-bottom: 10px; }
+.ow-cv__row { display: flex; justify-content: space-between; gap: 12px; }
+.ow-cv__row span { color: #555; font-size: 10pt; white-space: nowrap; }
+.ow-cv__sub { color: #444; font-size: 10.5pt; margin-bottom: 2px; }
+/* Classic: one column, serif. Modern: sans, name block, two columns. */
+.ow-cv--classic .ow-cv__body { display: block; }
+.ow-cv--classic .ow-cv__side { margin-top: 6px; }
+.ow-cv--modern { font-family: Inter, system-ui, sans-serif; font-size: 10.5pt; }
+.ow-cv--modern .ow-cv__head { border-left: 6px solid var(--ow-accent); padding-left: 16px; margin-bottom: 8px; }
+.ow-cv--modern h1 { font-size: 26pt; letter-spacing: -0.02em; }
+.ow-cv--modern h2 { border-bottom: 0; color: var(--ow-accent); letter-spacing: 0.1em; }
+.ow-cv--modern .ow-cv__body { display: grid; grid-template-columns: minmax(0, 1fr) 190px; gap: 32px; }
+.ow-cv--modern .ow-cv__side ul { list-style: none; padding: 0; }
+.ow-cv--modern .ow-cv__side li { padding: 3px 0; border-bottom: 1px solid #eee; }
+@media (max-width: 767px) {
+  .ow-cv { padding: 28px 24px; min-height: 0; }
+  .ow-cv--modern .ow-cv__body { grid-template-columns: 1fr; gap: 8px; }
+}
+/* Print: only the résumé, at page size, no chrome. */
+@media print {
+  @page { size: letter; margin: 0.5in; }
+  body * { visibility: hidden; }
+  #cv, #cv * { visibility: visible; }
+  #cv { position: absolute; inset: 0; width: auto; max-width: none; min-height: 0; margin: 0; padding: 0; box-shadow: none; border: 0; }
+  .ow-header, .ow-footer, .ow-bottomnav, .ow-resume__editor, .ow-resume__head { display: none !important; }
+}
+
+.ow-resume__tools { display: flex; gap: var(--p-space-200); align-items: center; flex-wrap: wrap; min-width: 0; max-width: 100%; }
+.ow-resume__tools .Polaris-Select { max-width: min(420px, 100%); }
+.ow-resume__tools .Polaris-Select__Content, .ow-resume__tools .Polaris-Select__SelectedOption { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ow-resume__head, .ow-resume__cols, .ow-resume__editor, .ow-resume__preview { min-width: 0; }
+@media (max-width: 767px) { .ow-resume__tools .Polaris-Select { max-width: 100%; width: 100%; } }

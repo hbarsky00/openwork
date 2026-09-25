@@ -98,7 +98,7 @@ export function Passport() {
               )}
             </Section>
 
-            <Section title="Résumé">
+            <Section title="Résumé" action={<Button url="/resume">Build or edit</Button>}>
               {p.resumeFileName ? (
                 <InlineStack gap="300" blockAlign="center" wrap>
                   <Icon source={CheckCircleIcon} tone="success" />
@@ -115,7 +115,7 @@ export function Passport() {
               ) : (
                 <div className="ow-drop">
                   <DropZone accept=".pdf,.doc,.docx,.txt" type="file" allowMultiple={false} onDrop={(_d, accepted) => accepted[0] && patch({ resumeFileName: accepted[0].name })}>
-                    <DropZone.FileUpload actionTitle="Upload your résumé" actionHint="PDF or Word. Optional. With one saved, jobs without questions become one-tap Quick apply." />
+                    <DropZone.FileUpload actionTitle="Upload your résumé" actionHint="PDF or Word. Or build one from your profile with Build or edit — it takes two minutes." />
                   </DropZone>
                 </div>
               )}
