@@ -41,15 +41,28 @@ at `/about`.
   components (`LegacyCard`, `LegacyStack`, `LegacyTabs`, `LegacyFilters`) are
   not used anywhere.
 
-## 1b. Color (one accent)
+## 1b. Identity layer (the face on top of Polaris)
 
-Polaris's brand tokens are monochrome admin black. The product remaps
-`--p-color-*-brand*` and `--p-color-bg-surface-selected` to Polaris's
-**emphasis** scale, so primary buttons, links, focus rings, active nav and the
-selected job card are one blue. Success badges are solid green with white
-text; neutral badges are outlined, not gray blobs. A selected card keeps a
-surface: tinted `bg-surface-emphasis` with a 4px accent edge, never the
-page-ground gray.
+Polaris supplies components, spacing, motion and semantics. It is Shopify's
+admin system, so used raw it looks like a back-office form. Openwork adds an
+identity layer in `product.css` `:root`, all through Polaris semantic tokens:
+
+- **Type:** Atkinson Hyperlegible Next (Braille Institute's low-vision face),
+  loaded from Google Fonts, system-ui fallback. Headings 700–800, tight
+  tracking.
+- **Ground:** warm paper `#f5f2ec`, surfaces white, lines `#e1dcd1`, ink
+  `#1c1a17`, secondary ink `#56524b`.
+- **One accent:** deep violet `#4c2e8a` (hover `#3c2370`, tint `#efeaf7`).
+  Mapped to every brand *and* emphasis token, so primary buttons, links,
+  focus rings, active nav and the selected job card are one colour. Not
+  stock SaaS blue.
+- **Forms:** no red asterisks (`RequiredIndicator` hidden). Required is the
+  default; optional fields say "(optional)" in the label. No helper captions
+  unless they change what you type.
+- **Sheets, not card stacks:** one white `.ow-sheet` holds a whole form.
+  Sections are plain headings with generous gaps, never numbered steps.
+- **Employer questions are casual** ("Why do you want to work at Corvid?").
+  Skills belong on the résumé.
 
 ## 1a. Legibility layer (why the app does not look like Shopify admin)
 

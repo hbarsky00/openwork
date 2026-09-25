@@ -1,13 +1,11 @@
-import { BlockStack, Button, Card, InlineGrid, InlineStack, Text } from '@shopify/polaris';
+import { BlockStack, Button, InlineGrid, InlineStack, Text } from '@shopify/polaris';
 import { useTitle } from '../../lib/useTitle';
 
 const STEPS = [
-  { title: 'Start with what you can do', body: 'Pick strengths from a plain list — organizing, working with numbers, following a process, helping customers, building things. Add job titles if you know them. No résumé needed to begin.' },
-  { title: 'Say what makes work accessible for you', body: 'Nine categories of need — vision, hearing, mobility, dexterity, communication, focus, color, schedule, support — in any combination. “I need captions”, never “I am Deaf”. Every answer has an importance and a privacy setting.' },
-  { title: 'See what each job actually requires', body: 'A typical day as a task list. Standing, lifting, walking, driving. Phone calls, meetings, presentations. The actual software and whether it works with a screen reader or keyboard. Noise, interruptions, schedule.' },
-  { title: 'See what each workplace has confirmed', body: 'Step-free entrance, accessible restroom, interpreters, visual alarms, job coach welcome — each marked ✓ △ ✗ or ?, with who confirmed it and when. An unknown is never shown as a match.' },
-  { title: 'Compare, line by line', body: '“Why this could work for you” puts your needs next to the employer’s answers, in sentences, with sources. Where the employer has not said, one click asks them. You decide.' },
-  { title: 'Apply on your terms', body: 'Choose what to share. Request an interview accommodation from a practical list. See the exact list of what the employer will receive before anything is sent. Track every step the employer takes.' },
+  { title: 'Search jobs', body: 'Type what you want to do and where. Filter by remote, job type, pay, or a need like captions or a step-free entrance. No account needed.' },
+  { title: 'Read how the job really works', body: 'A typical day as a list. Hours, noise, meetings, how instructions arrive. What the employer provides, in plain words, and how hiring goes step by step.' },
+  { title: 'Apply in a few minutes', body: 'Your name, your résumé if you have one, and a couple of friendly questions from the employer. Ask for anything you need at the interview. Send.' },
+  { title: 'Track the reply', body: 'Every step the employer takes shows on your Applications page, with dates. Nothing you did not send ever reaches them.' },
 ];
 
 export function HowItWorks() {
@@ -20,50 +18,50 @@ export function HowItWorks() {
             How Openwork works
           </Text>
           <Text as="p" variant="bodyLg" tone="subdued">
-            A job listing should tell you whether you can do the job and whether the workplace will let you do it well. Openwork asks employers to state what a job requires and what the workplace supports — with evidence — and lets you compare that with what you need, privately.
+            Jobs that tell you how they actually work, and an application that takes minutes.
           </Text>
         </BlockStack>
 
-        <BlockStack gap="400">
+        <ol className="ow-howto">
           {STEPS.map((s, i) => (
-            <Card key={s.title}>
-              <InlineStack gap="400" blockAlign="start" wrap={false}>
-                <span className="ow-timeline__marker" style={{ position: 'static' }} aria-hidden="true">
-                  {i + 1}
-                </span>
-                <BlockStack gap="100">
-                  <Text as="h2" variant="headingMd">
-                    {s.title}
-                  </Text>
-                  <Text as="p">{s.body}</Text>
-                </BlockStack>
-              </InlineStack>
-            </Card>
+            <li key={s.title} className="ow-howto__step">
+              <span className="ow-howto__n" aria-hidden="true">
+                {i + 1}
+              </span>
+              <BlockStack gap="100">
+                <Text as="h2" variant="headingLg">
+                  {s.title}
+                </Text>
+                <Text as="p" variant="bodyLg">
+                  {s.body}
+                </Text>
+              </BlockStack>
+            </li>
           ))}
-        </BlockStack>
+        </ol>
 
-        <Card>
+        <div className="ow-sheet">
           <BlockStack gap="300">
             <Text as="h2" variant="headingLg">
               What we never do
             </Text>
             <InlineGrid columns={{ xs: 1, sm: 2 }} gap="300">
-              <Text as="p">We never ask for a diagnosis. There is no field for one anywhere on Openwork, and nothing is ever inferred from one.</Text>
-              <Text as="p">We never decide what you can do. We compare what you said you need with what the employer said. The decision is yours.</Text>
-              <Text as="p">We never treat “not provided” as a match. Unknown is shown as unknown, with a button to ask.</Text>
-              <Text as="p">We never send an employer anything you have not confirmed on the “What this employer will see” step.</Text>
-              <Text as="p">We never give an employer an “accessible” badge for ticking a box. Every fact shows who confirmed it and when.</Text>
-              <Text as="p">We never require a résumé, a phone call, or a mouse.</Text>
+              <Text as="p">Ask for a diagnosis. There is no field for one anywhere.</Text>
+              <Text as="p">Decide what you can do. You read the job, you decide.</Text>
+              <Text as="p">Show “not answered” as a yes. If the employer has not said, you see that.</Text>
+              <Text as="p">Send an employer anything that was not on your apply page.</Text>
+              <Text as="p">Require a résumé, a phone call, or a mouse.</Text>
+              <Text as="p">Hide a job behind a questionnaire. Jobs come first.</Text>
             </InlineGrid>
           </BlockStack>
-        </Card>
+        </div>
 
         <InlineStack gap="300">
-          <Button url="/discover" variant="primary" size="large">
-            Find the right work
+          <Button url="/jobs" variant="primary" size="large">
+            Browse jobs
           </Button>
-          <Button url="/jobs" size="large">
-            Browse all jobs
+          <Button url="/for-employers" size="large">
+            I’m hiring
           </Button>
         </InlineStack>
       </BlockStack>

@@ -1,4 +1,4 @@
-import { Banner, BlockStack, Button, Card, DropZone, Form, FormLayout, Icon, InlineStack, List, Text, TextField } from '@shopify/polaris';
+import { Banner, BlockStack, Button, DropZone, Form, FormLayout, Icon, InlineStack, List, Text, TextField } from '@shopify/polaris';
 import { CheckCircleIcon } from '@shopify/polaris-icons';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -12,10 +12,10 @@ import { useJob, useMyApplication, useStore } from '../../state/store';
 import { NotFound } from '../public/NotFound';
 
 /**
- * Apply. Three short parts on one page — you, your résumé, the employer's
- * questions — with the job kept in view the whole time. Works with no
- * account: the account is made from the same two fields. After sending,
- * you see exactly what happens next and where to go.
+ * Apply. One page, top to bottom: who you are, your résumé, a couple of
+ * friendly questions from the employer, send. No steps, no stars, no
+ * captions. Works without an account; the account is made from the same
+ * two fields when you send.
  */
 export function Apply() {
   const { id } = useParams();
@@ -35,7 +35,7 @@ export function Apply() {
   const [need, setNeed] = useState(p?.privacy.supportNotes === 'shared' ? p.supportNotes : '');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sentId, setSentId] = useState<string | null>(null);
-  const doneHeading = useRef<HTMLHeadingElement>(null);
+  const doneHeading = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     if (sentId) doneHeading.current?.focus();
@@ -84,20 +84,17 @@ export function Apply() {
     );
 
   const sharedNeeds = p ? Object.entries(p.accessNeeds).filter(([, n]) => n.visibility === 'shared').map(([k]) => k) : [];
-  const qCount = job.screeningQuestions.length;
-  const parts = ['About you', 'Résumé', qCount ? `${qCount} question${qCount === 1 ? '' : 's'} from ${employer.name}` : null].filter(Boolean) as string[];
 
   const submit = () => {
     const e: Record<string, string> = {};
     if (!name.trim()) e.name = 'Enter your name.';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) e.email = 'Enter an email address like name@example.com.';
     job.screeningQuestions.forEach((_, i) => {
-      if (!answers[i]?.trim()) e[`q${i}`] = 'A sentence or two is enough.';
+      if (!answers[i]?.trim()) e[`q${i}`] = 'A couple of sentences is plenty.';
     });
     setErrors(e);
     if (Object.keys(e).length) {
-      const first = Object.keys(e)[0];
-      document.getElementById(`apply-${first}`)?.focus();
+      document.getElementById(`apply-${Object.keys(e)[0]}`)?.focus();
       return;
     }
     if (!p) dispatch({ type: 'signUpCandidate', name: name.trim(), email: email.trim() });
@@ -140,9 +137,9 @@ export function Apply() {
             </BlockStack>
           </div>
 
-          <Card>
+          <div className="ow-sheet">
             <BlockStack gap="300">
-              <Text as="h2" variant="headingMd">
+              <Text as="h2" variant="headingLg">
                 What happens next
               </Text>
               <List type="number">
@@ -165,12 +162,12 @@ export function Apply() {
                 </Button>
               </InlineStack>
             </BlockStack>
-          </Card>
+          </div>
 
           {similar.length > 0 && (
             <BlockStack gap="300">
               <Text as="h2" variant="headingLg">
-                While you wait, three more like this
+                Three more like this
               </Text>
               {similar.map((j) => (
                 <JobCard key={j.id} job={j} />
@@ -184,8 +181,7 @@ export function Apply() {
 
   return (
     <div className="ow-container ow-container--narrow">
-      <BlockStack gap="500">
-        {/* The job stays in view: who, what, how much. */}
+      <BlockStack gap="600">
         <div className="ow-applyhead">
           <Link to={`/jobs/${job.id}`} className="ow-applyhead__back">
             ← Back to the job
@@ -201,23 +197,11 @@ export function Apply() {
               </Text>
             </BlockStack>
           </InlineStack>
-          <InlineStack align="space-between" blockAlign="center" wrap gap="300">
-            <ol className="ow-parts" aria-label="What this page asks for">
-              {parts.map((part, i) => (
-                <li key={part}>
-                  <span className="ow-parts__n" aria-hidden="true">
-                    {i + 1}
-                  </span>
-                  {part}
-                </li>
-              ))}
-            </ol>
-            {!p && (
-              <Text as="p" variant="bodySm">
-                Applied before? <Link to={`/signin?next=${encodeURIComponent(`/jobs/${job.id}/apply`)}`}>Sign in</Link> and this fills itself in.
-              </Text>
-            )}
-          </InlineStack>
+          {!p && (
+            <Text as="p" variant="bodyMd">
+              Applied before? <Link to={`/signin?next=${encodeURIComponent(`/jobs/${job.id}/apply`)}`}>Sign in</Link> and this fills itself in.
+            </Text>
+          )}
         </div>
 
         {Object.keys(errors).length > 0 && (
@@ -233,31 +217,23 @@ export function Apply() {
         )}
 
         <Form onSubmit={submit}>
-          <BlockStack gap="400">
-            <Card>
+          <div className="ow-sheet">
+            <BlockStack gap="800">
               <BlockStack gap="300">
-                <Text as="h2" variant="headingMd">
-                  <span className="ow-parts__n" aria-hidden="true">
-                    1
-                  </span>
+                <Text as="h2" variant="headingLg">
                   About you
                 </Text>
                 <FormLayout>
                   <FormLayout.Group>
-                    <TextField id="apply-name" label="Your name" value={name} onChange={setName} autoComplete="name" error={errors.name} requiredIndicator />
-                    <TextField id="apply-email" label="Email" type="email" value={email} onChange={setEmail} autoComplete="email" error={errors.email} requiredIndicator helpText="Where the reply goes." />
+                    <TextField id="apply-name" label="Your name" value={name} onChange={setName} autoComplete="name" error={errors.name} />
+                    <TextField id="apply-email" label="Email" type="email" value={email} onChange={setEmail} autoComplete="email" error={errors.email} />
                   </FormLayout.Group>
-                  <TextField label="Phone" type="tel" value={phone} onChange={setPhone} autoComplete="tel" helpText="Optional." />
+                  <TextField label="Phone (optional)" type="tel" value={phone} onChange={setPhone} autoComplete="tel" />
                 </FormLayout>
               </BlockStack>
-            </Card>
 
-            <Card>
               <BlockStack gap="300">
-                <Text as="h2" variant="headingMd">
-                  <span className="ow-parts__n" aria-hidden="true">
-                    2
-                  </span>
+                <Text as="h2" variant="headingLg">
                   Résumé
                 </Text>
                 {resume ? (
@@ -271,62 +247,54 @@ export function Apply() {
                     </Button>
                   </InlineStack>
                 ) : (
-                  <DropZone accept=".pdf,.doc,.docx,.txt" type="file" allowMultiple={false} onDrop={(_d, accepted) => accepted[0] && setResume(accepted[0].name)}>
-                    <DropZone.FileUpload actionTitle="Add your résumé" actionHint="PDF or Word" />
-                  </DropZone>
+                  <div className="ow-drop">
+                    <DropZone accept=".pdf,.doc,.docx,.txt" type="file" allowMultiple={false} onDrop={(_d, accepted) => accepted[0] && setResume(accepted[0].name)}>
+                      <DropZone.FileUpload actionTitle="Upload your résumé" actionHint="PDF or Word. No résumé? Skip this — your answers below count." />
+                    </DropZone>
+                  </div>
                 )}
-                <Text as="p" tone="subdued">
-                  No résumé? Skip this. {employer.name} reads your answers below either way.
-                </Text>
               </BlockStack>
-            </Card>
 
-            {qCount > 0 && (
-              <Card>
+              {job.screeningQuestions.length > 0 && (
                 <BlockStack gap="400">
                   <BlockStack gap="100">
-                    <Text as="h2" variant="headingMd">
-                      <span className="ow-parts__n" aria-hidden="true">
-                        3
-                      </span>
-                      {employer.name} asks
+                    <Text as="h2" variant="headingLg">
+                      {employer.name} would like to know
                     </Text>
                     <Text as="p" tone="subdued">
-                      Plain words. A sentence or two each is plenty.
+                      In your own words. A couple of sentences is plenty.
                     </Text>
                   </BlockStack>
                   {job.screeningQuestions.map((q, i) => (
-                    <TextField key={q} id={`apply-q${i}`} label={q} value={answers[i]} onChange={(v) => setAnswers((a) => a.map((x, j) => (j === i ? v : x)))} multiline={3} autoComplete="off" error={errors[`q${i}`]} requiredIndicator />
+                    <TextField key={q} id={`apply-q${i}`} label={q} value={answers[i]} onChange={(v) => setAnswers((a) => a.map((x, j) => (j === i ? v : x)))} multiline={4} autoComplete="off" error={errors[`q${i}`]} />
                   ))}
                 </BlockStack>
-              </Card>
-            )}
+              )}
 
-            <Card>
               <BlockStack gap="300">
-                <Text as="h2" variant="headingMd">
-                  Need anything for the interview?
+                <Text as="h2" variant="headingLg">
+                  Anything you need for the interview? (optional)
                 </Text>
-                <TextField label="Interview needs" labelHidden value={need} onChange={setNeed} multiline={2} autoComplete="off" placeholder="Optional. For example: send the questions ahead of time, a step-free room, an ASL interpreter." helpText={`Goes to ${employer.accessibilityContact}. You never have to say why.`} />
+                <TextField label="Interview needs" labelHidden value={need} onChange={setNeed} multiline={2} autoComplete="off" placeholder="For example: the questions ahead of time, a step-free room, an ASL interpreter. You never have to say why." />
                 {sharedNeeds.length > 0 && (
                   <Text as="p" variant="bodySm" tone="subdued">
                     Also going with this: {sharedNeeds.map((n) => ACCESS_FEATURE_BY_ID[n]?.label).join(', ')}. <Link to="/passport/sharing">Change</Link>
                   </Text>
                 )}
               </BlockStack>
-            </Card>
+            </BlockStack>
+          </div>
 
-            <div className="ow-actionbar">
-              <InlineStack align="space-between" blockAlign="center" wrap gap="300">
-                <Text as="p" variant="bodySm" tone="subdued">
-                  {p ? `${employer.name} sees only what is on this page.` : 'Sending also creates your free account, so you can track the reply.'}
-                </Text>
-                <Button submit variant="primary" size="large">
-                  Send application
-                </Button>
-              </InlineStack>
-            </div>
-          </BlockStack>
+          <div className="ow-actionbar">
+            <InlineStack align="space-between" blockAlign="center" wrap gap="300">
+              <Text as="p" variant="bodySm" tone="subdued">
+                {p ? `${employer.name} sees only what is on this page.` : 'Sending creates your free account so you can track the reply.'}
+              </Text>
+              <Button submit variant="primary" size="large">
+                Send application
+              </Button>
+            </InlineStack>
+          </div>
         </Form>
       </BlockStack>
     </div>

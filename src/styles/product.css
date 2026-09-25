@@ -40,23 +40,75 @@
   --p-text-heading-3xl-font-line-height: var(--p-font-line-height-1200);
   --p-font-weight-regular: 450;
 
-  /* Color — Polaris's brand tokens are monochrome (admin black). This
-     product uses Polaris's emphasis scale as its brand, so primary buttons,
-     selection, links and focus rings are one color. */
-  --p-color-bg-fill-brand: var(--p-color-bg-fill-emphasis);
-  --p-color-bg-fill-brand-hover: var(--p-color-bg-fill-emphasis-hover);
-  --p-color-bg-fill-brand-active: var(--p-color-bg-fill-emphasis-active);
-  --p-color-bg-fill-brand-selected: var(--p-color-bg-fill-emphasis);
-  --p-color-text-brand-on-bg-fill: var(--p-color-text-emphasis-on-bg-fill);
-  --p-color-text-brand: var(--p-color-text-emphasis);
-  --p-color-text-brand-hover: var(--p-color-text-emphasis-hover);
-  --p-color-icon-brand: var(--p-color-icon-emphasis);
-  --p-color-border-brand: var(--p-color-border-emphasis);
-  --p-color-bg-surface-brand: var(--p-color-bg-surface-emphasis);
-  --p-color-bg-surface-brand-hover: var(--p-color-bg-surface-emphasis-hover);
-  --p-color-bg-surface-brand-selected: var(--p-color-bg-surface-emphasis-active);
-  --p-color-bg-surface-selected: var(--p-color-bg-surface-emphasis);
-  --p-color-bg-fill-selected: var(--p-color-bg-fill-emphasis);
+  /* IDENTITY LAYER
+     Polaris supplies components, spacing, motion and semantics. Openwork
+     supplies the face: a typeface designed for low-vision readers, warm
+     paper instead of admin grey, ink text, and one deep accent that is not
+     stock SaaS blue. Every Polaris component picks these up through the
+     semantic tokens below. */
+  --p-font-family-sans: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --ow-ink: #1c1a17;
+  --ow-ink-2: #56524b;
+  --ow-paper: #f5f2ec;
+  --ow-paper-2: #ebe7de;
+  --ow-line: #e1dcd1;
+  --ow-line-2: #c9c2b4;
+  --ow-accent: #4c2e8a;
+  --ow-accent-hover: #3c2370;
+  --ow-accent-active: #2c1955;
+  --ow-accent-tint: #efeaf7;
+  --ow-accent-tint-2: #e4dcf1;
+
+  --p-color-text: var(--ow-ink);
+  --p-color-text-secondary: var(--ow-ink-2);
+  --p-color-bg: var(--ow-paper);
+  --p-color-bg-surface-secondary: var(--ow-paper);
+  --p-color-bg-surface-tertiary: var(--ow-paper-2);
+  --p-color-bg-surface-hover: var(--ow-paper);
+  --p-color-bg-fill-secondary: var(--ow-paper-2);
+  --p-color-bg-fill-tertiary: var(--ow-line);
+  --p-color-border: var(--ow-line-2);
+  --p-color-border-secondary: var(--ow-line);
+  --p-color-border-hover: var(--ow-line-2);
+  --p-color-input-border: var(--ow-line-2);
+  --p-color-input-border-hover: var(--ow-ink-2);
+
+  --p-color-bg-fill-emphasis: var(--ow-accent);
+  --p-color-bg-fill-emphasis-hover: var(--ow-accent-hover);
+  --p-color-bg-fill-emphasis-active: var(--ow-accent-active);
+  --p-color-bg-surface-emphasis: var(--ow-accent-tint);
+  --p-color-bg-surface-emphasis-hover: var(--ow-accent-tint-2);
+  --p-color-bg-surface-emphasis-active: var(--ow-accent-tint-2);
+  --p-color-border-emphasis: var(--ow-accent);
+  --p-color-border-emphasis-hover: var(--ow-accent-hover);
+  --p-color-text-emphasis: var(--ow-accent);
+  --p-color-text-emphasis-hover: var(--ow-accent-hover);
+  --p-color-icon-emphasis: var(--ow-accent);
+  --p-color-text-link: var(--ow-accent);
+  --p-color-text-link-hover: var(--ow-accent-hover);
+  --p-color-border-focus: var(--ow-accent);
+
+  --p-color-bg-fill-brand: var(--ow-accent);
+  --p-color-bg-fill-brand-hover: var(--ow-accent-hover);
+  --p-color-bg-fill-brand-active: var(--ow-accent-active);
+  --p-color-bg-fill-brand-selected: var(--ow-accent);
+  --p-color-text-brand-on-bg-fill: #ffffff;
+  --p-color-text-emphasis-on-bg-fill: #ffffff;
+  --p-color-text-brand: var(--ow-accent);
+  --p-color-text-brand-hover: var(--ow-accent-hover);
+  --p-color-icon-brand: var(--ow-accent);
+  --p-color-border-brand: var(--ow-accent);
+  --p-color-bg-surface-brand: var(--ow-accent-tint);
+  --p-color-bg-surface-brand-hover: var(--ow-accent-tint-2);
+  --p-color-bg-surface-brand-selected: var(--ow-accent-tint-2);
+  --p-color-bg-surface-selected: var(--ow-accent-tint);
+  --p-color-bg-fill-selected: var(--ow-accent);
+
+  /* Headings: tighter, heavier, no admin timidity. */
+  --p-text-heading-lg-font-weight: 700;
+  --p-text-heading-xl-font-weight: 800;
+  --p-text-heading-2xl-font-weight: 800;
 
   /* Surfaces — flat buttons (no admin bevel); card padding is set below */
   --p-space-card-padding: var(--p-space-400);
@@ -1116,4 +1168,64 @@ ol.Polaris-BlockStack {
 /* Roomier answer boxes: the questions are the whole application. */
 .Polaris-TextField--multiline .Polaris-TextField__Input {
   line-height: var(--p-text-body-md-font-line-height);
+}
+
+/* Sheet: one white page for a whole form. Not a stack of admin cards. */
+.ow-sheet {
+  background: var(--p-color-bg-surface);
+  border: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  border-radius: var(--p-border-radius-400);
+  padding: var(--p-space-500);
+}
+@media (min-width: 768px) {
+  .ow-sheet {
+    padding: var(--p-space-800);
+  }
+}
+/* Drop zone: a quiet dashed field, not a billboard. */
+.ow-drop .Polaris-DropZone {
+  min-height: 0;
+  background: var(--p-color-bg-surface-secondary);
+}
+.ow-drop .Polaris-DropZone__Container {
+  min-height: 0;
+}
+.ow-drop .Polaris-DropZone-FileUpload {
+  padding: var(--p-space-500);
+}
+
+/* Forms: no red asterisks. Required is the default; optional says so in the label. */
+.Polaris-Label__RequiredIndicator {
+  display: none;
+}
+.Polaris-Text--heading2xl,
+.Polaris-Text--headingXl,
+.ow-hero h1 {
+  letter-spacing: -0.02em;
+}
+
+/* How it works: four big numbered steps, no cards. */
+.ow-howto {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--p-space-600);
+}
+.ow-howto__step {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: var(--p-space-400);
+  align-items: start;
+}
+.ow-howto__n {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--p-border-radius-full);
+  background: var(--p-color-bg-fill-brand);
+  color: var(--p-color-text-brand-on-bg-fill);
+  font-size: var(--p-font-size-500);
+  font-weight: var(--p-font-weight-bold);
 }
