@@ -418,8 +418,8 @@ body {
     position: sticky;
     bottom: 0;
     z-index: var(--p-z-index-2);
-    margin-inline: calc(-1 * var(--p-space-500));
-    padding: var(--p-space-300) var(--p-space-500);
+    margin-inline: calc(-1 * var(--p-space-400));
+    padding: var(--p-space-300) var(--p-space-400);
     background: var(--p-color-bg-surface);
     border-block-start: var(--p-border-width-025) solid var(--p-color-border-secondary);
     box-shadow: var(--p-shadow-300);
@@ -450,6 +450,12 @@ body {
 @media (min-width: 768px) {
   .ow-container {
     padding: var(--p-space-800) var(--p-space-600);
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .ow-actionbar {
+    margin-inline: calc(-1 * var(--p-space-600));
+    padding-inline: var(--p-space-600);
   }
 }
 
@@ -1039,4 +1045,75 @@ ol.Polaris-BlockStack {
 .ow-details dd {
   margin: 0;
   font-weight: var(--p-font-weight-medium);
+}
+
+/* Apply page ---------------------------------------------------------------- */
+.ow-applyhead {
+  display: grid;
+  gap: var(--p-space-300);
+}
+.ow-applyhead__back {
+  justify-self: start;
+  color: var(--p-color-text-link);
+  text-decoration: none;
+  font-weight: var(--p-font-weight-medium);
+}
+.ow-applyhead__back:hover {
+  text-decoration: underline;
+}
+/* "What this page asks for": three numbered words, not a wizard. */
+.ow-parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--p-space-200) var(--p-space-500);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ow-parts li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--p-space-200);
+  font-weight: var(--p-font-weight-medium);
+}
+.ow-parts__n {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--p-border-radius-full);
+  background: var(--p-color-bg-fill-brand);
+  color: var(--p-color-text-brand-on-bg-fill);
+  font-size: var(--p-font-size-350);
+  font-weight: var(--p-font-weight-bold);
+  margin-inline-end: var(--p-space-200);
+  vertical-align: middle;
+  flex: none;
+}
+.ow-parts .ow-parts__n {
+  margin-inline-end: 0;
+}
+/* Sent state */
+.ow-done {
+  display: flex;
+  gap: var(--p-space-400);
+  align-items: flex-start;
+}
+.ow-done__icon {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--p-border-radius-full);
+  background: var(--p-color-bg-fill-success);
+  display: grid;
+  place-items: center;
+}
+.ow-done__icon svg {
+  width: 32px;
+  height: 32px;
+  fill: var(--p-color-text-success-on-bg-fill);
+}
+/* Roomier answer boxes: the questions are the whole application. */
+.Polaris-TextField--multiline .Polaris-TextField__Input {
+  line-height: var(--p-text-body-md-font-line-height);
 }
