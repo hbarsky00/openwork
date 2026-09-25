@@ -10,7 +10,8 @@ import { STRENGTHS } from '../lib/access';
 export function StrengthsPicker({ value, onChange, title = 'What are you good at?', labelHidden = false }: { value: string[]; onChange: (v: string[]) => void; title?: string; labelHidden?: boolean }) {
   const [query, setQuery] = useState('');
   const q = query.trim().toLowerCase();
-  const options = useMemo(() => STRENGTHS.filter((s) => !q || s.toLowerCase().includes(q)).map((s) => ({ value: s, label: s })), [q]);
+  // Eight rows at most. The list is a helper, not the page.
+  const options = useMemo(() => STRENGTHS.filter((s) => !q || s.toLowerCase().includes(q)).filter((s) => !value.includes(s)).slice(0, 8).map((s) => ({ value: s, label: s })), [q, value]);
   const exact = STRENGTHS.some((s) => s.toLowerCase() === q) || value.some((s) => s.toLowerCase() === q);
   const addOwn = () => {
     const v = query.trim();
@@ -22,9 +23,9 @@ export function StrengthsPicker({ value, onChange, title = 'What are you good at
       <Autocomplete
         allowMultiple
         options={options}
-        selected={value}
+        selected={[]}
         onSelect={(picked) => {
-          onChange(picked);
+          onChange([...value, ...picked.filter((v) => !value.includes(v))]);
           setQuery('');
         }}
         actionBefore={q && !exact ? { content: `Add “${query.trim()}” as your own`, onAction: addOwn } : undefined}

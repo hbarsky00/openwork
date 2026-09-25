@@ -1,5 +1,5 @@
-import { BlockStack, Box, Button, Checkbox, EmptySearchResult, InlineStack, Modal, Select, Text, TextField } from '@shopify/polaris';
-import { FilterIcon, NotificationFilledIcon, NotificationIcon, SearchIcon } from '@shopify/polaris-icons';
+import { BlockStack, Box, Button, Checkbox, EmptySearchResult, InlineStack, Select, Text, TextField } from '@shopify/polaris';
+import { NotificationFilledIcon, NotificationIcon, SearchIcon } from '@shopify/polaris-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { JobCard } from '../../components/JobCard';
@@ -52,8 +52,6 @@ export function Jobs() {
   const hasPassport = !!profile && (Object.keys(profile.accessNeeds).length > 0 || Object.keys(profile.workPreferences).length > 0);
   const requiredNeeds = profile ? Object.entries(profile.accessNeeds).filter(([, n]) => n.importance === 'required').map(([k]) => k) : [];
 
-  const filterCount = activeFilterCount(params);
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const filters = (
     <BlockStack gap="300">
       {profile && Object.keys(profile.accessNeeds).length > 0 && (
@@ -112,12 +110,17 @@ export function Jobs() {
               </div>
             </form>
 
+            <div className="ow-filterstrip ow-mobile-only" role="group" aria-label="Filter jobs">
+              <Select label="Where" labelHidden options={[{ label: 'Anywhere', value: ANY }, ...Object.entries(WORK_LOCATION_LABEL).map(([value, label]) => ({ value, label }))]} value={one(params.arrangement)} onChange={setOne('arrangement')} />
+              <Select label="Job type" labelHidden options={[{ label: 'Job type', value: ANY }, ...Object.entries(EMPLOYMENT_TYPE_LABEL).map(([value, label]) => ({ value, label }))]} value={one(params.type)} onChange={setOne('type')} />
+              <Select label="Pay" labelHidden options={[{ label: 'Pay', value: '' }, { label: '$20+/hr', value: '20' }, { label: '$25+/hr', value: '25' }, { label: '$30+/hr', value: '30' }, { label: '$40+/hr', value: '40' }]} value={params.minPay} onChange={(v) => update({ minPay: v })} />
+              <Select label="Sort" labelHidden options={[{ label: hasPassport ? 'Best for you' : 'Newest', value: 'recommended' }, { label: 'Newest', value: 'newest' }, { label: 'Highest pay', value: 'pay' }]} value={params.sort} onChange={(v) => update({ sort: v as SearchParams['sort'] })} />
+              <div className="ow-filterstrip__needs">
+                <NeedsSearch compact jobs={state.jobs} employers={state.employers} needs={params.need} practices={params.practice} onChange={({ needs, practices }) => update({ need: needs, practice: practices })} />
+              </div>
+            </div>
+
             <InlineStack align="space-between" blockAlign="center" wrap gap="300">
-              <span className="ow-mobile-only">
-                <Button icon={FilterIcon} onClick={() => setFiltersOpen(true)} ariaExpanded={filtersOpen}>
-                  {filterCount ? `Filters (${filterCount})` : 'Filters'}
-                </Button>
-              </span>
               <Text as="h1" variant="headingLg">
                 <span role="status" aria-live="polite">
                   {results.length} job{results.length === 1 ? '' : 's'}
@@ -125,13 +128,16 @@ export function Jobs() {
                 {params.q ? ` for “${params.q}”` : ''}
                 {params.where ? ` in ${params.where}` : ''}
               </Text>
-              <Button
-                icon={alertOn ? NotificationFilledIcon : NotificationIcon}
-                pressed={alertOn}
-                onClick={() => (state.role === 'candidate' ? dispatch({ type: 'toggleAlert', query: sp.toString() }) : navigate(`/signin?next=${encodeURIComponent(`/jobs?${sp.toString()}`)}&reason=alert`))}
-              >
-                {alertOn ? 'Alert on' : 'Alert me about jobs like this'}
-              </Button>
+              <span className="ow-alertbtn">
+                <Button
+                  icon={alertOn ? NotificationFilledIcon : NotificationIcon}
+                  pressed={alertOn}
+                  accessibilityLabel={alertOn ? 'Job alert on for this search' : 'Alert me about jobs like this'}
+                  onClick={() => (state.role === 'candidate' ? dispatch({ type: 'toggleAlert', query: sp.toString() }) : navigate(`/signin?next=${encodeURIComponent(`/jobs?${sp.toString()}`)}&reason=alert`))}
+                >
+                  {alertOn ? 'Alert on' : 'Alert me about jobs like this'}
+                </Button>
+              </span>
             </InlineStack>
 
             {results.length === 0 ? (
@@ -161,16 +167,6 @@ export function Jobs() {
         </div>
       </div>
 
-      <Modal
-        open={filtersOpen}
-        onClose={() => setFiltersOpen(false)}
-        title="Filters"
-        size="fullScreen"
-        primaryAction={{ content: `Show ${results.length} job${results.length === 1 ? '' : 's'}`, onAction: () => setFiltersOpen(false) }}
-        secondaryActions={filterCount ? [{ content: 'Clear all', onAction: clearAll }] : []}
-      >
-        <Modal.Section>{filters}</Modal.Section>
-      </Modal>
     </div>
   );
 }

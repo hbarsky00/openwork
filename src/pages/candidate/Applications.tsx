@@ -217,15 +217,12 @@ export function Applications() {
           </div>
         )}
 
+        {state.alerts.length > 0 && (
         <BlockStack gap="300">
           <Text as="h2" variant="headingLg">
             Job alerts
           </Text>
-          {state.alerts.length === 0 ? (
-            <Text as="p" tone="subdued">
-              None yet. On Search jobs, set your search and press “Alert me about jobs like this”.
-            </Text>
-          ) : (
+          {(
             state.alerts.map((q) => (
               <div key={q} className="ow-sheet ow-aside__card">
                 <InlineStack align="space-between" blockAlign="center" wrap gap="300">
@@ -245,6 +242,7 @@ export function Applications() {
             ))
           )}
         </BlockStack>
+        )}
       </BlockStack>
     </div>
   );

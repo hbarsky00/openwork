@@ -16,7 +16,7 @@
  */
 :root {
   /* Type — 18px base, generous line-height */
-  --p-text-body-xs-font-size: var(--p-font-size-325);        /* 13 */
+  --p-text-body-xs-font-size: 0.8125rem;                      /* 13 */
   --p-text-body-xs-font-line-height: var(--p-font-line-height-500);
   --p-text-body-sm-font-size: var(--p-font-size-350);        /* 14 */
   --p-text-body-sm-font-line-height: var(--p-font-line-height-500);
@@ -34,7 +34,7 @@
   --p-text-heading-lg-font-line-height: var(--p-font-line-height-700);
   --p-text-heading-xl-font-size: var(--p-font-size-600);     /* 24 */
   --p-text-heading-xl-font-line-height: var(--p-font-line-height-800);
-  --p-text-heading-2xl-font-size: var(--p-font-size-750);    /* 30 */
+  --p-text-heading-2xl-font-size: 1.75rem;                    /* 28 */
   --p-text-heading-2xl-font-line-height: var(--p-font-line-height-1000);
   --p-text-heading-3xl-font-size: var(--p-font-size-1000);   /* 40 */
   --p-text-heading-3xl-font-line-height: var(--p-font-line-height-1200);
@@ -1484,7 +1484,7 @@ ol.Polaris-BlockStack {
     gap: 2px;
     text-decoration: none;
     color: var(--ow-ink-2);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
   }
   .ow-bottomnav a svg {
@@ -1513,7 +1513,7 @@ ol.Polaris-BlockStack {
   gap: 6px;
   padding: 4px 10px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1556,7 +1556,7 @@ ol.Polaris-BlockStack {
 }
 .ow-evcard svg { width: 20px; height: 20px; fill: var(--ow-success); }
 .ow-evcard--unknown svg { fill: var(--ow-ink-3); }
-.ow-evcard__source { color: var(--ow-ink-2); font-size: 12px; margin-top: 6px; display: block; }
+.ow-evcard__source { color: var(--ow-ink-2); font-size: 13px; margin-top: 6px; display: block; }
 .ow-verif {
   background: rgba(239, 246, 255, 0.5);
   border: 1px solid var(--ow-accent-tint-2);
@@ -1565,7 +1565,7 @@ ol.Polaris-BlockStack {
 }
 /* Match bars (sidebar "Your Match") */
 .ow-bar { display: grid; gap: 6px; }
-.ow-bar__head { display: flex; justify-content: space-between; font-size: 12px; }
+.ow-bar__head { display: flex; justify-content: space-between; font-size: 13px; }
 .ow-bar__track { height: 6px; background: var(--ow-paper-2); border-radius: 999px; overflow: hidden; }
 .ow-bar__fill { height: 100%; background: var(--ow-success); border-radius: 999px; }
 .ow-bar--warn .ow-bar__fill { background: var(--ow-warning); }
@@ -1678,7 +1678,53 @@ ol.Polaris-BlockStack {
 }
 /* Match labels: 12px minimum and no all-caps for readers who need it. */
 .ow-matchlabel {
-  font-size: 12px;
+  font-size: 13px;
   text-transform: none;
   letter-spacing: 0;
+}
+
+/* Type scale is six sizes: 28 · 20 · 18 · 16 · 14 · 13. Nothing smaller. */
+.Polaris-Text--bodyXs, .Polaris-Badge, .ow-matchlabel, .ow-evcard__source, .ow-bottomnav a { font-size: 13px; }
+
+/* Phone and tablet: one compact strip of filters under the search. Two per
+   row, needs full width. About 150px. Nothing hidden, nothing full-screen. */
+.ow-filterstrip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--p-space-200);
+}
+.ow-filterstrip__needs {
+  grid-column: 1 / -1;
+}
+.ow-filterstrip .Polaris-Select__Content,
+.ow-filterstrip .Polaris-TextField__Input {
+  min-height: 40px;
+  padding-block: var(--p-space-150);
+  font-size: 14px;
+}
+/* Alert button: icon-only on phone, labelled from tablet up */
+@media (max-width: 767px) {
+  .ow-alertbtn .Polaris-Button .Polaris-Text--root { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .ow-alertbtn .Polaris-Button { min-width: 44px; }
+}
+/* Typeahead lists never take the page: eight rows, then scroll. */
+.Polaris-Autocomplete .Polaris-Listbox,
+.Polaris-Popover__Pane .Polaris-Listbox {
+  max-height: 336px;
+  overflow-y: auto;
+}
+.Polaris-Popover__Pane {
+  max-height: 380px;
+}
+/* Search bar on phone: one row, button inside */
+@media (max-width: 767px) {
+  .ow-searchbar {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: var(--p-space-100) var(--p-space-100) var(--p-space-100) var(--p-space-200);
+    border-radius: var(--p-border-radius-full);
+  }
+  .ow-searchbar__where { display: none; }
+  .ow-searchbar .Polaris-TextField__Backdrop { border-color: transparent; box-shadow: none; background: transparent; }
+  .ow-searchbar .Polaris-Button { border-radius: var(--p-border-radius-full); }
 }

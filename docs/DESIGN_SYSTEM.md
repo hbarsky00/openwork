@@ -101,7 +101,14 @@ are listed and switched off on the Applications page.
 - One heading tree per page: h1 = page or count, cards h2 in a list, h3
   inside a pane or a hero card's siblings.
 - Tag remove buttons 32px; one 2px accent focus ring everywhere.
-- Match labels are sentence case at 12px.
+- Match labels are sentence case at 13px.
+- **Six text sizes, nothing else:** 28 page title · 20 section · 18 card
+  title · 16 body · 14 meta and labels · 13 pills, sources, nav labels.
+- **Empty sections do not render.** A section with nothing in it (alerts,
+  drafts, questions) is omitted; only a page whose purpose is that list shows
+  an empty state.
+- **Typeaheads show eight rows** and then scroll. A dropdown never takes the
+  page.
 
 ## 1c. Page system (three templates, nothing else)
 
