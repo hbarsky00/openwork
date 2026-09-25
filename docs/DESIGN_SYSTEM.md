@@ -43,8 +43,12 @@ at `/about`.
 
 ## 1c. Page system (three templates, nothing else)
 
-1. **List + pane** (`.ow-split`): jobs. Search across the top, list left,
-   job right, both on white.
+1. **Rail + list + pane** (`.ow-jobs` → `.ow-rail`, `.ow-split`): jobs.
+   Filters live in a sticky 240px left rail with visible labels (Where, Job
+   type, Pay, Date posted, Accessibility needs, Sort). To the right: search
+   bar, count, list, and the job pane from 1024px. Tablet keeps the rail and
+   list; phone turns the rail into one swipeable row. Filters are never
+   stacked above the jobs and never behind a button.
 2. **Article + sidebar** (`.ow-cols`): job, company, application. One white
    `.ow-sheet` for the reading column and a sticky 360px `.ow-aside` holding
    the action card (Apply / Save) and the employer card. On phone the action

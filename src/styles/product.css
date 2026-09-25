@@ -274,7 +274,8 @@
   --ow-container: 1200px;
   --ow-container-narrow: 880px;
   --ow-header-height: 72px;
-  --ow-results-width: 460px;
+  --ow-results-width: 400px;
+  --ow-rail-width: 240px;
 }
 
 html,
@@ -1288,4 +1289,69 @@ ol.Polaris-BlockStack {
   background: var(--p-color-bg-surface-emphasis);
   border-radius: var(--p-border-radius-300);
   border: var(--p-border-width-025) solid var(--ow-accent-tint-2);
+}
+
+/* Jobs page: filter rail on the left, search + list + job on the right. */
+.ow-jobs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--p-space-500);
+  align-items: start;
+}
+.ow-rail {
+  min-width: 0;
+  max-width: 100%;
+}
+@media (min-width: 768px) {
+  .ow-jobs {
+    grid-template-columns: var(--ow-rail-width) minmax(0, 1fr);
+  }
+  .ow-rail {
+    position: sticky;
+    top: calc(var(--ow-header-height) + var(--p-space-400));
+  }
+}
+.ow-rail__inner {
+  display: grid;
+  gap: var(--p-space-300);
+  padding: var(--p-space-400);
+  background: var(--p-color-bg-surface);
+  border: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  border-radius: var(--p-border-radius-300);
+}
+/* Phone: the rail is one row you swipe. Nothing hidden behind a button. */
+@media (max-width: 767px) {
+  .ow-rail__inner {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(180px, max-content);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    padding: var(--p-space-300);
+  }
+  .ow-rail__inner > * {
+    scroll-snap-align: start;
+  }
+  .ow-rail__needs {
+    min-width: 260px;
+  }
+}
+.ow-jobs__main {
+  min-width: 0;
+}
+/* Rail labels stay visible; controls a step shorter than page controls. */
+.ow-rail .Polaris-Select__Content,
+.ow-rail .Polaris-TextField__Input {
+  min-height: var(--ow-control-height-slim);
+  padding-block: var(--p-space-200);
+}
+.ow-rail .Polaris-Label__Text {
+  font-size: var(--p-text-body-sm-font-size);
+  color: var(--p-color-text-secondary);
+}
+/* The split inside the main column: list + pane from 1024 up. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .ow-split {
+    grid-template-columns: minmax(300px, 0.9fr) minmax(0, 1.1fr);
+  }
 }
