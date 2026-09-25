@@ -1,31 +1,49 @@
-import { BlockStack, Button, InlineStack, Tag, TextField } from '@shopify/polaris';
-import { useState } from 'react';
+import { Autocomplete, BlockStack, Icon, InlineStack, Tag, Text } from '@shopify/polaris';
+import { SearchIcon } from '@shopify/polaris-icons';
+import { useMemo, useState } from 'react';
 import { STRENGTHS } from '../lib/access';
-import { ChoiceChips } from './ChoiceChips';
 
-/** Strengths as a chip grid — all 24 visible in a few rows. Custom entries welcome. */
+/**
+ * Strengths: a typeahead over the shared list, selected ones as tags. Typing
+ * something not on the list adds it as your own. One control, no chip wall.
+ */
 export function StrengthsPicker({ value, onChange, title = 'What are you good at?', labelHidden = false }: { value: string[]; onChange: (v: string[]) => void; title?: string; labelHidden?: boolean }) {
-  const [draft, setDraft] = useState('');
-  const custom = value.filter((v) => !STRENGTHS.includes(v));
-  const add = () => {
-    const v = draft.trim();
+  const [query, setQuery] = useState('');
+  const q = query.trim().toLowerCase();
+  const options = useMemo(() => STRENGTHS.filter((s) => !q || s.toLowerCase().includes(q)).map((s) => ({ value: s, label: s })), [q]);
+  const exact = STRENGTHS.some((s) => s.toLowerCase() === q) || value.some((s) => s.toLowerCase() === q);
+  const addOwn = () => {
+    const v = query.trim();
     if (v && !value.includes(v)) onChange([...value, v]);
-    setDraft('');
+    setQuery('');
   };
   return (
-    <BlockStack gap="400">
-      <ChoiceChips label={title} labelHidden={labelHidden} multiple options={STRENGTHS.map((s) => ({ value: s, label: s }))} value={value.filter((v) => STRENGTHS.includes(v))} onChange={(picked) => onChange([...(picked as string[]), ...custom])} />
-      <InlineStack gap="200" blockAlign="end" wrap>
-        <div style={{ flex: '1 1 240px' }}>
-          <TextField label="Something else you are good at" value={draft} onChange={setDraft} autoComplete="off" onBlur={add} />
-        </div>
-        <Button onClick={add}>Add</Button>
-        {custom.map((c) => (
-          <Tag key={c} onRemove={() => onChange(value.filter((v) => v !== c))}>
-            {c}
-          </Tag>
-        ))}
-      </InlineStack>
+    <BlockStack gap="300">
+      <Autocomplete
+        allowMultiple
+        options={options}
+        selected={value}
+        onSelect={(picked) => {
+          onChange(picked);
+          setQuery('');
+        }}
+        actionBefore={q && !exact ? { content: `Add “${query.trim()}” as your own`, onAction: addOwn } : undefined}
+        emptyState={
+          <Text as="p" tone="subdued">
+            Nothing on the list matches. Add it as your own above.
+          </Text>
+        }
+        textField={<Autocomplete.TextField label={title} labelHidden={labelHidden} value={query} onChange={setQuery} autoComplete="off" prefix={<Icon source={SearchIcon} />} placeholder="Type a strength — organizing, numbers, fixing things…" />}
+      />
+      {value.length > 0 && (
+        <InlineStack gap="200" wrap>
+          {value.map((s) => (
+            <Tag key={s} onRemove={() => onChange(value.filter((v) => v !== s))}>
+              {s}
+            </Tag>
+          ))}
+        </InlineStack>
+      )}
     </BlockStack>
   );
 }

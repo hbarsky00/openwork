@@ -1407,3 +1407,18 @@ ol.Polaris-BlockStack {
 .ow-fit--mixed {
   background: #fff6dc;
 }
+
+/* Inside a sheet: a quiet inset form and a row with an action on the right. */
+.ow-subsheet {
+  padding: var(--p-space-400);
+  background: var(--p-color-bg-surface-secondary);
+  border-radius: var(--p-border-radius-200);
+}
+.ow-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--p-space-400);
+  align-items: start;
+  padding-block: var(--p-space-300);
+  border-block-start: var(--p-border-width-025) solid var(--ow-line);
+}
