@@ -414,3 +414,54 @@ if (typeof process !== 'undefined' && process.argv?.[1]?.endsWith('match.ts')) {
   // eslint-disable-next-line no-console
   console.log(selfCheck());
 }
+
+// ---------------------------------------------------------------------------
+// Presentation helpers for match cards (reference: Strong / Good / Worth Reviewing)
+// ---------------------------------------------------------------------------
+export type MatchTier = 'strong' | 'good' | 'review' | 'new';
+
+export function matchTier(result: MatchResult | null): MatchTier {
+  if (!result || result.comparable === 0) return 'new';
+  if (result.summary === 'strong') return 'strong';
+  if (result.summary === 'good') return 'good';
+  return 'review';
+}
+
+export const MATCH_TIER_LABEL: Record<MatchTier, string> = {
+  strong: 'Strong match',
+  good: 'Good match',
+  review: 'Worth reviewing',
+  new: 'New',
+};
+
+export interface EvidenceLine {
+  heading: 'Career' | 'Work' | 'Accessibility';
+  text: string;
+  tone: 'ok' | 'info' | 'warn';
+}
+
+/** Three compact lines: Career · Work · Accessibility. Never a badge wall. */
+export function evidenceLines(result: MatchResult, job: Job): EvidenceLine[] {
+  const out: EvidenceLine[] = [];
+  const skills = result.skillsMatched.length + result.strengthsMatched.length;
+  const skillsTotal = job.skills.length + job.strengthsUsed.length;
+  if (skillsTotal > 0) out.push({ heading: 'Career', text: skills > 0 ? `${skills} of ${skillsTotal} skills and strengths align` : 'Skills not yet compared — add skills to your profile', tone: skills > 0 ? 'ok' : 'info' });
+  const prefsOk = result.confirmed.filter((r) => r.kind === 'preference');
+  const prefsOff = [...result.different, ...result.review].filter((r) => r.kind === 'preference');
+  if (prefsOk.length || prefsOff.length) {
+    const bits = prefsOk.slice(0, 2).map((r) => r.label);
+    if (prefsOff.length) bits.push(`${prefsOff[0].label} differs`);
+    out.push({ heading: 'Work', text: bits.join(' · '), tone: prefsOff.length && !prefsOk.length ? 'warn' : 'ok' });
+  }
+  const needsOk = result.confirmed.filter((r) => r.kind === 'need').length;
+  const needsUnknown = result.needsConfirmation.filter((r) => r.kind === 'need').length;
+  const needsOff = [...result.different, ...result.review].filter((r) => r.kind === 'need').length;
+  if (needsOk || needsUnknown || needsOff) {
+    const bits = [];
+    if (needsOk) bits.push(`${needsOk} requirement${needsOk === 1 ? '' : 's'} confirmed`);
+    if (needsOff) bits.push(`${needsOff} differ${needsOff === 1 ? 's' : ''}`);
+    if (needsUnknown) bits.push(`${needsUnknown} unknown`);
+    out.push({ heading: 'Accessibility', text: bits.join(' · '), tone: needsOff ? 'warn' : needsUnknown && !needsOk ? 'info' : 'ok' });
+  }
+  return out;
+}

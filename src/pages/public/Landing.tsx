@@ -1,81 +1,112 @@
 import { BlockStack, Button, InlineGrid, InlineStack, Text } from '@shopify/polaris';
-import { JobCard } from '../../components/JobCard';
+import { CheckCircleIcon } from '@shopify/polaris-icons';
+import { EmployerLogo } from '../../components/EmployerLogo';
+import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL, salary } from '../../lib/format';
 import { useTitle } from '../../lib/useTitle';
 import { useStore } from '../../state/store';
 
-/** The About page. Short. The product is the jobs page; this just says why. */
+const POINTS = [
+  { t: 'Jobs that fit more than your résumé', b: 'Matches use your skills, goals, how you like to work and what you need at work — together.' },
+  { t: 'Know what the workplace is actually like', b: 'Hours, noise, meetings, instructions, and what the employer provides, with the source, before you apply.' },
+  { t: 'Apply with help from Openwork', b: 'Your profile and résumé are reused. The employer’s few questions are all that is left to write.' },
+  { t: 'You control what employers see', b: 'Private, matching only, or okay to share. Nothing reaches an employer that you did not mark shareable.' },
+  { t: 'Built for different ways of working', b: 'Screen readers, keyboards, captions, plain language, simplified view. Accessibility is the intelligence underneath, not a badge on top.' },
+];
+
+/** Landing per the master spec: promise, product preview, five short points, employer CTA. */
 export function Landing() {
-  useTitle('About');
+  useTitle('');
   const { state } = useStore();
-  const featured = state.jobs.filter((j) => j.status === 'published').slice(0, 3);
+  const demo = state.jobs.find((j) => j.id === 'j-dataquality') ?? state.jobs[0];
+  const emp = demo && state.employers.find((e) => e.id === demo.employerId);
 
   return (
     <>
       <section className="ow-hero">
         <div className="ow-container">
-          <BlockStack gap="600">
-            <BlockStack gap="400">
-              <h1>Jobs that tell you how they actually work.</h1>
-              <Text as="p" variant="bodyLg" tone="subdued">
-                Hours, noise, meetings, how instructions arrive, what the employer provides. All of it on the job page, before you apply. Then an application that takes a few minutes.
+          <div className="ow-hero__grid">
+            <BlockStack gap="600">
+              <BlockStack gap="400">
+                <h1>Find the right job. Apply with confidence.</h1>
+                <Text as="p" variant="bodyLg" tone="subdued">
+                  Openwork finds jobs that match your skills, goals, work preferences and accessibility needs — then helps you apply.
+                </Text>
+              </BlockStack>
+              <InlineStack gap="300">
+                <Button url="/signup" variant="primary" size="large">
+                  Find my matches
+                </Button>
+                <Button url="/jobs" size="large">
+                  Search jobs
+                </Button>
+              </InlineStack>
+              <Text as="p" variant="bodySm" tone="subdued">
+                Free for job seekers. Hiring? <a href="/for-employers">For employers</a>.
               </Text>
             </BlockStack>
-            <InlineStack gap="300">
-              <Button url="/jobs" variant="primary" size="large">
-                Browse jobs
-              </Button>
-              <Button url="/for-employers" size="large">
-                I’m hiring
-              </Button>
-            </InlineStack>
-          </BlockStack>
+
+            {demo && emp && (
+              <div className="ow-sheet ow-hero-match">
+                <BlockStack gap="400">
+                  <InlineStack gap="300" blockAlign="center" wrap={false}>
+                    <EmployerLogo employer={emp} size={56} />
+                    <BlockStack gap="050">
+                      <Text as="p" variant="headingLg">
+                        {demo.title}
+                      </Text>
+                      <Text as="p" tone="subdued">
+                        {emp.name} • {WORK_LOCATION_LABEL[demo.environment.workLocation ?? ''] ?? demo.location} • {salary(demo)} • {EMPLOYMENT_TYPE_LABEL[demo.employmentType]}
+                      </Text>
+                    </BlockStack>
+                  </InlineStack>
+                  <span className="ow-matchlabel ow-matchlabel--strong">Strong match</span>
+                  <div className="ow-why">
+                    {['9 of 11 skills align', 'Remote matches your preference', 'Flexible schedule', 'Interview accommodations available', 'Accessibility information confirmed'].map((t) => (
+                      <div key={t} className="ow-why__row ow-why__row--ok">
+                        <CheckCircleIcon />
+                        <span>{t}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <InlineStack>
+                    <Button url={`/jobs/${demo.id}`}>Why this matches</Button>
+                  </InlineStack>
+                </BlockStack>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
       <section className="ow-container">
         <BlockStack gap="800">
-          <InlineGrid columns={{ xs: 1, md: 3 }} gap="600">
-            <BlockStack gap="200">
-              <Text as="h2" variant="headingLg">
-                Built for every access need
-              </Text>
-              <Text as="p" variant="bodyLg">
-                Blind, Deaf, wheelchair users, people with learning disabilities, people bringing a job coach, people starting their first job. Never a diagnosis. Just what you need at work.
-              </Text>
-            </BlockStack>
-            <BlockStack gap="200">
-              <Text as="h2" variant="headingLg">
-                Employers say what they provide
-              </Text>
-              <Text as="p" variant="bodyLg">
-                Step-free entrance, captions, interpreters, written instructions, a mentor. If an employer has not said, you see that too, and you can ask.
-              </Text>
-            </BlockStack>
-            <BlockStack gap="200">
-              <Text as="h2" variant="headingLg">
-                Apply like a person
-              </Text>
-              <Text as="p" variant="bodyLg">
-                Your résumé if you have one, a couple of friendly questions, and a place to ask for what you need at the interview. No forms about forms.
-              </Text>
-            </BlockStack>
+          <InlineGrid columns={{ xs: 1, md: 2, lg: 3 }} gap="600">
+            {POINTS.map((pt) => (
+              <BlockStack key={pt.t} gap="200">
+                <Text as="h2" variant="headingLg">
+                  {pt.t}
+                </Text>
+                <Text as="p" tone="subdued">
+                  {pt.b}
+                </Text>
+              </BlockStack>
+            ))}
+            <div className="ow-sheet ow-aside__card">
+              <BlockStack gap="300">
+                <Text as="h2" variant="headingLg">
+                  Hiring?
+                </Text>
+                <Text as="p" tone="subdued">
+                  Describe how the job actually works and what your workplace provides. Candidates who fit find you.
+                </Text>
+                <InlineStack>
+                  <Button url="/for-employers" variant="primary">
+                    For employers
+                  </Button>
+                </InlineStack>
+              </BlockStack>
+            </div>
           </InlineGrid>
-
-          <BlockStack gap="400">
-            <InlineStack align="space-between" blockAlign="baseline">
-              <Text as="h2" variant="headingXl">
-                Recently posted
-              </Text>
-              <Button url="/jobs" variant="plain">
-                See all jobs
-              </Button>
-            </InlineStack>
-            <InlineGrid columns={{ xs: 1, md: 3 }} gap="400">
-              {featured.map((j) => (
-                <JobCard key={j.id} job={j} />
-              ))}
-            </InlineGrid>
-          </BlockStack>
         </BlockStack>
       </section>
     </>

@@ -17,7 +17,7 @@ import { NotFound } from './pages/public/NotFound';
 
 import { Onboarding } from './pages/candidate/Onboarding';
 import { Discover } from './pages/candidate/Discover';
-import { CandidateHome } from './pages/candidate/CandidateHome';
+import { Matches } from './pages/candidate/Matches';
 import { Saved } from './pages/candidate/Saved';
 import { Applications } from './pages/candidate/Applications';
 import { ApplicationDetail } from './pages/candidate/ApplicationDetail';
@@ -63,12 +63,18 @@ function ScrollToTop() {
 const C = ({ children }: { children: ReactNode }) => <RequireRole role="candidate">{children}</RequireRole>;
 const E = ({ children }: { children: ReactNode }) => <RequireRole role="employer">{children}</RequireRole>;
 
+/** Signed-in candidates land on Matches; everyone else sees the landing page. */
+function Front() {
+  const { state } = useStore();
+  return state.role === 'candidate' ? <Navigate to="/matches" replace /> : <Landing />;
+}
+
 export function App() {
   return (
     <Shell>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Jobs />} />
+        <Route path="/" element={<Front />} />
         <Route path="/about" element={<Landing />} />
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/jobs/:id" element={<JobDetailPage />} />
@@ -82,7 +88,8 @@ export function App() {
         <Route path="/employers/signup" element={<EmployerSignUp />} />
 
         <Route path="/onboarding" element={<C><Onboarding /></C>} />
-        <Route path="/home" element={<C><CandidateHome /></C>} />
+        <Route path="/matches" element={<C><Matches /></C>} />
+        <Route path="/home" element={<Navigate to="/matches" replace />} />
         <Route path="/saved" element={<C><Saved /></C>} />
         <Route path="/applications" element={<C><Applications /></C>} />
         <Route path="/applications/:id" element={<C><ApplicationDetail /></C>} />

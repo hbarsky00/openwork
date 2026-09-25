@@ -1,7 +1,8 @@
 import { ActionList, Button, InlineStack, Popover, Text } from '@shopify/polaris';
-import { MenuIcon } from '@shopify/polaris-icons';
+import { MenuIcon, PersonIcon, SearchIcon, SendIcon, StarIcon, MagicIcon } from '@shopify/polaris-icons';
 import { useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { initials } from '../lib/format';
 import { useStore } from '../state/store';
 import { DisplaySettings } from './DisplaySettings';
 
@@ -9,25 +10,28 @@ interface NavItem {
   label: string;
   to: string;
   end?: boolean;
+  icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
+  short?: string;
 }
 
 const PUBLIC_NAV: NavItem[] = [
-  { label: 'Jobs', to: '/jobs' },
-  { label: 'How it works', to: '/how-it-works' },
+  { label: 'Search jobs', to: '/jobs' },
   { label: 'For employers', to: '/for-employers' },
 ];
 
 const CANDIDATE_NAV: NavItem[] = [
-  { label: 'Jobs', to: '/jobs' },
-  { label: 'Saved', to: '/saved' },
-  { label: 'Applications', to: '/applications' },
-  { label: 'Profile', to: '/passport' },
+  { label: 'Matches', to: '/matches', icon: MagicIcon },
+  { label: 'Search jobs', to: '/jobs', icon: SearchIcon, short: 'Search' },
+  { label: 'Applications', to: '/applications', icon: SendIcon, short: 'Applied' },
+  { label: 'Saved', to: '/saved', icon: StarIcon },
+  { label: 'Profile', to: '/passport', icon: PersonIcon },
 ];
 
 const EMPLOYER_NAV: NavItem[] = [
   { label: 'Overview', to: '/employer', end: true },
   { label: 'Jobs', to: '/employer/jobs' },
   { label: 'Candidates', to: '/employer/candidates' },
+  { label: 'Interviews', to: '/employer/interviews' },
   { label: 'Workplace accessibility', to: '/employer/accessibility' },
   { label: 'Company', to: '/employer/company' },
 ];
@@ -39,26 +43,32 @@ export function Shell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
 
   const nav = state.role === 'candidate' ? CANDIDATE_NAV : state.role === 'employer' ? EMPLOYER_NAV : state.role === 'admin' ? ADMIN_NAV : PUBLIC_NAV;
-  const home = state.role === 'employer' ? '/employer' : state.role === 'admin' ? '/admin' : '/jobs';
+  const home = state.role === 'candidate' ? '/matches' : state.role === 'employer' ? '/employer' : state.role === 'admin' ? '/admin' : '/';
 
   const signOut = () => {
     dispatch({ type: 'signOut' });
     navigate('/');
   };
 
-  const accountName =
-    state.role === 'candidate' ? state.candidate?.name : state.role === 'employer' ? state.employers.find((e) => e.id === state.employerId)?.name : state.role === 'admin' ? 'Trust team' : null;
+  const accountName = state.role === 'candidate' ? state.candidate?.name ?? '' : state.role === 'employer' ? state.employers.find((e) => e.id === state.employerId)?.name ?? '' : state.role === 'admin' ? 'Trust team' : '';
 
   const menuItems = [
     ...nav.map((n) => ({ content: n.label, onAction: () => { setMenuOpen(false); navigate(n.to); } })),
     ...(state.role === 'visitor'
       ? [
-          { content: 'Sign in', onAction: () => { setMenuOpen(false); navigate('/signin'); } },
-          { content: 'Create account', onAction: () => { setMenuOpen(false); navigate('/signup'); } },
+          { content: 'Log in', onAction: () => { setMenuOpen(false); navigate('/signin'); } },
+          { content: 'Sign up', onAction: () => { setMenuOpen(false); navigate('/signup'); } },
         ]
       : [{ content: 'Sign out', onAction: () => { setMenuOpen(false); signOut(); } }]),
+  ];
+  const accountItems = [
+    ...(state.role === 'candidate' ? [{ content: 'Profile', onAction: () => { setAccountOpen(false); navigate('/passport'); } }, { content: 'Privacy & sharing', onAction: () => { setAccountOpen(false); navigate('/passport/sharing'); } }] : []),
+    ...(state.role === 'employer' ? [{ content: 'Company', onAction: () => { setAccountOpen(false); navigate('/employer/company'); } }] : []),
+    { content: 'Support', onAction: () => { setAccountOpen(false); navigate('/support'); } },
+    { content: 'Sign out', onAction: () => { setAccountOpen(false); signOut(); } },
   ];
 
   return (
@@ -85,20 +95,33 @@ export function Shell({ children }: { children: ReactNode }) {
             <DisplaySettings />
             {state.role === 'visitor' ? (
               <span className="ow-desktop-only">
-                <Button url={`/signin?next=${encodeURIComponent(location.pathname)}`}>Sign in</Button>
+                <InlineStack gap="200">
+                  <Button url={`/signin?next=${encodeURIComponent(location.pathname)}`} variant="tertiary">
+                    Log in
+                  </Button>
+                  <Button url="/signup" variant="primary">
+                    Sign up
+                  </Button>
+                </InlineStack>
               </span>
             ) : (
               <span className="ow-desktop-only">
-                <InlineStack gap="300" blockAlign="center">
-                  <span className="ow-header__name">
-                    <Text as="span" variant="bodySm" tone="subdued">
+                <Popover
+                  active={accountOpen}
+                  onClose={() => setAccountOpen(false)}
+                  activator={
+                    <button type="button" className="ow-avatar" onClick={() => setAccountOpen((o) => !o)} aria-expanded={accountOpen} aria-haspopup="menu" aria-label={`Account: ${accountName}`}>
+                      {initials(accountName || 'O')}
+                    </button>
+                  }
+                >
+                  <div style={{ padding: '12px 16px 4px' }}>
+                    <Text as="p" variant="bodySm" fontWeight="semibold">
                       {accountName}
                     </Text>
-                  </span>
-                  <Button onClick={signOut} variant="tertiary">
-                    Sign out
-                  </Button>
-                </InlineStack>
+                  </div>
+                  <ActionList items={accountItems} />
+                </Popover>
               </span>
             )}
             <span className="ow-header__menu">
@@ -110,20 +133,33 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main id="main" className="ow-main" tabIndex={-1}>
+      <main id="main" className={`ow-main${state.role === 'candidate' ? ' ow-main--bottomnav' : ''}`} tabIndex={-1}>
         {children}
       </main>
+
+      {state.role === 'candidate' && (
+        <nav className="ow-bottomnav" aria-label="Primary (mobile)">
+          {CANDIDATE_NAV.map((n) => {
+            const I = n.icon!;
+            return (
+              <NavLink key={n.to} to={n.to} end={n.end}>
+                <I aria-hidden="true" />
+                <span>{n.short ?? n.label}</span>
+              </NavLink>
+            );
+          })}
+        </nav>
+      )}
 
       <footer className="ow-footer">
         <div className="ow-container">
           <InlineStack align="space-between" blockAlign="center" wrap gap="400">
             <Text as="p" variant="bodySm" tone="subdued">
-              Openwork · Jobs that tell you how they actually work.
+              Openwork · Find the right job. Apply with confidence.
             </Text>
             <InlineStack gap="400">
               <Link to="/about">About</Link>
               <Link to="/how-it-works">How it works</Link>
-              <Link to="/discover">Start from your strengths</Link>
               <Link to="/support">Support</Link>
               <Link to="/for-employers">For employers</Link>
             </InlineStack>

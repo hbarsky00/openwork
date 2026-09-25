@@ -41,7 +41,7 @@ export function QuickApplyButton({ job, size = 'large', fullWidth = false }: { j
     );
   return (
     <Button variant="primary" size={size} fullWidth={fullWidth} onClick={() => navigate(`/jobs/${job.id}/apply`)}>
-      Apply now
+      Prepare application
     </Button>
   );
 }
@@ -49,6 +49,6 @@ export function QuickApplyButton({ job, size = 'large', fullWidth = false }: { j
 /** One line under the button saying what the tap does. */
 export function applyHint(job: Job, signedIn: boolean): string {
   const q = job.screeningQuestions.length;
-  if (q === 0) return signedIn ? 'One tap. Your profile and résumé go as they are.' : 'Résumé only. A minute.';
-  return `Résumé + ${q} required question${q === 1 ? '' : 's'}. A few minutes.`;
+  if (q === 0) return signedIn ? 'One tap. Your profile and résumé go as they are.' : 'Profile and résumé. A minute.';
+  return `Profile, résumé and ${q} employer question${q === 1 ? '' : 's'}. A few minutes.`;
 }
