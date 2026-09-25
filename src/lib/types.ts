@@ -119,6 +119,8 @@ export interface Employer {
   accessibility: Record<string, Evidence>;
   /** Named person or address for accommodation requests. */
   accessibilityContact: string;
+  /** How fast this employer usually gets back to applicants. */
+  typicalResponse: string;
   logoColor: string;
 }
 
@@ -161,6 +163,8 @@ export interface Job {
   hiringOptions: HiringOptionId[];
   /** 1–3 short questions the employer asks at apply time. */
   screeningQuestions: string[];
+  /** Applicants before any on this platform; live count adds to it. */
+  baseApplicants: number;
   hiringStages: HiringStage[];
   decisionTimeframe: string;
   accommodationRoute: string;

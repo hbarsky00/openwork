@@ -35,13 +35,15 @@ export interface AppState {
   recentlyViewed: string[];
   reports: Report[];
   lastSearch: string;
+  /** Saved searches the candidate wants to hear about (query strings). */
+  alerts: string[];
   displayMode: DisplayMode;
 }
 
 // v2: access-needs data model. Older v1 state is intentionally dropped.
-const STORAGE_KEY = 'openwork.v6';
+const STORAGE_KEY = 'openwork.v7';
 
-const SCHEMA = 6;
+const SCHEMA = 7;
 
 const initialState: AppState = {
   schema: SCHEMA,
@@ -68,6 +70,7 @@ const initialState: AppState = {
   recentlyViewed: [],
   reports: [],
   lastSearch: '',
+  alerts: [],
   displayMode: 'standard',
 };
 
@@ -91,6 +94,7 @@ type Action =
   | { type: 'reportJob'; report: Report }
   | { type: 'resolveReport'; reportId: string }
   | { type: 'setLastSearch'; value: string }
+  | { type: 'toggleAlert'; query: string }
   | { type: 'setDisplayMode'; mode: DisplayMode }
   | { type: 'reset' };
 
@@ -168,6 +172,8 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, reports: state.reports.map((r) => (r.id === action.reportId ? { ...r, resolved: true } : r)) };
     case 'setLastSearch':
       return { ...state, lastSearch: action.value };
+    case 'toggleAlert':
+      return { ...state, alerts: state.alerts.includes(action.query) ? state.alerts.filter((a) => a !== action.query) : [...state.alerts, action.query] };
     case 'setDisplayMode':
       return { ...state, displayMode: action.mode };
     case 'reset':
@@ -186,7 +192,7 @@ function load(): AppState {
     // Seed data is code, not storage: take jobs/employers from the seed and
     // merge in anything the user created or edited. A persisted copy that
     // predates the current shape is never trusted over the seed.
-    const wellFormed = (j: Job) => !!j.accessibility && !!j.physical && !!j.communication && Array.isArray(j.technology) && Array.isArray(j.hiringOptions) && Array.isArray(j.screeningQuestions);
+    const wellFormed = (j: Job) => !!j.accessibility && !!j.physical && !!j.communication && Array.isArray(j.technology) && Array.isArray(j.hiringOptions) && Array.isArray(j.screeningQuestions) && typeof j.baseApplicants === 'number';
     const seedJobIds = new Set(JOBS.map((j) => j.id));
     const userJobs = (parsed.jobs ?? []).filter((j) => !seedJobIds.has(j.id) && wellFormed(j));
     const editedSeed = (parsed.jobs ?? []).filter((j) => seedJobIds.has(j.id) && wellFormed(j));
@@ -254,4 +260,11 @@ export function useJobEmployer(job: Job | null) {
   const { state } = useStore();
   if (!job) return null;
   return state.employers.find((e) => e.id === job.employerId) ?? null;
+}
+
+/** Seed applicants plus everyone who applied here. */
+export function useApplicantCount(jobId: string): number {
+  const { state } = useStore();
+  const job = state.jobs.find((j) => j.id === jobId);
+  return (job?.baseApplicants ?? 0) + state.applications.filter((a) => a.jobId === jobId).length;
 }

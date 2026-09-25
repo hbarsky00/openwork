@@ -7,7 +7,7 @@ import { SaveButton } from '../../components/SaveButton';
 import { VerificationBadge } from '../../components/VerificationBadge';
 import { salary } from '../../lib/format';
 import { useTitle } from '../../lib/useTitle';
-import { useJob, useMyApplication, useStore } from '../../state/store';
+import { useApplicantCount, useJob, useMyApplication, useStore } from '../../state/store';
 import { NotFound } from './NotFound';
 
 /**
@@ -20,6 +20,7 @@ export function JobDetailPage() {
   const job = useJob(id);
   const { state } = useStore();
   const myApplication = useMyApplication(id ?? '');
+  const applicants = useApplicantCount(id ?? '');
   useTitle(job ? job.title : 'Job not found');
   if (!job) return <NotFound message="This job may have been removed or the link is wrong." />;
   const employer = state.employers.find((e) => e.id === job.employerId);
@@ -48,6 +49,9 @@ export function JobDetailPage() {
                 </Text>
                 <Text as="p" tone="subdued">
                   {job.location}
+                </Text>
+                <Text as="p" variant="bodySm" tone="subdued">
+                  {applicants} applicant{applicants === 1 ? '' : 's'} · {employer.name} replies {employer.typicalResponse}
                 </Text>
               </BlockStack>
               <QuickApplyButton job={job} fullWidth />

@@ -6,7 +6,7 @@ import { DIMENSIONS, optionOf } from '../lib/dimensions';
 import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL, postedAgo, salary } from '../lib/format';
 import { matchJob } from '../lib/match';
 import type { Job } from '../lib/types';
-import { useMyApplication, useStore } from '../state/store';
+import { useApplicantCount, useMyApplication, useStore } from '../state/store';
 import { AskEmployerButton } from './AskEmployerModal';
 import { EmployerLogo } from './EmployerLogo';
 import { QuickApplyButton, applyHint } from './QuickApplyButton';
@@ -34,6 +34,7 @@ export function JobDetailContent({ job, pane = false }: Props) {
   const hasPassport = !!profile && (Object.keys(profile.accessNeeds).length > 0 || Object.keys(profile.workPreferences).length > 0);
   const result = profile && employer && hasPassport ? matchJob(profile, job, employer) : null;
   const myApplication = useMyApplication(job.id);
+  const applicants = useApplicantCount(job.id);
 
   useEffect(() => {
     if (state.role === 'candidate') dispatch({ type: 'viewJob', jobId: job.id });
@@ -85,7 +86,7 @@ export function JobDetailContent({ job, pane = false }: Props) {
               <Badge>{EMPLOYMENT_TYPE_LABEL[job.employmentType]}</Badge>
               <VerificationBadge level={employer.verification} />
               <Text as="span" variant="bodySm" tone="subdued">
-                {postedAgo(job.postedOn)}
+                {postedAgo(job.postedOn)} · {applicants} applicant{applicants === 1 ? '' : 's'} · replies {employer.typicalResponse}
               </Text>
             </InlineStack>
           </BlockStack>

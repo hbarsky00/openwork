@@ -38,6 +38,7 @@ export const EMPLOYERS: Employer[] = [
       assistiveListening: E('notAvailable', '2026-03-02', 'Meeting rooms do not have hearing loops. Live captions are our standard.'),
     },
     accessibilityContact: 'Dana Whitcomb, HR — people@meridianhp.example',
+    typicalResponse: 'within a week',
     logoColor: '#1F5C4C',
   },
   {
@@ -67,6 +68,7 @@ export const EMPLOYERS: Employer[] = [
       liveTranscription: E('confirmed', '2026-08-20', 'Zoom captions.'),
     },
     accessibilityContact: 'Dana Reyes, office manager — hr@kesslervance.example',
+    typicalResponse: 'within two weeks',
     logoColor: '#3B4A7A',
   },
   {
@@ -101,6 +103,7 @@ export const EMPLOYERS: Employer[] = [
       ergonomicEquipment: E('confirmed', '2026-05-14'),
     },
     accessibilityContact: 'accessibility@northline.example',
+    typicalResponse: 'within 3 business days',
     logoColor: '#8A4B1E',
   },
   {
@@ -135,6 +138,7 @@ export const EMPLOYERS: Employer[] = [
       ergonomicEquipment: E('confirmed', '2026-07-01'),
     },
     accessibilityContact: 'hr@hartwelllibrary.example',
+    typicalResponse: 'within two weeks',
     logoColor: '#5C3A6E',
   },
   {
@@ -162,6 +166,7 @@ export const EMPLOYERS: Employer[] = [
       vocRehab: E('contact', '2026-07-19', 'Not yet, but open to it.'),
     },
     accessibilityContact: 'Accessibility request form (operations) — access@corvid.example',
+    typicalResponse: 'within 5 business days',
     logoColor: '#2C3E50',
   },
   {
@@ -186,6 +191,7 @@ export const EMPLOYERS: Employer[] = [
       transportSupport: E('confirmed', '2026-09-01', 'Crews leave from the yard in company trucks.'),
     },
     accessibilityContact: 'Operations manager — ops@brightwater.example',
+    typicalResponse: 'within a week',
     logoColor: '#4A6B2A',
   },
   {
@@ -215,6 +221,7 @@ export const EMPLOYERS: Employer[] = [
       ergonomicEquipment: E('confirmed', '2026-08-15'),
     },
     accessibilityContact: 'people@fenmore.example',
+    typicalResponse: 'within two weeks',
     logoColor: '#7A3B3B',
   },
   {
@@ -248,6 +255,7 @@ export const EMPLOYERS: Employer[] = [
       nonvisualNavigation: E('contact', '2026-05-28', 'Fixed layout with painted walkways; no tactile signage yet.'),
     },
     accessibilityContact: 'HR — hr@dalgren.example, or any shift lead',
+    typicalResponse: 'within 3 business days',
     logoColor: '#34495E',
   },
 ];

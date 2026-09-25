@@ -1,10 +1,11 @@
-import { Badge, BlockStack, Card, EmptyState, InlineStack, Text } from '@shopify/polaris';
+import { Badge, BlockStack, Button, Card, EmptyState, InlineStack, Text } from '@shopify/polaris';
 import { Link } from 'react-router-dom';
 import { EmployerLogo } from '../../components/EmployerLogo';
 import { APPLICATION_STATUS_LABEL, longDate } from '../../lib/format';
 import type { ApplicationStatus } from '../../lib/types';
 import { useTitle } from '../../lib/useTitle';
 import { useStore } from '../../state/store';
+import { describeSearch } from '../../lib/search';
 
 const TONE: Record<ApplicationStatus, 'info' | 'attention' | 'success' | 'critical' | undefined> = {
   applied: 'info',
@@ -19,7 +20,7 @@ const TONE: Record<ApplicationStatus, 'info' | 'attention' | 'success' | 'critic
 
 export function Applications() {
   useTitle('Applications');
-  const { state } = useStore();
+  const { state, dispatch } = useStore();
   const mine = state.applications
     .filter((a) => a.candidateId === state.candidate!.id)
     .sort((a, b) => b.submittedOn.localeCompare(a.submittedOn));
@@ -89,6 +90,35 @@ export function Applications() {
             )}
           </>
         )}
+
+        <BlockStack gap="300">
+          <Text as="h2" variant="headingLg">
+            Job alerts
+          </Text>
+          {state.alerts.length === 0 ? (
+            <Text as="p" tone="subdued">
+              None yet. On the jobs page, set your search and press “Alert me about jobs like this”.
+            </Text>
+          ) : (
+            state.alerts.map((q) => (
+              <Card key={q}>
+                <InlineStack align="space-between" blockAlign="center" wrap gap="300">
+                  <BlockStack gap="050">
+                    <Text as="p" fontWeight="semibold">
+                      {describeSearch(new URLSearchParams(q))}
+                    </Text>
+                    <Text as="p" variant="bodySm" tone="subdued">
+                      We email you when a new job matches. <Link to={`/jobs?${q}`}>See matches</Link>
+                    </Text>
+                  </BlockStack>
+                  <Button variant="plain" onClick={() => dispatch({ type: 'toggleAlert', query: q })}>
+                    Turn off
+                  </Button>
+                </InlineStack>
+              </Card>
+            ))
+          )}
+        </BlockStack>
       </BlockStack>
     </div>
   );

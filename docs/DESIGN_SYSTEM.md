@@ -57,6 +57,14 @@ Signed-in candidates with stated needs see a tinted `FitPanel` on every card:
 differs (the cross is the useful line). Green tint for strong/good, yellow for
 mixed, grey otherwise. The job page shows the fuller "For you" block.
 
+## 0c. Trust signals and alerts
+
+Every card, pane and sidebar shows `posted · N applicants · replies within X`.
+Applicants = the job's seed baseline plus live applications; reply time is
+`Employer.typicalResponse`. The jobs page has one "Alert me about jobs like
+this" toggle for the current search (visitors are sent to sign in); alerts
+are listed and switched off on the Applications page.
+
 ## 1c. Page system (three templates, nothing else)
 
 1. **Rail + list + pane** (`.ow-jobs` → `.ow-rail`, `.ow-split`): jobs.

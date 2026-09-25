@@ -1,3 +1,5 @@
+import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL } from './format';
+import { ACCESS_FEATURE_BY_ID } from './access';
 import type { HiringOptionId } from './access';
 import { jobSatisfies, matchJob, rankScore } from './match';
 import type { CandidateProfile, Employer, Job } from './types';
@@ -173,4 +175,17 @@ export const VAGUE_PHRASES: { pattern: RegExp; ask: string; options: string[] }[
 
 export function findVaguePhrases(text: string) {
   return VAGUE_PHRASES.filter((v) => v.pattern.test(text));
+}
+
+/** "scheduling in Columbus · Remote · Captions" — what an alert is for. */
+export function describeSearch(sp: URLSearchParams): string {
+  const p = readSearch(sp);
+  const bits: string[] = [];
+  if (p.q) bits.push(`“${p.q}”`);
+  if (p.where) bits.push(`in ${p.where}`);
+  if (p.arrangement.length) bits.push(...p.arrangement.map((a) => WORK_LOCATION_LABEL[a] ?? a));
+  if (p.type.length) bits.push(...p.type.map((t) => (EMPLOYMENT_TYPE_LABEL as Record<string, string>)[t] ?? t));
+  if (p.minPay) bits.push(`$${p.minPay}+/hr`);
+  if (p.need.length) bits.push(...p.need.map((n) => ACCESS_FEATURE_BY_ID[n]?.label ?? n));
+  return bits.length ? bits.join(' · ') : 'All jobs';
 }

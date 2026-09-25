@@ -1,7 +1,7 @@
 import { BlockStack, Box, Button, EmptySearchResult, InlineStack, Select, Text, TextField } from '@shopify/polaris';
-import { SearchIcon } from '@shopify/polaris-icons';
+import { NotificationFilledIcon, NotificationIcon, SearchIcon } from '@shopify/polaris-icons';
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { JobCard } from '../../components/JobCard';
 import { JobDetailContent } from '../../components/JobDetailContent';
 import { NeedsSearch } from '../../components/NeedsSearch';
@@ -21,6 +21,7 @@ export function Jobs() {
   useTitle('Jobs');
   const { state, dispatch } = useStore();
   const [sp, setSp] = useSearchParams();
+  const navigate = useNavigate();
   const params = useMemo(() => readSearch(sp), [sp]);
   const [draftQ, setDraftQ] = useState(params.q);
   const [draftWhere, setDraftWhere] = useState(params.where);
@@ -47,6 +48,7 @@ export function Jobs() {
   const setOne = (key: 'arrangement' | 'type') => (v: string) => update({ [key]: v === ANY ? [] : [v] } as Partial<SearchParams>);
 
   const selected = results.find((j) => j.id === selectedId) ?? null;
+  const alertOn = state.alerts.includes(sp.toString());
   const hasPassport = !!profile && (Object.keys(profile.accessNeeds).length > 0 || Object.keys(profile.workPreferences).length > 0);
 
   return (
@@ -86,13 +88,22 @@ export function Jobs() {
               </div>
             </form>
 
-            <Text as="h1" variant="headingLg">
-              <span role="status" aria-live="polite">
-                {results.length} job{results.length === 1 ? '' : 's'}
-              </span>
-              {params.q ? ` for “${params.q}”` : ''}
-              {params.where ? ` in ${params.where}` : ''}
-            </Text>
+            <InlineStack align="space-between" blockAlign="center" wrap gap="300">
+              <Text as="h1" variant="headingLg">
+                <span role="status" aria-live="polite">
+                  {results.length} job{results.length === 1 ? '' : 's'}
+                </span>
+                {params.q ? ` for “${params.q}”` : ''}
+                {params.where ? ` in ${params.where}` : ''}
+              </Text>
+              <Button
+                icon={alertOn ? NotificationFilledIcon : NotificationIcon}
+                pressed={alertOn}
+                onClick={() => (state.role === 'candidate' ? dispatch({ type: 'toggleAlert', query: sp.toString() }) : navigate(`/signin?next=${encodeURIComponent(`/jobs?${sp.toString()}`)}&reason=alert`))}
+              >
+                {alertOn ? 'Alert on' : 'Alert me about jobs like this'}
+              </Button>
+            </InlineStack>
 
             {results.length === 0 ? (
               <Box paddingBlock="1200">

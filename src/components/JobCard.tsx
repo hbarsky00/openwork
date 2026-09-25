@@ -5,7 +5,7 @@ import { ACCESS_FEATURE_BY_ID } from '../lib/access';
 import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL, postedAgo, salary } from '../lib/format';
 import { matchJob } from '../lib/match';
 import type { Employer, Job } from '../lib/types';
-import { useIsSaved, useStore } from '../state/store';
+import { useApplicantCount, useIsSaved, useStore } from '../state/store';
 import { EmployerLogo } from './EmployerLogo';
 import { FitPanel } from './FitPanel';
 import { QuickApplyButton } from './QuickApplyButton';
@@ -41,6 +41,7 @@ export function JobCard({ job, onSelect, selected = false, strengthsUsed }: Prop
   const { state, dispatch } = useStore();
   const navigate = useNavigate();
   const saved = useIsSaved(job.id);
+  const applicants = useApplicantCount(job.id);
   const employer = state.employers.find((e) => e.id === job.employerId);
   const profile = state.role === 'candidate' ? state.candidate : null;
   const hasInputs = !!profile && (Object.keys(profile.workPreferences).length > 0 || Object.keys(profile.accessNeeds).length > 0);
@@ -120,7 +121,8 @@ export function JobCard({ job, onSelect, selected = false, strengthsUsed }: Prop
 
         <InlineStack align="space-between" blockAlign="center" gap="200" wrap>
           <Text as="span" variant="bodySm" tone="subdued">
-            {postedAgo(job.postedOn)}
+            {postedAgo(job.postedOn)} · {applicants} applicant{applicants === 1 ? '' : 's'}
+            {employer ? ` · replies ${employer.typicalResponse}` : ''}
           </Text>
           {profile && quick && !applied && (
             <span onClick={(e) => e.stopPropagation()}>

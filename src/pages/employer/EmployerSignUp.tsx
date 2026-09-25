@@ -20,7 +20,7 @@ export function EmployerSignUp() {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) e.email = 'Enter a work email address.';
     setErrors(e);
     if (Object.keys(e).length) return;
-    const employer: Employer = { id: `emp-${Date.now().toString(36)}`, name: name.trim(), industry: '', size: '', headquarters: '', about: '', mission: '', benefits: [], verification: 'listed', verifiedOn: null, workplace: { communicationNorms: '', onboarding: '', accommodationRoute: `Email ${email.trim()}. No reason needed.`, managerCadence: '' }, accessibility: {}, accessibilityContact: email.trim(), logoColor: '#4A5568' };
+    const employer: Employer = { id: `emp-${Date.now().toString(36)}`, name: name.trim(), industry: '', size: '', headquarters: '', about: '', mission: '', benefits: [], verification: 'listed', verifiedOn: null, workplace: { communicationNorms: '', onboarding: '', accommodationRoute: `Email ${email.trim()}. No reason needed.`, managerCadence: '' }, accessibility: {}, accessibilityContact: email.trim(), typicalResponse: 'within two weeks', logoColor: '#4A5568' };
     dispatch({ type: 'createEmployer', employer });
     navigate('/employer');
   };
