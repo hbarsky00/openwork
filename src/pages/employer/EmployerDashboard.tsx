@@ -39,7 +39,7 @@ export function EmployerDashboard() {
   const setupLeft = setup.filter((s) => !s.done);
 
   return (
-    <Page title={employer.name} subtitle="Overview" titleMetadata={<VerificationBadge level={employer.verification} />} primaryAction={{ content: 'Create job', url: '/employer/jobs/new' }}>
+    <Page fullWidth title={employer.name} subtitle="Overview" titleMetadata={<VerificationBadge level={employer.verification} />} primaryAction={{ content: 'Create job', url: '/employer/jobs/new' }}>
       <Layout>
         <Layout.Section>
           <BlockStack gap="500">

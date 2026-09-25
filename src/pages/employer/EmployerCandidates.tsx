@@ -21,7 +21,7 @@ export function EmployerCandidates() {
     .sort((a, b) => b.submittedOn.localeCompare(a.submittedOn));
 
   return (
-    <Page title="Candidates" subtitle={`${apps.length} application${apps.length === 1 ? '' : 's'}`}>
+    <Page fullWidth title="Candidates" subtitle={`${apps.length} application${apps.length === 1 ? '' : 's'}`}>
       <InlineGrid columns={{ xs: 1, md: ['oneThird', 'twoThirds'] }} gap="500">
         <Card>
           <BlockStack gap="400">

@@ -1615,3 +1615,38 @@ ol.Polaris-BlockStack {
 .ow-stages { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--p-space-300); }
 .ow-stages li { display: grid; grid-template-columns: 28px 1fr; gap: var(--p-space-300); align-items: start; }
 .ow-stages__n { width: 28px; height: 28px; border-radius: 50%; background: var(--ow-accent-tint); color: var(--ow-accent); font-weight: 700; font-size: 13px; display: grid; place-items: center; }
+
+@media (max-width: 1023px) { .ow-aside--desktop { display: none; } }
+
+/* EMPLOYER SIDE: Polaris Page picks up the same page system. */
+.Polaris-Page {
+  max-width: var(--ow-container);
+  margin: 0 auto;
+  padding-inline: var(--p-space-400);
+}
+@media (min-width: 768px) {
+  .Polaris-Page {
+    padding-inline: var(--p-space-600);
+  }
+}
+.Polaris-Page-Header {
+  padding-block: var(--p-space-500) var(--p-space-400);
+}
+.Polaris-Page-Header .Polaris-Header-Title {
+  font-size: var(--p-text-heading-2xl-font-size);
+  line-height: var(--p-text-heading-2xl-font-line-height);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.Polaris-ShadowBevel,
+.Polaris-Card {
+  border-radius: var(--ow-radius-lg);
+}
+.Polaris-Box[class*='Polaris-Box'] > .Polaris-ShadowBevel::before {
+  box-shadow: 0 0 0 1px var(--ow-line);
+}
+/* Sheet-like cards everywhere: hairline instead of Polaris bevel shadow. */
+.Polaris-ShadowBevel::before {
+  box-shadow: 0 0 0 1px var(--ow-line), 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+  border-radius: var(--ow-radius-lg);
+}

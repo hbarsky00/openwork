@@ -68,7 +68,7 @@ export function CandidateDetail() {
   };
 
   return (
-    <Page title={cand.name} subtitle={`${job.title} · ${APPLICATION_STATUS_LABEL[app.status]}`} backAction={{ content: 'Candidates', url: '/employer/candidates' }}>
+    <Page fullWidth title={cand.name} subtitle={`${job.title} · ${APPLICATION_STATUS_LABEL[app.status]}`} backAction={{ content: 'Candidates', url: '/employer/candidates' }}>
       <BlockStack gap="500">
         <Banner tone="info" title="You are seeing only what this candidate chose to share">
           <p>Openwork does not pass on private needs, preferences, or anything not confirmed on the candidate’s sharing review. There is no diagnosis anywhere on Openwork. Judge the application on the work.</p>

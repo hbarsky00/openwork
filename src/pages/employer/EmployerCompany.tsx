@@ -22,7 +22,7 @@ export function EmployerCompany() {
   };
 
   return (
-    <Page title="Company and workplace" titleMetadata={<VerificationBadge level={employer.verification} />} primaryAction={{ content: 'Save', onAction: save }} secondaryActions={[{ content: 'Workplace accessibility', url: '/employer/accessibility' }, { content: 'View public profile', url: `/companies/${employer.id}` }]}>
+    <Page fullWidth title="Company and workplace" titleMetadata={<VerificationBadge level={employer.verification} />} primaryAction={{ content: 'Save', onAction: save }} secondaryActions={[{ content: 'Workplace accessibility', url: '/employer/accessibility' }, { content: 'View public profile', url: `/companies/${employer.id}` }]}>
       <Layout>
         <Layout.Section>
           <BlockStack gap="500">

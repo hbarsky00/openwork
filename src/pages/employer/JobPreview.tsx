@@ -15,7 +15,7 @@ export function JobPreview() {
   if (!job) return <NotFound message="That job is not in your account." />;
 
   return (
-    <Page title="Candidate view" subtitle={job.title} backAction={{ content: 'Jobs', url: '/employer/jobs' }} primaryAction={{ content: 'Edit', url: `/employer/jobs/${job.id}/edit` }}>
+    <Page fullWidth title="Candidate view" subtitle={job.title} backAction={{ content: 'Jobs', url: '/employer/jobs' }} primaryAction={{ content: 'Edit', url: `/employer/jobs/${job.id}/edit` }}>
       <BlockStack gap="500">
         {sp.get('published') && (
           <Banner tone="success" title="Published">

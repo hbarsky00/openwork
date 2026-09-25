@@ -41,6 +41,33 @@ at `/about`.
   components (`LegacyCard`, `LegacyStack`, `LegacyTabs`, `LegacyFilters`) are
   not used anywhere.
 
+## 00. Reference (2026-09-25 reboot)
+
+The product now follows `OPENWORK_UXPILOT_MASTER_FULL_FLOW.md` and the twelve
+UX Pilot screens (kept locally in `public/_ref/`, not committed). Polaris stays
+as the component foundation; the reference supplies the look and the IA.
+
+- **Look:** Inter; page `#f8fafc`; surfaces white with `#e2e8f0` hairlines,
+  12–16px radius, faint shadow; ink `#0f172a`, meta `#475569`; primary buttons
+  ink, links/active nav/focus `#2563eb`; tint panels `#eff6ff`; success
+  `#10b981`, warning `#f59e0b`. Pills are 6px-radius slate-100 tags.
+- **IA:** Matches is home. Candidate nav Matches · Search jobs · Applications ·
+  Saved · Profile; bottom nav on phone. Employer nav Overview · Jobs ·
+  Candidates · Interviews · Workplace accessibility · Company · Settings.
+- **Cards:** logo · title · company • location · pills · match label
+  (Strong / Good / Worth reviewing) · Career / Work / Accessibility lines ·
+  Prepare application / View job / Save.
+- **Job detail:** header sheet → Accessibility verification (source + date on
+  every item) → For you → What you'll actually do → Skills (Required /
+  Preferred) → How this job works → Hiring process; sidebar Prepare
+  application, Your match bars, About the company.
+- **Prepare application:** readiness panel → About you → Résumé → employer
+  questions (required) → interview needs → What the employer will see → Submit.
+- **Onboarding:** six steps with STEP X OF 6 progress and option cards; ends
+  on "Your matches are ready."
+- **Applications:** tabs · list · sticky detail panel (Status timeline / What
+  they received / Job details).
+
 ## 0a. Apply control (one button, learned once)
 
 `QuickApplyButton` is the only apply control. Signed in and the job has no

@@ -108,7 +108,7 @@ export function Applications() {
                         </Text>
                         <InlineStack gap="200" blockAlign="center" wrap>
                           <Text as="span" variant="bodySm" tone="subdued">
-                            Applied {postedAgo(a.submittedOn)}
+                            Applied {postedAgo(a.submittedOn).replace(/^Posted /, '')}
                           </Text>
                           <Badge tone={TONE[a.status]} toneAndProgressLabelOverride={APPLICATION_STATUS_LABEL[a.status]}>
                             {APPLICATION_STATUS_LABEL[a.status]}
@@ -122,7 +122,7 @@ export function Applications() {
             </BlockStack>
 
             {selected && (
-              <aside className="ow-aside ow-split__detail" style={{ display: undefined }}>
+              <aside className="ow-aside ow-aside--desktop">
                 <div className="ow-sheet ow-aside__card">
                   <BlockStack gap="400">
                     <InlineStack gap="300" blockAlign="center" wrap={false}>

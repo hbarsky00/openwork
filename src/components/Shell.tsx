@@ -34,6 +34,7 @@ const EMPLOYER_NAV: NavItem[] = [
   { label: 'Interviews', to: '/employer/interviews' },
   { label: 'Workplace accessibility', to: '/employer/accessibility' },
   { label: 'Company', to: '/employer/company' },
+  { label: 'Settings', to: '/employer/settings' },
 ];
 
 const ADMIN_NAV: NavItem[] = [{ label: 'Moderation', to: '/admin', end: true }];
@@ -66,7 +67,7 @@ export function Shell({ children }: { children: ReactNode }) {
   ];
   const accountItems = [
     ...(state.role === 'candidate' ? [{ content: 'Profile', onAction: () => { setAccountOpen(false); navigate('/passport'); } }, { content: 'Privacy & sharing', onAction: () => { setAccountOpen(false); navigate('/passport/sharing'); } }] : []),
-    ...(state.role === 'employer' ? [{ content: 'Company', onAction: () => { setAccountOpen(false); navigate('/employer/company'); } }] : []),
+    ...(state.role === 'employer' ? [{ content: 'Settings', onAction: () => { setAccountOpen(false); navigate('/employer/settings'); } }] : []),
     { content: 'Support', onAction: () => { setAccountOpen(false); navigate('/support'); } },
     { content: 'Sign out', onAction: () => { setAccountOpen(false); signOut(); } },
   ];
