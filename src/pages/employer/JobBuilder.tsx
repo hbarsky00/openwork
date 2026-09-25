@@ -275,7 +275,7 @@ export function JobBuilder() {
                 <InlineStack>
                   <Button onClick={() => set({ hiringStages: [...job.hiringStages, { id: `s${Date.now()}`, name: '', description: '', duration: '' }] })}>Add a step</Button>
                 </InlineStack>
-                <TextField label="Questions to ask when someone applies (one per line, up to 3)" value={job.screeningQuestions.join('\n')} onChange={(v) => set({ screeningQuestions: v.split('\n').slice(0, 3) })} onBlur={() => set({ screeningQuestions: lines(job.screeningQuestions.join('\n')).slice(0, 3) })} multiline={3} autoComplete="off" helpText="Keep them friendly — why they want to work with you, what they would enjoy. Skills are on the résumé; this is where you hear the person." />
+                <TextField label="Questions candidates must answer to apply (optional, one per line, up to 3)" value={job.screeningQuestions.join('\n')} onChange={(v) => set({ screeningQuestions: v.split('\n').slice(0, 3) })} onBlur={() => set({ screeningQuestions: lines(job.screeningQuestions.join('\n')).slice(0, 3) })} multiline={3} autoComplete="off" helpText="Leave empty and people apply with just a résumé. If you add questions, nobody can send without answering them — so keep them friendly: why they want to work with you, what they would enjoy." />
                 <TextField label="Overall timeframe" value={job.decisionTimeframe} onChange={(v) => set({ decisionTimeframe: v })} autoComplete="off" placeholder="About three weeks from application to decision." />
               </BlockStack>
             </Card>

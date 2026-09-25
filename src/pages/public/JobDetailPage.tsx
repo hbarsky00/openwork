@@ -67,7 +67,7 @@ export function JobDetailPage() {
               <SaveButton jobId={job.id} size="large" fullWidth />
               {!myApplication && !closed && (
                 <Text as="p" variant="bodySm" tone="subdued" alignment="center">
-                  Résumé{q ? ` + ${q} short question${q === 1 ? '' : 's'}` : ''}. A few minutes.
+                  Résumé{q ? ` + ${q} required question${q === 1 ? '' : 's'}` : ''}. A few minutes.
                 </Text>
               )}
             </BlockStack>

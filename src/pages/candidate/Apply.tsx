@@ -1,4 +1,4 @@
-import { Banner, BlockStack, Button, DropZone, Form, FormLayout, Icon, InlineStack, List, Text, TextField } from '@shopify/polaris';
+import { Badge, Banner, BlockStack, Button, DropZone, Form, FormLayout, Icon, InlineStack, List, Text, TextField } from '@shopify/polaris';
 import { CheckCircleIcon } from '@shopify/polaris-icons';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -83,6 +83,7 @@ export function Apply() {
       </div>
     );
 
+  const missing = job.screeningQuestions.filter((_, i) => !answers[i]?.trim()).length;
   const sharedNeeds = p ? Object.entries(p.accessNeeds).filter(([, n]) => n.visibility === 'shared').map(([k]) => k) : [];
 
   const submit = () => {
@@ -90,7 +91,7 @@ export function Apply() {
     if (!name.trim()) e.name = 'Enter your name.';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) e.email = 'Enter an email address like name@example.com.';
     job.screeningQuestions.forEach((_, i) => {
-      if (!answers[i]?.trim()) e[`q${i}`] = 'A couple of sentences is plenty.';
+      if (!answers[i]?.trim()) e[`q${i}`] = `${employer.name} needs an answer here. A couple of sentences is plenty.`;
     });
     setErrors(e);
     if (Object.keys(e).length) {
@@ -249,7 +250,7 @@ export function Apply() {
                 ) : (
                   <div className="ow-drop">
                     <DropZone accept=".pdf,.doc,.docx,.txt" type="file" allowMultiple={false} onDrop={(_d, accepted) => accepted[0] && setResume(accepted[0].name)}>
-                      <DropZone.FileUpload actionTitle="Upload your résumé" actionHint="PDF or Word. No résumé? Skip this — your answers below count." />
+                      <DropZone.FileUpload actionTitle="Upload your résumé" actionHint={`PDF or Word. No résumé? Skip this — ${job.screeningQuestions.length ? 'your answers below count' : 'your name and email are enough to start'}.`} />
                     </DropZone>
                   </div>
                 )}
@@ -258,11 +259,14 @@ export function Apply() {
               {job.screeningQuestions.length > 0 && (
                 <BlockStack gap="400">
                   <BlockStack gap="100">
-                    <Text as="h2" variant="headingLg">
-                      {employer.name} would like to know
-                    </Text>
+                    <InlineStack gap="200" blockAlign="center" wrap>
+                      <Text as="h2" variant="headingLg">
+                        Questions from {employer.name}
+                      </Text>
+                      <Badge tone="attention">Required</Badge>
+                    </InlineStack>
                     <Text as="p" tone="subdued">
-                      In your own words. A couple of sentences is plenty.
+                      {employer.name} needs these answered before you can send. In your own words — a couple of sentences is plenty.
                     </Text>
                   </BlockStack>
                   {job.screeningQuestions.map((q, i) => (
@@ -287,8 +291,12 @@ export function Apply() {
 
           <div className="ow-actionbar">
             <InlineStack align="space-between" blockAlign="center" wrap gap="300">
-              <Text as="p" variant="bodySm" tone="subdued">
-                {p ? `${employer.name} sees only what is on this page.` : 'Sending creates your free account so you can track the reply.'}
+              <Text as="p" variant="bodySm" tone={missing > 0 ? 'critical' : 'subdued'}>
+                {missing > 0
+                  ? `Answer ${missing} question${missing === 1 ? '' : 's'} from ${employer.name} to send.`
+                  : p
+                    ? `${employer.name} sees only what is on this page.`
+                    : 'Sending creates your free account so you can track the reply.'}
               </Text>
               <Button submit variant="primary" size="large">
                 Send application

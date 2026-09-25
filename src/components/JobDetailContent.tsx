@@ -113,7 +113,7 @@ export function JobDetailContent({ job, pane = false }: Props) {
           <SaveButton jobId={job.id} size="large" />
           {!myApplication && !closed && (
             <Text as="span" variant="bodySm" tone="subdued">
-              Résumé{job.screeningQuestions.length ? ` + ${job.screeningQuestions.length} short question${job.screeningQuestions.length === 1 ? '' : 's'}` : ''}. A few minutes.
+              Résumé{job.screeningQuestions.length ? ` + ${job.screeningQuestions.length} required question${job.screeningQuestions.length === 1 ? '' : 's'}` : ''}. A few minutes.
             </Text>
           )}
         </div>

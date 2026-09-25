@@ -171,7 +171,7 @@ export const JOBS: Job[] = [
     environmentNotes: { schedulePredictability: 'Monday to Friday, 9:00 to 5:00 all year. Not affected by tax season.' },
     accessibility: { accessibleDocuments: E('confirmed', '2026-08-20'), highContrast: E('confirmed', '2026-08-20'), breakFlexibility: E('confirmed', '2026-08-20') },
     hiringOptions: ['questionsInAdvance', 'workSample', 'structuredInterview', 'quietWorkspaceAvailable', 'flexibleHours', 'videoInterview'],
-    screeningQuestions: ["What made you apply?"],
+    screeningQuestions: [],
     hiringStages: [
       { id: 's1', name: 'Application review', description: 'We read every application.', duration: 'within 1 week' },
       { id: 's2', name: 'Work sample', description: 'Match 15 sample invoices to purchase orders.', duration: 'about 45 minutes' },
