@@ -79,10 +79,8 @@ export function JobDetailContent({ job, pane = false }: Props) {
             <Text as="p" variant="bodyMd">
               <Link to={`/companies/${employer.id}`}>{employer.name}</Link> · {job.location}
             </Text>
-            <InlineStack gap="200" blockAlign="center" wrap>
-              <Text as="span" variant="headingMd">
-                {salary(job)}
-              </Text>
+            <InlineStack gap="150" blockAlign="center" wrap>
+              <Badge>{salary(job)}</Badge>
               <Badge>{WORK_LOCATION_LABEL[job.environment.workLocation ?? ''] ?? 'On-site'}</Badge>
               <Badge>{EMPLOYMENT_TYPE_LABEL[job.employmentType]}</Badge>
               <VerificationBadge level={employer.verification} />

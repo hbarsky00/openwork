@@ -16,25 +16,25 @@
  */
 :root {
   /* Type — 18px base, generous line-height */
-  --p-text-body-xs-font-size: var(--p-font-size-350);        /* 14 */
+  --p-text-body-xs-font-size: var(--p-font-size-325);        /* 13 */
   --p-text-body-xs-font-line-height: var(--p-font-line-height-500);
-  --p-text-body-sm-font-size: var(--p-font-size-400);        /* 16 */
-  --p-text-body-sm-font-line-height: var(--p-font-line-height-600);
-  --p-text-body-md-font-size: var(--p-font-size-450);        /* 18 */
-  --p-text-body-md-font-line-height: var(--p-font-line-height-700);
-  --p-text-body-lg-font-size: var(--p-font-size-500);        /* 20 */
-  --p-text-body-lg-font-line-height: var(--p-font-line-height-800);
-  --p-text-heading-xs-font-size: var(--p-font-size-400);     /* 16 */
-  --p-text-heading-xs-font-line-height: var(--p-font-line-height-600);
-  --p-text-heading-sm-font-size: var(--p-font-size-450);     /* 18 */
-  --p-text-heading-sm-font-line-height: var(--p-font-line-height-700);
-  --p-text-heading-md-font-size: var(--p-font-size-500);     /* 20 */
+  --p-text-body-sm-font-size: var(--p-font-size-350);        /* 14 */
+  --p-text-body-sm-font-line-height: var(--p-font-line-height-500);
+  --p-text-body-md-font-size: var(--p-font-size-400);        /* 16 */
+  --p-text-body-md-font-line-height: var(--p-font-line-height-600);
+  --p-text-body-lg-font-size: var(--p-font-size-450);        /* 18 */
+  --p-text-body-lg-font-line-height: var(--p-font-line-height-700);
+  --p-text-heading-xs-font-size: var(--p-font-size-350);     /* 14 */
+  --p-text-heading-xs-font-line-height: var(--p-font-line-height-500);
+  --p-text-heading-sm-font-size: var(--p-font-size-400);     /* 16 */
+  --p-text-heading-sm-font-line-height: var(--p-font-line-height-600);
+  --p-text-heading-md-font-size: var(--p-font-size-450);     /* 18 */
   --p-text-heading-md-font-line-height: var(--p-font-line-height-700);
-  --p-text-heading-lg-font-size: var(--p-font-size-600);     /* 24 */
-  --p-text-heading-lg-font-line-height: var(--p-font-line-height-800);
-  --p-text-heading-xl-font-size: var(--p-font-size-750);     /* 30 */
-  --p-text-heading-xl-font-line-height: var(--p-font-line-height-1000);
-  --p-text-heading-2xl-font-size: var(--p-font-size-900);    /* 36 */
+  --p-text-heading-lg-font-size: var(--p-font-size-500);     /* 20 */
+  --p-text-heading-lg-font-line-height: var(--p-font-line-height-700);
+  --p-text-heading-xl-font-size: var(--p-font-size-600);     /* 24 */
+  --p-text-heading-xl-font-line-height: var(--p-font-line-height-800);
+  --p-text-heading-2xl-font-size: var(--p-font-size-750);    /* 30 */
   --p-text-heading-2xl-font-line-height: var(--p-font-line-height-1000);
   --p-text-heading-3xl-font-size: var(--p-font-size-1000);   /* 40 */
   --p-text-heading-3xl-font-line-height: var(--p-font-line-height-1200);
@@ -48,12 +48,12 @@
      semantic tokens below. */
   --p-font-family-sans: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --ow-ink: #1c1a17;
-  --ow-ink-2: #56524b;
-  --ow-paper: #f7f5f0;
-  --ow-paper-2: #eeebe4;
-  --ow-line: #e1dcd1;
-  --ow-line-2: #c9c2b4;
+  --ow-ink: #1a1a1a;
+  --ow-ink-2: #5e5e5e;
+  --ow-paper: #ffffff;
+  --ow-paper-2: #f3f3f3;
+  --ow-line: #e6e6e6;
+  --ow-line-2: #d4d4d4;
   --ow-accent: #4c2e8a;
   --ow-accent-hover: #3c2370;
   --ow-accent-active: #2c1955;
@@ -63,9 +63,9 @@
   --p-color-text: var(--ow-ink);
   --p-color-text-secondary: var(--ow-ink-2);
   --p-color-bg: var(--ow-paper);
-  --p-color-bg-surface-secondary: var(--ow-paper);
+  --p-color-bg-surface-secondary: #f7f7f7;
   --p-color-bg-surface-tertiary: var(--ow-paper-2);
-  --p-color-bg-surface-hover: var(--ow-paper);
+  --p-color-bg-surface-hover: #fafafa;
   --p-color-bg-fill-secondary: var(--ow-paper-2);
   --p-color-bg-fill-tertiary: var(--ow-line);
   --p-color-border: var(--ow-line-2);
@@ -126,7 +126,7 @@
   --p-shadow-bevel-100: 0 0 0 var(--p-border-width-025) var(--p-color-border-secondary);
 
   /* Product semantic sizes */
-  --ow-control-height: var(--p-height-1200);      /* 48px — buttons, inputs, selects */
+  --ow-control-height: 2.75rem;                   /* 44px — buttons, inputs, selects */
   --ow-control-height-slim: var(--p-height-1000); /* 40px — secondary buttons on cards */
   --ow-choice-size: var(--p-space-600);           /* 24px — checkbox / radio */
   --ow-display-size: 2.75rem;                     /* landing headline, mobile */
@@ -137,19 +137,29 @@
     --p-space-card-padding: var(--p-space-500);
   }
 }
-/* Success badges: solid green with white text instead of Polaris's neon mint. */
+/* Pills. Pay, type, location, status: small, rounded, quiet grey — the way
+   every job site renders metadata. Tones are soft tints, never neon or solid. */
+.Polaris-Badge {
+  border-radius: var(--p-border-radius-full);
+  font-size: var(--p-text-body-sm-font-size);
+  line-height: var(--p-text-body-sm-font-line-height);
+  --pc-badge-vertical-padding: var(--p-space-100);
+  --pc-badge-horizontal-padding: var(--p-space-300);
+}
+.Polaris-Badge:not([class*='Polaris-Badge--tone']) {
+  background-color: var(--ow-paper-2);
+  color: var(--p-color-text);
+}
 .Polaris-Badge.Polaris-Badge--toneSuccess {
-  background-color: var(--p-color-bg-fill-success);
-  color: var(--p-color-text-success-on-bg-fill);
+  background-color: #e3f5ea;
+  color: #0f5132;
 }
 .Polaris-Badge.Polaris-Badge--toneSuccess svg {
-  fill: var(--p-color-text-success-on-bg-fill);
+  fill: #0f5132;
 }
-/* Neutral badges: quiet outline, not a gray blob. */
-.Polaris-Badge:not([class*='Polaris-Badge--tone']) {
-  background-color: var(--p-color-bg-surface);
-  box-shadow: inset 0 0 0 var(--p-border-width-025) var(--p-color-border);
-  color: var(--p-color-text);
+.Polaris-Badge.Polaris-Badge--toneInfo {
+  background-color: var(--ow-accent-tint);
+  color: var(--ow-accent);
 }
 
 /* Controls — 48px tall, 18px labels, 24px choice boxes */
@@ -321,7 +331,6 @@ body {
   z-index: var(--p-z-index-6);
   background: var(--p-color-bg-surface);
   border-block-end: var(--p-border-width-025) solid var(--p-color-border-secondary);
-  box-shadow: var(--p-shadow-100);
 }
 .ow-header__inner {
   max-width: var(--ow-container);
@@ -576,7 +585,7 @@ body {
 /* Job card ----------------------------------------------------------------- */
 .ow-jobcard {
   display: block;
-  border: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  border: var(--p-border-width-025) solid var(--ow-line-2);
   border-radius: var(--p-border-radius-300);
   background: var(--p-color-bg-surface);
   padding: var(--p-space-400);
@@ -585,8 +594,8 @@ body {
   transition: border-color var(--p-motion-duration-100) var(--p-motion-ease), box-shadow var(--p-motion-duration-100) var(--p-motion-ease);
 }
 .ow-jobcard:hover {
-  border-color: var(--p-color-border-emphasis);
-  box-shadow: var(--p-shadow-100);
+  border-color: var(--ow-ink-2);
+  box-shadow: var(--p-shadow-200);
 }
 .ow-jobcard:focus-visible {
   outline: var(--p-border-width-050) solid var(--p-color-border-focus);
@@ -594,11 +603,10 @@ body {
 }
 .ow-jobcard--selected,
 .ow-jobcard--selected:hover {
-  /* Keeps its surface: a tinted card with a solid accent edge, never the
-     page-ground gray that made the selected job disappear. */
-  border-color: var(--p-color-border-emphasis);
-  box-shadow: inset var(--p-space-100) 0 0 var(--p-color-border-emphasis);
-  background: var(--p-color-bg-surface-emphasis);
+  /* White card, accent edge. The selected job is the one with the border. */
+  border-color: var(--ow-accent);
+  box-shadow: inset 0 0 0 1px var(--ow-accent);
+  background: var(--p-color-bg-surface);
 }
 .ow-jobcard__signals {
   display: flex;
@@ -606,7 +614,7 @@ body {
   gap: var(--p-space-100) var(--p-space-400);
 }
 .ow-jobcard__title {
-  font-size: var(--p-font-size-500);
+  font-size: var(--p-font-size-450);
   font-weight: var(--p-font-weight-semibold);
   line-height: var(--p-font-line-height-700);
   color: var(--p-color-text);
@@ -1001,20 +1009,34 @@ ol.Polaris-BlockStack {
   border-radius: var(--p-border-radius-100);
 }
 
-/* Search bar: what / where / button on one line; stacks on phone. */
+/* Search bar: one joined bar, button inside, radius-full, soft shadow. */
 .ow-searchbar {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--p-space-200);
-  padding: var(--p-space-300);
+  padding: var(--p-space-200);
   background: var(--p-color-bg-surface);
-  border: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  border: var(--p-border-width-025) solid var(--ow-line-2);
   border-radius: var(--p-border-radius-300);
+  box-shadow: var(--p-shadow-100);
 }
 @media (min-width: 768px) {
   .ow-searchbar {
-    grid-template-columns: 1.6fr 1fr auto;
-    align-items: start;
+    grid-template-columns: 1.4fr 1fr auto;
+    align-items: center;
+    border-radius: var(--p-border-radius-full);
+    padding: var(--p-space-100) var(--p-space-100) var(--p-space-100) var(--p-space-300);
+  }
+  .ow-searchbar .Polaris-TextField__Backdrop {
+    border-color: transparent;
+    box-shadow: none;
+    background: transparent;
+  }
+  .ow-searchbar__what {
+    border-inline-end: var(--p-border-width-025) solid var(--ow-line);
+  }
+  .ow-searchbar .Polaris-Button {
+    border-radius: var(--p-border-radius-full);
   }
 }
 .ow-filterrow {
@@ -1173,8 +1195,8 @@ ol.Polaris-BlockStack {
 /* Sheet: one white page for a whole form. Not a stack of admin cards. */
 .ow-sheet {
   background: var(--p-color-bg-surface);
-  border: var(--p-border-width-025) solid var(--p-color-border-secondary);
-  border-radius: var(--p-border-radius-400);
+  border: var(--p-border-width-025) solid var(--ow-line-2);
+  border-radius: var(--p-border-radius-300);
   padding: var(--p-space-500);
 }
 @media (min-width: 768px) {
@@ -1320,7 +1342,7 @@ ol.Polaris-BlockStack {
   gap: var(--p-space-300);
   padding: var(--p-space-400);
   background: var(--p-color-bg-surface);
-  border: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  border: var(--p-border-width-025) solid var(--ow-line-2);
   border-radius: var(--p-border-radius-300);
 }
 /* Phone: the rail is one row you swipe. Nothing hidden behind a button. */
@@ -1358,4 +1380,15 @@ ol.Polaris-BlockStack {
   .ow-split {
     grid-template-columns: minmax(300px, 0.9fr) minmax(0, 1.1fr);
   }
+}
+
+/* Sections inside a job: hairline between them, like every job page. */
+.ow-jobdetail > .Polaris-BlockStack > * + * {
+  border-block-start: var(--p-border-width-025) solid var(--ow-line);
+  padding-block-start: var(--p-space-400);
+}
+.ow-jobdetail > .Polaris-BlockStack > .ow-applybar,
+.ow-jobdetail > .Polaris-BlockStack > .ow-applybar + *,
+.ow-jobdetail > .Polaris-BlockStack > .ow-foryou {
+  border-block-start: 0;
 }

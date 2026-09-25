@@ -68,8 +68,15 @@ identity layer in `product.css` `:root`, all through Polaris semantic tokens:
 - **Type:** Atkinson Hyperlegible Next (Braille Institute's low-vision face),
   loaded from Google Fonts, system-ui fallback. Headings 700–800, tight
   tracking.
-- **Ground:** warm paper `#f5f2ec`, surfaces white, lines `#e1dcd1`, ink
-  `#1c1a17`, secondary ink `#56524b`.
+- **Ground:** white, like Indeed and LinkedIn. Grey `#f7f7f7` only as a
+  backdrop for subdued boxes. Hairlines `#e6e6e6` / `#d4d4d4`, ink `#1a1a1a`,
+  meta grey `#5e5e5e`. Benchmarked 2026-09-25 against Indeed, LinkedIn Jobs
+  and AIApply: white, dense, soft surfaces, metadata as small grey pills.
+- **Density:** body 16, meta 14, card title 18, pane title 24, page title 30.
+  Controls 44px. One step larger than the benchmarks, never two.
+- **Pills:** pay, arrangement, type and status are rounded `Badge`s on
+  `#f3f3f3`; success is a soft green tint, info is the accent tint.
+- **Search:** one joined radius-full bar with the button inside.
 - **One accent:** deep violet `#4c2e8a` (hover `#3c2370`, tint `#efeaf7`).
   Mapped to every brand *and* emphasis token, so primary buttons, links,
   focus rings, active nav and the selected job card are one colour. Not
