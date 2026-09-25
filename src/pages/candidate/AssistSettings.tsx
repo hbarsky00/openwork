@@ -1,5 +1,6 @@
-import { Badge, BlockStack, Button, Checkbox, FormLayout, InlineGrid, InlineStack, Select, Text, TextField } from '@shopify/polaris';
+import { Badge, BlockStack, Button, FormLayout, InlineGrid, InlineStack, Select, Text, TextField } from '@shopify/polaris';
 import { OptionCard, OptionCards } from '../../components/OptionCard';
+import { OptionGrid } from '../../components/OptionGrid';
 import { autoApplyBlocker } from '../../lib/apply';
 import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL } from '../../lib/format';
 import type { CandidateProfile, EmploymentType } from '../../lib/types';
@@ -24,7 +25,6 @@ export function AssistSettings() {
   const patch = (x: Partial<CandidateProfile>) => dispatch({ type: 'updateCandidate', patch: x });
   const rules = p.autoRules;
   const setRule = (x: Partial<typeof rules>) => patch({ autoRules: { ...rules, ...x } });
-  const toggle = <T,>(list: T[], v: T) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
   const published = state.jobs.filter((j) => j.status === 'published');
   const eligible = published.filter((j) => {
@@ -95,26 +95,8 @@ export function AssistSettings() {
                       <Select label="Applications per day, at most" options={['1', '2', '3', '5', '10'].map((v) => ({ label: v, value: v }))} value={String(rules.dailyCap)} onChange={(v) => setRule({ dailyCap: Number(v) })} />
                     </FormLayout.Group>
                   </FormLayout>
-                  <BlockStack gap="200">
-                    <Text as="h3" variant="headingSm">
-                      Work arrangement (leave all off for any)
-                    </Text>
-                    <InlineStack gap="300" wrap>
-                      {Object.entries(WORK_LOCATION_LABEL).map(([v, l]) => (
-                        <Checkbox key={v} label={l} checked={rules.arrangements.includes(v)} onChange={() => setRule({ arrangements: toggle(rules.arrangements, v) })} />
-                      ))}
-                    </InlineStack>
-                  </BlockStack>
-                  <BlockStack gap="200">
-                    <Text as="h3" variant="headingSm">
-                      Employment type (leave all off for any)
-                    </Text>
-                    <InlineStack gap="300" wrap>
-                      {Object.entries(EMPLOYMENT_TYPE_LABEL).map(([v, l]) => (
-                        <Checkbox key={v} label={l} checked={rules.types.includes(v as EmploymentType)} onChange={() => setRule({ types: toggle(rules.types, v as EmploymentType) })} />
-                      ))}
-                    </InlineStack>
-                  </BlockStack>
+                  <OptionGrid label="Work arrangement" helpText="Leave all off for any." multiple options={Object.entries(WORK_LOCATION_LABEL).map(([value, label]) => ({ value, label }))} value={rules.arrangements} onChange={(v) => setRule({ arrangements: v as string[] })} />
+                  <OptionGrid label="Employment type" helpText="Leave all off for any." multiple options={Object.entries(EMPLOYMENT_TYPE_LABEL).map(([value, label]) => ({ value, label }))} value={rules.types} onChange={(v) => setRule({ types: v as EmploymentType[] })} />
                 </BlockStack>
 
                 <div className="ow-why" role="status">

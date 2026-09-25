@@ -1,8 +1,8 @@
-import { Banner, BlockStack, Button, Card, Checkbox, FormLayout, InlineGrid, InlineStack, Select, Text, TextField } from '@shopify/polaris';
+import { Banner, BlockStack, Button, Checkbox, FormLayout, InlineGrid, InlineStack, Select, Text, TextField } from '@shopify/polaris';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChoiceChips } from '../../components/ChoiceChips';
 import { OptionCard, OptionCards } from '../../components/OptionCard';
+import { OptionGrid } from '../../components/OptionGrid';
 import { CompletenessMeter } from '../../components/CompletenessMeter';
 import { EvidencePicker } from '../../components/EvidencePicker';
 import { COMMUNICATION_REQUIREMENTS, COMM_LEVEL_LABEL, HIRING_OPTIONS, JOB_EVIDENCE_FEATURES, JOB_FAMILIES, PHYSICAL_REQUIREMENTS, STRENGTHS, TECH_A11Y, type CommLevel, type Evidence, type EvidenceStatus, type HiringOptionId } from '../../lib/access';
@@ -170,22 +170,22 @@ export function JobBuilder() {
         {step === 1 && (
           <BlockStack gap="400">
             <InlineGrid columns={{ xs: 1, lg: 2 }} gap="400">
-              <Card>
+              <div>
                 <FormLayout>
                   <TextField label="A typical day, as steps" value={job.tasks.join('\n')} onChange={(v) => set({ tasks: v.split('\n') })} onBlur={() => set({ tasks: lines(job.tasks.join('\n')) })} multiline={8} autoComplete="off" error={errors.tasks} requiredIndicator helpText="One step per line, in order. “Open the next request in the queue”, not “Support the team”." />
                 </FormLayout>
-              </Card>
-              <Card>
+              </div>
+              <div>
                 <FormLayout>
                   <TextField label="Essential — needed to do the job" value={job.essentialRequirements.join('\n')} onChange={(v) => set({ essentialRequirements: v.split('\n') })} onBlur={() => set({ essentialRequirements: lines(job.essentialRequirements.join('\n')) })} multiline={4} autoComplete="off" error={errors.essential} requiredIndicator helpText="One per line. What the person must be able to do — not who they must be." />
                   <TextField label="Helpful but not required" value={job.preferredRequirements.join('\n')} onChange={(v) => set({ preferredRequirements: v.split('\n') })} onBlur={() => set({ preferredRequirements: lines(job.preferredRequirements.join('\n')) })} multiline={2} autoComplete="off" />
                   <TextField label="Skills and tools (comma separated)" value={job.skills.join(', ')} onChange={(v) => set({ skills: v.split(',').map((s) => s.trimStart()) })} onBlur={() => set({ skills: job.skills.map((s) => s.trim()).filter(Boolean) })} autoComplete="off" />
                 </FormLayout>
-              </Card>
+              </div>
             </InlineGrid>
-            <Card>
-              <ChoiceChips label="Strengths this job uses" multiple options={STRENGTHS.map((s) => ({ value: s, label: s }))} value={job.strengthsUsed} onChange={(v) => set({ strengthsUsed: v as string[] })} helpText="Candidates without a work history are matched on these. Pick the ones that genuinely matter." />
-            </Card>
+            <div>
+              <OptionGrid label="Strengths this job uses" multiple options={STRENGTHS.map((s) => ({ value: s, label: s }))} value={job.strengthsUsed} onChange={(v) => set({ strengthsUsed: v as string[] })} helpText="Candidates without a work history are matched on these. Pick the ones that genuinely matter." />
+            </div>
             {vague.length > 0 && (
               <Banner tone="warning" title="Some phrases are hard for candidates to act on">
                 <BlockStack gap="200">
@@ -205,29 +205,29 @@ export function JobBuilder() {
             <Banner tone="info">
               <p>What the job genuinely requires — not how it has usually been done. “Not stated” is shown to candidates as a gap. Physical {physDone}/{PHYSICAL_REQUIREMENTS.length} · Communication {commDone}/{COMMUNICATION_REQUIREMENTS.length} · Tools {job.technology.length}</p>
             </Banner>
-            <InlineGrid columns={{ xs: 1, lg: 2 }} gap="400">
-              <Card>
+            <BlockStack gap="600">
+              <div>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingLg">
                     Physical
                   </Text>
                   {PHYSICAL_REQUIREMENTS.map((p) => (
-                    <ChoiceChips key={p.id} label={p.employerQuestion} size="slim" options={p.options} value={job.physical[p.id] ?? null} onChange={(v) => set({ physical: { ...job.physical, [p.id]: (v as string | null) ?? null } })} />
+                    <OptionGrid key={p.id} label={p.employerQuestion} options={p.options} value={job.physical[p.id] ?? null} onChange={(v) => set({ physical: { ...job.physical, [p.id]: (v as string | null) ?? null } })} />
                   ))}
                 </BlockStack>
-              </Card>
-              <Card>
+              </div>
+              <div>
                 <BlockStack gap="400">
                   <Text as="h2" variant="headingLg">
                     Communication
                   </Text>
                   {COMMUNICATION_REQUIREMENTS.map((c) => (
-                    <ChoiceChips key={c.id} label={c.label} size="slim" options={(Object.keys(COMM_LEVEL_LABEL) as CommLevel[]).map((k) => ({ value: k, label: COMM_LEVEL_LABEL[k] }))} value={job.communication[c.id] ?? null} onChange={(v) => set({ communication: { ...job.communication, [c.id]: (v as CommLevel | null) ?? null } })} />
+                    <OptionGrid key={c.id} label={c.label} options={(Object.keys(COMM_LEVEL_LABEL) as CommLevel[]).map((k) => ({ value: k, label: COMM_LEVEL_LABEL[k] }))} value={job.communication[c.id] ?? null} onChange={(v) => set({ communication: { ...job.communication, [c.id]: (v as CommLevel | null) ?? null } })} />
                   ))}
                 </BlockStack>
-              </Card>
-            </InlineGrid>
-            <Card>
+              </div>
+            </BlockStack>
+            <div>
               <BlockStack gap="400">
                 <BlockStack gap="100">
                   <Text as="h2" variant="headingLg">
@@ -256,32 +256,30 @@ export function JobBuilder() {
                           </Button>
                         </InlineStack>
                         {TECH_A11Y.map((a) => (
-                          <ChoiceChips key={a.id} label={a.employerQuestion} size="slim" allowNone={false} options={TECH_STATUS} value={t.accessibility[a.id]?.status ?? ''} onChange={(v) => setToolEvidence(i, a.id, (v as EvidenceStatus | '') ?? '')} />
+                          <OptionGrid key={a.id} label={a.employerQuestion} allowNone={false} options={TECH_STATUS} value={t.accessibility[a.id]?.status ?? ''} onChange={(v) => setToolEvidence(i, a.id, (v as EvidenceStatus | '') ?? '')} />
                         ))}
                       </BlockStack>
                     </div>
                   ))}
                 </InlineGrid>
               </BlockStack>
-            </Card>
+            </div>
           </BlockStack>
         )}
 
         {step === 3 && (
           <BlockStack gap="400">
-            <Card>
-              <CompletenessMeter id="cm-env" done={envDone} total={DIMENSIONS.length} label="Work environment" why="Describe the real job, including the hard parts. “Not sure” is shown as not provided — better than a guess that turns out wrong." />
-            </Card>
-            <InlineGrid columns={{ xs: 1, lg: 2 }} gap="300">
+            <CompletenessMeter id="cm-env" done={envDone} total={DIMENSIONS.length} label="Work environment" why="Describe the real job, including the hard parts. “Not sure” is shown as not provided — better than a guess that turns out wrong." />
+            <div>
               {DIMENSIONS.map((d) => (
-                <div key={d.id} className="ow-env__item">
+                <div key={d.id} className="ow-qblock">
                   <BlockStack gap="300">
-                    <ChoiceChips label={d.employerQuestion} helpText={d.employerHelp} size="slim" options={[...d.options.map((o) => ({ value: o.value, label: o.employerLabel })), { value: '__none', label: 'Not sure' }]} value={job.environment[d.id] ?? '__none'} allowNone={false} onChange={(v) => set({ environment: { ...job.environment, [d.id]: v === '__none' ? null : (v as string) } })} />
+                    <OptionGrid label={d.employerQuestion} helpText={d.employerHelp} options={[...d.options.map((o) => ({ value: o.value, label: o.employerLabel })), { value: '__none', label: 'Not sure' }]} value={job.environment[d.id] ?? '__none'} allowNone={false} onChange={(v) => set({ environment: { ...job.environment, [d.id]: v === '__none' ? null : (v as string) } })} />
                     <TextField label="Detail in your words (optional)" labelHidden value={job.environmentNotes[d.id] ?? ''} onChange={(v) => set({ environmentNotes: { ...job.environmentNotes, [d.id]: v } })} autoComplete="off" placeholder="Detail in your words (optional)" />
                   </BlockStack>
                 </div>
               ))}
-            </InlineGrid>
+            </div>
           </BlockStack>
         )}
 
@@ -290,22 +288,22 @@ export function JobBuilder() {
             <Banner tone="info">
               <p>Job-specific answers ({accDone}/{JOB_EVIDENCE_FEATURES.length}). Workplace-wide answers — entrance, restrooms, alarms, interpreters, job coaching — come from your <Button variant="plain" url="/employer/accessibility">workplace accessibility profile</Button> and appear on every job.</p>
             </Banner>
-            <Card>
+            <div>
               <InlineGrid columns={{ xs: 1, md: 2 }} gap="300">
                 {JOB_EVIDENCE_FEATURES.map((f) => (
                   <EvidencePicker key={f.id} question={f.employerQuestion ?? f.label} evidence={job.accessibility[f.id]} onChange={(s, n) => setEvidence(f.id, s, n)} />
                 ))}
               </InlineGrid>
-            </Card>
-            <Card>
+            </div>
+            <div>
               <TextField label="Support available in this job" value={job.supportAvailable.join('\n')} onChange={(v) => set({ supportAvailable: v.split('\n') })} onBlur={() => set({ supportAvailable: lines(job.supportAvailable.join('\n')) })} multiline={3} autoComplete="off" helpText="One per line. Written onboarding plan, named buddy, written procedures, equipment provided, job coach welcome." />
-            </Card>
+            </div>
           </BlockStack>
         )}
 
         {step === 5 && (
-          <InlineGrid columns={{ xs: 1, lg: 2 }} gap="400">
-            <Card>
+          <BlockStack gap="600">
+            <div>
               <BlockStack gap="400">
                 <Text as="h2" variant="headingLg">
                   Steps candidates see before applying
@@ -332,8 +330,8 @@ export function JobBuilder() {
                 <Checkbox label="Accept applications Openwork sends on a candidate’s behalf" helpText="Candidates on Pro can let Openwork apply for them within rules they set. Their profile and résumé arrive exactly as a manual application would, marked “sent by Openwork”. Turn off to receive only applications the person sent themselves." checked={job.acceptsAutoApply} onChange={(v) => set({ acceptsAutoApply: v })} />
                 <TextField label="Overall timeframe" value={job.decisionTimeframe} onChange={(v) => set({ decisionTimeframe: v })} autoComplete="off" placeholder="About three weeks from application to decision." />
               </BlockStack>
-            </Card>
-            <Card>
+            </div>
+            <div>
               <BlockStack gap="400">
                 <Text as="h2" variant="headingLg">
                   Accessible hiring options
@@ -342,12 +340,12 @@ export function JobBuilder() {
                   Tap only what you will actually offer. Candidates filter on these and request them when they apply.
                 </Text>
                 {(['demonstrate', 'interview', 'workplace'] as const).map((g) => (
-                  <ChoiceChips key={g} label={g === 'demonstrate' ? 'Ways to demonstrate skills' : g === 'interview' ? 'Interview accessibility' : 'Workplace flexibility'} multiple size="slim" options={HIRING_OPTIONS.filter((h) => h.group === g).map((h) => ({ value: h.id, label: h.label, helpText: h.description }))} value={job.hiringOptions.filter((h) => HIRING_OPTIONS.find((x) => x.id === h)?.group === g)} onChange={(v) => set({ hiringOptions: [...job.hiringOptions.filter((h) => HIRING_OPTIONS.find((x) => x.id === h)?.group !== g), ...(v as HiringOptionId[])] })} />
+                  <OptionGrid key={g} label={g === 'demonstrate' ? 'Ways to demonstrate skills' : g === 'interview' ? 'Interview accessibility' : 'Workplace flexibility'} multiple options={HIRING_OPTIONS.filter((h) => h.group === g).map((h) => ({ value: h.id, label: h.label, helpText: h.description }))} value={job.hiringOptions.filter((h) => HIRING_OPTIONS.find((x) => x.id === h)?.group === g)} onChange={(v) => set({ hiringOptions: [...job.hiringOptions.filter((h) => HIRING_OPTIONS.find((x) => x.id === h)?.group !== g), ...(v as HiringOptionId[])] })} />
                 ))}
                 <TextField label="How a candidate asks for an adjustment" value={job.accommodationRoute} onChange={(v) => set({ accommodationRoute: v })} autoComplete="off" error={errors.accommodation} requiredIndicator helpText="Prefilled from your workplace profile. Say whether a reason is needed — it should not be." />
               </BlockStack>
-            </Card>
-          </InlineGrid>
+            </div>
+          </BlockStack>
         )}
 
         {step === 6 && (
@@ -355,12 +353,12 @@ export function JobBuilder() {
             <Banner tone={vague.length ? 'warning' : 'info'} title="Before publishing">
               <p>Tasks {job.tasks.length} · Physical {physDone}/{PHYSICAL_REQUIREMENTS.length} · Communication {commDone}/{COMMUNICATION_REQUIREMENTS.length} · Tools {job.technology.length} · Environment {envDone}/{DIMENSIONS.length} · Job accessibility {accDone}/{JOB_EVIDENCE_FEATURES.length} · Hiring options {job.hiringOptions.length}. Anything not stated shows as “Not provided” with a button to ask you.{vague.length ? ` ${vague.length} vague phrase${vague.length === 1 ? '' : 's'} remain.` : ''}</p>
             </Banner>
-            <Card>
+            <div className="ow-why">
               <InlineStack align="space-between" blockAlign="center" wrap gap="300">
                 <Text as="p">See exactly what candidates will see before you publish.</Text>
                 <Button onClick={() => { dispatch({ type: 'upsertJob', job }); navigate(`/employer/jobs/${job.id}/preview`); }}>Save and preview</Button>
               </InlineStack>
-            </Card>
+            </div>
           </BlockStack>
         )}
 

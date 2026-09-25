@@ -37,8 +37,8 @@ export function EmployerJobs() {
                     </Text>
                   </BlockStack>
                   <InlineStack gap="200">
-                    <Button pressed={j.acceptsAutoApply} onClick={() => dispatch({ type: 'upsertJob', job: { ...j, acceptsAutoApply: !j.acceptsAutoApply } })} accessibilityLabel={`Applications sent by Openwork: ${j.acceptsAutoApply ? 'accepted' : 'not accepted'}`}>
-                      {j.acceptsAutoApply ? 'Openwork sends: on' : 'Openwork sends: off'}
+                    <Button pressed={j.acceptsAutoApply} onClick={() => dispatch({ type: 'upsertJob', job: { ...j, acceptsAutoApply: !j.acceptsAutoApply } })} accessibilityLabel={`${j.title}: applications sent by Openwork are ${j.acceptsAutoApply ? 'accepted' : 'not accepted'}. Press to change.`}>
+                      {j.acceptsAutoApply ? 'Accepts auto-apply' : 'Auto-apply off'}
                     </Button>
                     <Button url={`/employer/jobs/${j.id}/preview`}>Preview</Button>
                     <Button url={`/employer/jobs/${j.id}/edit`}>Edit</Button>

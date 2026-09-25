@@ -20,7 +20,7 @@ export function CompletenessMeter({
   return (
     <BlockStack gap="200">
       <InlineStack align="space-between" blockAlign="baseline">
-        <Text as="h3" variant="headingSm" id={id}>
+        <Text as="h2" variant="headingSm" id={id}>
           {label}
         </Text>
         <Text as="span" variant="bodySm" tone="subdued">

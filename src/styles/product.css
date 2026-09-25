@@ -1759,3 +1759,24 @@ ol.Polaris-BlockStack {
 /* Job builder uses the onboarding sheet at container width */
 .ow-container > .ow-onboard { max-width: 960px; margin: 0 auto; }
 .ow-optcards--tight .ow-optcard { padding: 12px 16px; }
+
+/* Compact option cards in a grid (employer forms) */
+.ow-optgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: var(--p-space-200);
+}
+.ow-optcard--compact {
+  padding: 10px 14px;
+  gap: 10px;
+  text-align: left;
+}
+.ow-optcard--compact .ow-optcard__dot { width: 18px; height: 18px; margin-top: 3px; }
+.ow-optcard--compact[aria-checked='true'] .ow-optcard__dot::after { width: 8px; height: 8px; }
+.ow-optcard[aria-checked='true'] { border-color: var(--ow-accent); background: var(--ow-accent-tint); }
+.ow-optcard[aria-checked='true'] .ow-optcard__dot { border-color: var(--ow-accent); }
+.ow-optcard[aria-checked='true'] .ow-optcard__dot::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--ow-accent); }
+.ow-optcard--check[aria-checked='true'] .ow-optcard__dot::after { border-radius: 2px; }
+/* Builder: question blocks separated by hairlines instead of nested cards */
+.ow-qblock { padding-block: var(--p-space-400); border-block-start: 1px solid var(--ow-line); }
+.ow-qblock:first-child { border-block-start: 0; padding-block-start: 0; }

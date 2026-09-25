@@ -54,7 +54,7 @@ export function SignIn() {
                       {SCENARIO[c.id] ?? c.headline}
                     </Text>
                   </BlockStack>
-                  <Button onClick={() => { dispatch({ type: 'signInCandidate', profile: c }); go('/matches'); }}>Sign in as {c.name.split(' ')[0]}</Button>
+                  <Button onClick={() => { dispatch({ type: 'signInCandidate', profile: state.candidates.find((x) => x.id === c.id) ?? c }); go('/matches'); }}>Sign in as {c.name.split(' ')[0]}</Button>
                 </InlineStack>
               ))}
               <Divider />
