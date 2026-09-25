@@ -50,8 +50,8 @@
 
   --ow-ink: #1c1a17;
   --ow-ink-2: #56524b;
-  --ow-paper: #f5f2ec;
-  --ow-paper-2: #ebe7de;
+  --ow-paper: #f7f5f0;
+  --ow-paper-2: #eeebe4;
   --ow-line: #e1dcd1;
   --ow-line-2: #c9c2b4;
   --ow-accent: #4c2e8a;
@@ -271,8 +271,8 @@
   --ow-match-unknown-border: var(--p-color-border-secondary);
 
   /* Marketplace layout. Polaris Page caps at 998px; a split view needs more. */
-  --ow-container: 1280px;
-  --ow-container-narrow: 960px;
+  --ow-container: 1200px;
+  --ow-container-narrow: 880px;
   --ow-header-height: 72px;
   --ow-results-width: 460px;
 }
@@ -320,6 +320,7 @@ body {
   z-index: var(--p-z-index-6);
   background: var(--p-color-bg-surface);
   border-block-end: var(--p-border-width-025) solid var(--p-color-border-secondary);
+  box-shadow: var(--p-shadow-100);
 }
 .ow-header__inner {
   max-width: var(--ow-container);
@@ -1065,12 +1066,6 @@ ol.Polaris-BlockStack {
   background: var(--p-color-bg-surface);
   border-block-end: var(--p-border-width-025) solid var(--p-color-border-secondary);
 }
-.ow-jobdetail:not(.ow-jobdetail--pane) .ow-applybar {
-  top: var(--ow-header-height);
-  margin-inline: 0;
-  padding-inline: 0;
-  background: var(--p-color-bg-surface-secondary);
-}
 
 /* Job details: label / value rows, two columns when there is room. */
 .ow-details {
@@ -1228,4 +1223,69 @@ ol.Polaris-BlockStack {
   color: var(--p-color-text-brand-on-bg-fill);
   font-size: var(--p-font-size-500);
   font-weight: var(--p-font-weight-bold);
+}
+
+/* PAGE SYSTEM ------------------------------------------------------------
+   Three templates and nothing else:
+   1. list + pane      (.ow-split)         jobs
+   2. article + aside  (.ow-cols)          job, company, application
+   3. sheet            (.ow-sheet, narrow) forms and lists
+   Text never sits on the paper except a page's title row. */
+.ow-pagehead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--p-space-400);
+  flex-wrap: wrap;
+  margin-block-end: var(--p-space-400);
+}
+.ow-backlink {
+  color: var(--p-color-text-link);
+  text-decoration: none;
+  font-weight: var(--p-font-weight-medium);
+}
+.ow-backlink:hover {
+  text-decoration: underline;
+}
+.ow-cols {
+  display: grid;
+  gap: var(--p-space-500);
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .ow-cols {
+    grid-template-columns: minmax(0, 1fr) 360px;
+  }
+  .ow-aside {
+    position: sticky;
+    top: calc(var(--ow-header-height) + var(--p-space-400));
+  }
+}
+.ow-aside {
+  display: grid;
+  gap: var(--p-space-400);
+}
+.ow-aside__card {
+  padding: var(--p-space-500);
+}
+.ow-article .ow-jobdetail {
+  max-width: none;
+}
+/* On phone and tablet: apply card first (it is what you came for), the job,
+   then the employer card. */
+@media (max-width: 1023px) {
+  .ow-aside {
+    display: contents;
+  }
+  .ow-aside__card:first-child {
+    order: -1;
+  }
+}
+
+/* "For you" on a job: one tinted block, plain sentences. */
+.ow-foryou {
+  padding: var(--p-space-400) var(--p-space-500);
+  background: var(--p-color-bg-surface-emphasis);
+  border-radius: var(--p-border-radius-300);
+  border: var(--p-border-width-025) solid var(--ow-accent-tint-2);
 }

@@ -93,7 +93,9 @@ export function JobDetailContent({ job, pane = false }: Props) {
           </BlockStack>
         </InlineStack>
 
-        {/* Pinned while the page scrolls, so Apply is never out of reach. */}
+        {/* In the split view the apply bar pins to the top of the pane. The
+            full page has its own sidebar card instead. */}
+        {pane && (
         <div className="ow-applybar">
           {myApplication ? (
             <Button url={`/applications/${myApplication.id}`} variant="primary" size="large">
@@ -115,6 +117,7 @@ export function JobDetailContent({ job, pane = false }: Props) {
             </Text>
           )}
         </div>
+        )}
 
         {result && <WhyThisCouldWork result={result} job={job} />}
 

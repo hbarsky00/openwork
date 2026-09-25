@@ -41,6 +41,20 @@ at `/about`.
   components (`LegacyCard`, `LegacyStack`, `LegacyTabs`, `LegacyFilters`) are
   not used anywhere.
 
+## 1c. Page system (three templates, nothing else)
+
+1. **List + pane** (`.ow-split`): jobs. Search across the top, list left,
+   job right, both on white.
+2. **Article + sidebar** (`.ow-cols`): job, company, application. One white
+   `.ow-sheet` for the reading column and a sticky 360px `.ow-aside` holding
+   the action card (Apply / Save) and the employer card. On phone the action
+   card comes first, then the article, then the employer card.
+3. **Sheet** (`.ow-container--narrow` + `.ow-sheet`): every form and list.
+   One centered white sheet, title row above it.
+
+Text never sits on the paper except a page's title row and back link.
+Container is 1200px; narrow is 880px.
+
 ## 1b. Identity layer (the face on top of Polaris)
 
 Polaris supplies components, spacing, motion and semantics. It is Shopify's
