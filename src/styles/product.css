@@ -1689,9 +1689,14 @@ ol.Polaris-BlockStack {
 /* Phone and tablet: one compact strip of filters under the search. Two per
    row, needs full width. About 150px. Nothing hidden, nothing full-screen. */
 .ow-filterstrip {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--p-space-200);
+  display: none;
+}
+@media (max-width: 1023px) {
+  .ow-filterstrip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--p-space-200);
+  }
 }
 .ow-filterstrip__needs {
   grid-column: 1 / -1;
@@ -1728,3 +1733,22 @@ ol.Polaris-BlockStack {
   .ow-searchbar .Polaris-TextField__Backdrop { border-color: transparent; box-shadow: none; background: transparent; }
   .ow-searchbar .Polaris-Button { border-radius: var(--p-border-radius-full); }
 }
+
+/* Results header: count left, quiet controls right. */
+.ow-results-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--p-space-300);
+  flex-wrap: wrap;
+}
+.ow-results-head__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--p-space-300);
+}
+@media (max-width: 1023px) {
+  .ow-results-head .ow-desktop-only { display: none; }
+}
+.ow-filterstrip > * { min-width: 0; }
+.ow-filterstrip .Polaris-Select, .ow-filterstrip .Polaris-Autocomplete { min-width: 0; }

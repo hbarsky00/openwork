@@ -71,7 +71,6 @@ export function Jobs() {
       <div className="ow-rail__needs">
         <NeedsSearch compact jobs={state.jobs} employers={state.employers} needs={params.need} practices={params.practice} onChange={({ needs, practices }) => update({ need: needs, practice: practices })} />
       </div>
-      <Select label="Sort" options={[{ label: hasPassport ? 'Best for you' : 'Newest', value: 'recommended' }, { label: 'Newest', value: 'newest' }, { label: 'Highest pay', value: 'pay' }]} value={params.sort} onChange={(v) => update({ sort: v as SearchParams['sort'] })} />
               </BlockStack>
   );
 
@@ -120,7 +119,7 @@ export function Jobs() {
               </div>
             </div>
 
-            <InlineStack align="space-between" blockAlign="center" wrap gap="300">
+            <div className="ow-results-head">
               <Text as="h1" variant="headingLg">
                 <span role="status" aria-live="polite">
                   {results.length} job{results.length === 1 ? '' : 's'}
@@ -128,17 +127,21 @@ export function Jobs() {
                 {params.q ? ` for “${params.q}”` : ''}
                 {params.where ? ` in ${params.where}` : ''}
               </Text>
-              <span className="ow-alertbtn">
+              <div className="ow-results-head__tools">
+                <span className="ow-desktop-only">
+                  <Select label="Sort" labelInline options={[{ label: hasPassport ? 'Best for you' : 'Newest', value: 'recommended' }, { label: 'Newest', value: 'newest' }, { label: 'Highest pay', value: 'pay' }]} value={params.sort} onChange={(v) => update({ sort: v as SearchParams['sort'] })} />
+                </span>
                 <Button
+                  variant="plain"
                   icon={alertOn ? NotificationFilledIcon : NotificationIcon}
                   pressed={alertOn}
-                  accessibilityLabel={alertOn ? 'Job alert on for this search' : 'Alert me about jobs like this'}
+                  accessibilityLabel={alertOn ? 'Job alert on for this search' : 'Get alerts for this search'}
                   onClick={() => (state.role === 'candidate' ? dispatch({ type: 'toggleAlert', query: sp.toString() }) : navigate(`/signin?next=${encodeURIComponent(`/jobs?${sp.toString()}`)}&reason=alert`))}
                 >
-                  {alertOn ? 'Alert on' : 'Alert me about jobs like this'}
+                  {alertOn ? 'Alert on' : 'Get alerts'}
                 </Button>
-              </span>
-            </InlineStack>
+              </div>
+            </div>
 
             {results.length === 0 ? (
               <Box paddingBlock="1200">
