@@ -50,7 +50,7 @@ export function Jobs() {
   const hasPassport = !!profile && (Object.keys(profile.accessNeeds).length > 0 || Object.keys(profile.workPreferences).length > 0);
 
   return (
-    <div className="ow-container">
+    <div className="ow-container ow-container--fluid">
       <div className="ow-jobs">
         <aside className="ow-rail" aria-label="Filter jobs">
           <div className="ow-rail__inner">

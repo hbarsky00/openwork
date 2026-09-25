@@ -57,7 +57,7 @@ at `/about`.
    One centered white sheet, title row above it.
 
 Text never sits on the paper except a page's title row and back link.
-Container is 1200px; narrow is 880px.
+Container is 1440px; narrow is 880px; the jobs page is fluid (`.ow-container--fluid`, gutters only).
 
 ## 1b. Identity layer (the face on top of Polaris)
 

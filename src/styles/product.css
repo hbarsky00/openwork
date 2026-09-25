@@ -271,10 +271,10 @@
   --ow-match-unknown-border: var(--p-color-border-secondary);
 
   /* Marketplace layout. Polaris Page caps at 998px; a split view needs more. */
-  --ow-container: 1200px;
+  --ow-container: 1440px;
   --ow-container-narrow: 880px;
   --ow-header-height: 72px;
-  --ow-results-width: 400px;
+  --ow-results-width: 440px;
   --ow-rail-width: 240px;
 }
 
@@ -497,6 +497,10 @@ body {
 }
 .ow-container--narrow {
   max-width: var(--ow-container-narrow);
+}
+/* App layouts (rail + list + pane) use the whole window, gutters only. */
+.ow-container--fluid {
+  max-width: none;
 }
 .ow-container--flush {
   padding-block: 0;
