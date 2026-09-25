@@ -15,6 +15,12 @@ export function QuickApplyButton({ job, size = 'large', fullWidth = false }: { j
   const profile = state.role === 'candidate' ? state.candidate : null;
   const mine = useMyApplication(job.id);
 
+  if (mine && mine.status === 'prepared')
+    return (
+      <Button url="/applications" variant="primary" size={size} fullWidth={fullWidth}>
+        Ready to send · review
+      </Button>
+    );
   if (mine)
     return (
       <Button url={`/applications/${mine.id}`} size={size} fullWidth={fullWidth}>

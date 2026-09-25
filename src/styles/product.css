@@ -1752,3 +1752,9 @@ ol.Polaris-BlockStack {
 }
 .ow-filterstrip > * { min-width: 0; }
 .ow-filterstrip .Polaris-Select, .ow-filterstrip .Polaris-Autocomplete { min-width: 0; }
+
+.ow-plancard { align-items: start; height: 100%; }
+
+/* Job builder uses the onboarding sheet at container width */
+.ow-container > .ow-onboard { max-width: 960px; margin: 0 auto; }
+.ow-optcards--tight .ow-optcard { padding: 12px 16px; }

@@ -296,7 +296,7 @@ export function Onboarding() {
                 </Text>
                 <OptionCards>
                   {MODES.map((m) => (
-                    <OptionCard key={m.v} title={m.t} help={m.h} selected={p.assistMode === m.v} onClick={() => patch({ assistMode: m.v })} />
+                    <OptionCard key={m.v} title={m.t} help={m.h} selected={p.assistMode === m.v} onClick={() => patch({ assistMode: m.v, plan: m.v === 'auto' ? 'pro' : m.v === 'assist' ? 'plus' : 'free' })} />
                   ))}
                 </OptionCards>
               </BlockStack>

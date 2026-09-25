@@ -10,6 +10,7 @@ import { useTitle } from '../../lib/useTitle';
 import { useStore } from '../../state/store';
 
 const TONE: Record<ApplicationStatus, 'info' | 'attention' | 'success' | 'critical' | undefined> = {
+  prepared: 'attention',
   applied: 'info',
   viewed: 'info',
   assessment: 'attention',
@@ -20,6 +21,7 @@ const TONE: Record<ApplicationStatus, 'info' | 'attention' | 'success' | 'critic
   withdrawn: undefined,
 };
 const CLOSED: ApplicationStatus[] = ['hired', 'notSelected', 'withdrawn'];
+const APPROVE_NOTE = 'Openwork prepared this from your profile and rules. Nothing goes until you send it.';
 const NEXT: Partial<Record<ApplicationStatus, string>> = {
   applied: 'Nothing to do. The employer has your application.',
   viewed: 'The employer opened it. You will hear about the next step here.',
@@ -28,7 +30,7 @@ const NEXT: Partial<Record<ApplicationStatus, string>> = {
   offer: 'Read the offer and reply to the employer.',
 };
 
-type Tab = 'active' | 'interview' | 'closed';
+type Tab = 'ready' | 'active' | 'interview' | 'closed';
 
 /**
  * Applications, reference layout: tabs, a list of cards on the left, and a
@@ -40,11 +42,12 @@ export function Applications() {
   const navigate = useNavigate();
   const p = state.candidate!;
   const mine = useMemo(() => state.applications.filter((a) => a.candidateId === p.id).sort((a, b) => b.submittedOn.localeCompare(a.submittedOn)), [state.applications, p.id]);
-  const active = mine.filter((a) => !CLOSED.includes(a.status));
+  const ready = mine.filter((a) => a.status === 'prepared');
+  const active = mine.filter((a) => !CLOSED.includes(a.status) && a.status !== 'prepared');
   const interviews = mine.filter((a) => a.status === 'interview' || a.status === 'assessment');
   const closed = mine.filter((a) => CLOSED.includes(a.status));
-  const [tab, setTab] = useState<Tab>('active');
-  const list = tab === 'active' ? active : tab === 'interview' ? interviews : closed;
+  const [tab, setTab] = useState<Tab>(ready.length ? 'ready' : 'active');
+  const list = tab === 'ready' ? ready : tab === 'active' ? active : tab === 'interview' ? interviews : closed;
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = list.find((a) => a.id === selectedId) ?? list[0] ?? null;
   const [panel, setPanel] = useState<'timeline' | 'documents' | 'job'>('timeline');
@@ -69,6 +72,7 @@ export function Applications() {
         <div className="ow-tabs" role="tablist" aria-label="Application status">
           {(
             [
+              ...(ready.length ? ([['ready', `Ready to send (${ready.length})`]] as [Tab, string][]) : []),
               ['active', `Active (${active.length})`],
               ['interview', `Interviews (${interviews.length})`],
               ['closed', `Closed (${closed.length})`],
@@ -82,7 +86,7 @@ export function Applications() {
 
         {list.length === 0 ? (
           <div className="ow-sheet">
-            <EmptyState heading={tab === 'active' ? 'No active applications' : tab === 'interview' ? 'No interviews yet' : 'Nothing closed yet'} image="" action={{ content: 'See your matches', url: '/matches' }}>
+            <EmptyState heading={tab === 'active' ? 'No active applications' : tab === 'interview' ? 'No interviews yet' : tab === 'ready' ? 'Nothing waiting' : 'Nothing closed yet'} image="" action={{ content: 'See your matches', url: '/matches' }}>
               <p>When you apply, every step the employer takes shows up here.</p>
             </EmptyState>
           </div>
@@ -108,12 +112,25 @@ export function Applications() {
                         </Text>
                         <InlineStack gap="200" blockAlign="center" wrap>
                           <Text as="span" variant="bodySm" tone="subdued">
-                            Applied {postedAgo(a.submittedOn).replace(/^Posted /, '')}
+                            {a.status === 'prepared' ? 'Prepared' : 'Applied'} {postedAgo(a.submittedOn).replace(/^Posted /, '')}
+                            {a.sentBy === 'openwork' && a.status !== 'prepared' ? ' · sent by Openwork' : ''}
                           </Text>
                           <Badge tone={TONE[a.status]} toneAndProgressLabelOverride={APPLICATION_STATUS_LABEL[a.status]}>
                             {APPLICATION_STATUS_LABEL[a.status]}
                           </Badge>
                         </InlineStack>
+                        {a.status === 'prepared' && (
+                          <span onClick={(e) => e.stopPropagation()}>
+                            <InlineStack gap="200">
+                              <Button variant="primary" size="medium" onClick={() => dispatch({ type: 'approvePrepared', applicationId: a.id })}>
+                                Approve and send
+                              </Button>
+                              <Button size="medium" onClick={() => dispatch({ type: 'discardPrepared', applicationId: a.id })}>
+                                Not for me
+                              </Button>
+                            </InlineStack>
+                          </span>
+                        )}
                       </BlockStack>
                     </InlineStack>
                   </article>
@@ -202,9 +219,25 @@ export function Applications() {
                         </Button>
                       </BlockStack>
                     )}
+                    {selected.status === 'prepared' && (
+                      <div className="ow-why">
+                        <Text as="p" variant="bodySm">
+                          {APPROVE_NOTE}
+                        </Text>
+                      </div>
+                    )}
                     <InlineStack gap="200">
-                      <Button url={`/applications/${selected.id}`}>Full details</Button>
-                      {!CLOSED.includes(selected.status) && (
+                      {selected.status === 'prepared' ? (
+                        <>
+                          <Button variant="primary" onClick={() => dispatch({ type: 'approvePrepared', applicationId: selected.id })}>
+                            Approve and send
+                          </Button>
+                          <Button onClick={() => dispatch({ type: 'discardPrepared', applicationId: selected.id })}>Not for me</Button>
+                        </>
+                      ) : (
+                        <Button url={`/applications/${selected.id}`}>Full details</Button>
+                      )}
+                      {!CLOSED.includes(selected.status) && selected.status !== 'prepared' && (
                         <Button variant="plain" tone="critical" onClick={() => dispatch({ type: 'withdrawApplication', applicationId: selected.id })}>
                           Withdraw
                         </Button>

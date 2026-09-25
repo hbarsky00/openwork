@@ -2,7 +2,7 @@ import { Badge, BlockStack, Button, EmptyState, InlineStack, Text } from '@shopi
 import { HIRING_OPTION_BY_ID } from '../../lib/access';
 import { APPLICATION_STATUS_LABEL, longDate } from '../../lib/format';
 import { useTitle } from '../../lib/useTitle';
-import { useStore } from '../../state/store';
+import { employerVisible, useStore } from '../../state/store';
 
 /**
  * Interviews: every candidate at the assessment or interview stage, with the
@@ -13,6 +13,7 @@ export function EmployerInterviews() {
   const { state } = useStore();
   const jobIds = new Set(state.jobs.filter((j) => j.employerId === state.employerId).map((j) => j.id));
   const rows = state.applications
+    .filter(employerVisible)
     .filter((a) => jobIds.has(a.jobId) && (a.status === 'interview' || a.status === 'assessment'))
     .sort((a, b) => b.history[b.history.length - 1].on.localeCompare(a.history[a.history.length - 1].on));
 

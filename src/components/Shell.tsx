@@ -66,7 +66,7 @@ export function Shell({ children }: { children: ReactNode }) {
       : [{ content: 'Sign out', onAction: () => { setMenuOpen(false); signOut(); } }]),
   ];
   const accountItems = [
-    ...(state.role === 'candidate' ? [{ content: 'Profile', onAction: () => { setAccountOpen(false); navigate('/passport'); } }, { content: 'Privacy & sharing', onAction: () => { setAccountOpen(false); navigate('/passport/sharing'); } }] : []),
+    ...(state.role === 'candidate' ? [{ content: 'Profile', onAction: () => { setAccountOpen(false); navigate('/passport'); } }, { content: 'Privacy & sharing', onAction: () => { setAccountOpen(false); navigate('/passport/sharing'); } }, { content: 'How Openwork helps', onAction: () => { setAccountOpen(false); navigate('/passport/assist'); } }] : []),
     ...(state.role === 'employer' ? [{ content: 'Settings', onAction: () => { setAccountOpen(false); navigate('/employer/settings'); } }] : []),
     { content: 'Support', onAction: () => { setAccountOpen(false); navigate('/support'); } },
     { content: 'Sign out', onAction: () => { setAccountOpen(false); signOut(); } },

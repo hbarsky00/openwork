@@ -27,6 +27,7 @@ export const WORK_LOCATION_LABEL: Record<string, string> = {
 };
 
 export const APPLICATION_STATUS_LABEL: Record<ApplicationStatus, string> = {
+  prepared: 'Ready to send',
   applied: 'Applied',
   viewed: 'Employer viewed',
   assessment: 'Work sample or assessment',

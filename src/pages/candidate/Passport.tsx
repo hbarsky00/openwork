@@ -240,6 +240,12 @@ export function Passport() {
               )}
             </Section>
 
+            <Section title="How Openwork helps" action={<Button url="/passport/assist">Change</Button>}>
+              <Text as="p">
+                {p.assistMode === 'auto' ? 'Pro · Auto. Openwork sends applications within your rules; jobs with employer questions wait for you.' : p.assistMode === 'assist' ? 'Plus · Assist. Openwork prepares applications for strong matches; you approve each one.' : 'Free · Review. Openwork finds jobs; you apply.'}
+              </Text>
+            </Section>
+
             <Section title="How you want to be hired" action={<Button url="/passport/how-i-work">Edit</Button>}>
               {p.hiringPreferences.length === 0 ? (
                 <Text as="p" tone="subdued">

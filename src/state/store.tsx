@@ -5,6 +5,7 @@
  */
 import { createContext, useContext, useEffect, useMemo, useReducer, type ReactNode } from 'react';
 import { SAMPLE_APPLICATIONS, SAMPLE_CANDIDATES, emptyProfile } from '../data/candidates';
+import { planAutoApply } from '../lib/apply';
 import { EMPLOYERS } from '../data/employers';
 import { JOBS } from '../data/jobs';
 import type {
@@ -37,13 +38,15 @@ export interface AppState {
   lastSearch: string;
   /** Saved searches the candidate wants to hear about (query strings). */
   alerts: string[];
+  /** Last day Openwork ran auto-apply for each candidate (YYYY-MM-DD). */
+  autoRuns: Record<string, string>;
   displayMode: DisplayMode;
 }
 
 // v2: access-needs data model. Older v1 state is intentionally dropped.
-const STORAGE_KEY = 'openwork.v8';
+const STORAGE_KEY = 'openwork.v9';
 
-const SCHEMA = 8;
+const SCHEMA = 9;
 
 const initialState: AppState = {
   schema: SCHEMA,
@@ -71,6 +74,7 @@ const initialState: AppState = {
   reports: [],
   lastSearch: '',
   alerts: [],
+  autoRuns: {},
   displayMode: 'standard',
 };
 
@@ -95,6 +99,9 @@ type Action =
   | { type: 'resolveReport'; reportId: string }
   | { type: 'setLastSearch'; value: string }
   | { type: 'toggleAlert'; query: string }
+  | { type: 'runAutoApply' }
+  | { type: 'approvePrepared'; applicationId: string }
+  | { type: 'discardPrepared'; applicationId: string }
   | { type: 'setDisplayMode'; mode: DisplayMode }
   | { type: 'reset' };
 
@@ -120,9 +127,12 @@ function reducer(state: AppState, action: Action): AppState {
     case 'updateCandidate': {
       if (!state.candidate) return state;
       const candidate = { ...state.candidate, ...action.patch };
+      // New mode or rules → Openwork may act again today.
+      const autoRuns = 'assistMode' in action.patch || 'autoRules' in action.patch ? Object.fromEntries(Object.entries(state.autoRuns).filter(([k]) => k !== candidate.id)) : state.autoRuns;
       return {
         ...state,
         candidate,
+        autoRuns,
         candidates: state.candidates.some((c) => c.id === candidate.id)
           ? state.candidates.map((c) => (c.id === candidate.id ? candidate : c))
           : [...state.candidates, candidate],
@@ -174,6 +184,21 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, lastSearch: action.value };
     case 'toggleAlert':
       return { ...state, alerts: state.alerts.includes(action.query) ? state.alerts.filter((a) => a !== action.query) : [...state.alerts, action.query] };
+    case 'runAutoApply': {
+      const p = state.candidate;
+      if (!p || p.assistMode === 'review' || state.autoRuns[p.id] === today()) return state;
+      const fresh = planAutoApply(p, state.jobs, state.employers, state.applications);
+      return { ...state, autoRuns: { ...state.autoRuns, [p.id]: today() }, applications: [...fresh, ...state.applications] };
+    }
+    case 'approvePrepared':
+      return {
+        ...state,
+        applications: state.applications.map((a) =>
+          a.id === action.applicationId && a.status === 'prepared' ? { ...a, status: 'applied', submittedOn: today(), history: [...a.history, { status: 'applied', on: today(), note: 'You approved and sent it.' }] } : a,
+        ),
+      };
+    case 'discardPrepared':
+      return { ...state, applications: state.applications.filter((a) => !(a.id === action.applicationId && a.status === 'prepared')) };
     case 'setDisplayMode':
       return { ...state, displayMode: action.mode };
     case 'reset':
@@ -192,7 +217,7 @@ function load(): AppState {
     // Seed data is code, not storage: take jobs/employers from the seed and
     // merge in anything the user created or edited. A persisted copy that
     // predates the current shape is never trusted over the seed.
-    const wellFormed = (j: Job) => !!j.accessibility && !!j.physical && !!j.communication && Array.isArray(j.technology) && Array.isArray(j.hiringOptions) && Array.isArray(j.screeningQuestions) && typeof j.baseApplicants === 'number';
+    const wellFormed = (j: Job) => !!j.accessibility && !!j.physical && !!j.communication && Array.isArray(j.technology) && Array.isArray(j.hiringOptions) && Array.isArray(j.screeningQuestions) && typeof j.baseApplicants === 'number' && typeof j.acceptsAutoApply === 'boolean';
     const seedJobIds = new Set(JOBS.map((j) => j.id));
     const userJobs = (parsed.jobs ?? []).filter((j) => !seedJobIds.has(j.id) && wellFormed(j));
     const editedSeed = (parsed.jobs ?? []).filter((j) => seedJobIds.has(j.id) && wellFormed(j));
@@ -266,5 +291,10 @@ export function useJobEmployer(job: Job | null) {
 export function useApplicantCount(jobId: string): number {
   const { state } = useStore();
   const job = state.jobs.find((j) => j.id === jobId);
-  return (job?.baseApplicants ?? 0) + state.applications.filter((a) => a.jobId === jobId).length;
+  return (job?.baseApplicants ?? 0) + state.applications.filter((a) => a.jobId === jobId && a.status !== 'prepared').length;
+}
+
+/** What an employer may see: never a prepared-but-unsent application. */
+export function employerVisible(a: Application): boolean {
+  return a.status !== 'prepared';
 }

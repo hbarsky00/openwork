@@ -6,7 +6,7 @@ import { ACCESS_FEATURE_BY_ID, COMMUNICATION_REQUIREMENTS, JOB_EVIDENCE_FEATURES
 import { DIMENSIONS } from '../../lib/dimensions';
 import { APPLICATION_STATUS_LABEL, longDate } from '../../lib/format';
 import { useTitle } from '../../lib/useTitle';
-import { useStore } from '../../state/store';
+import { employerVisible, useStore } from '../../state/store';
 
 export function EmployerDashboard() {
   useTitle('Employer overview');
@@ -16,7 +16,7 @@ export function EmployerDashboard() {
   const active = jobs.filter((j) => j.status === 'published');
   const drafts = jobs.filter((j) => j.status === 'draft');
   const jobIds = new Set(jobs.map((j) => j.id));
-  const apps = state.applications.filter((a) => jobIds.has(a.jobId) && a.status !== 'withdrawn');
+  const apps = state.applications.filter((a) => employerVisible(a) && jobIds.has(a.jobId) && a.status !== 'withdrawn');
   const newApps = apps.filter((a) => a.status === 'applied');
   const withRequest = apps.filter((a) => a.shared.accommodationRequest && ['applied', 'viewed'].includes(a.status));
   const questions = state.questions.filter((q) => jobIds.has(q.jobId));

@@ -4,7 +4,7 @@ import { ChoiceChips } from '../../components/ChoiceChips';
 import { APPLICATION_STATUS_LABEL, longDate } from '../../lib/format';
 import type { ApplicationStatus } from '../../lib/types';
 import { useTitle } from '../../lib/useTitle';
-import { useStore } from '../../state/store';
+import { employerVisible, useStore } from '../../state/store';
 
 export function EmployerCandidates() {
   useTitle('Candidates');
@@ -15,6 +15,7 @@ export function EmployerCandidates() {
   const statusFilter = sp.getAll('status') as ApplicationStatus[];
 
   const apps = state.applications
+    .filter(employerVisible)
     .filter((a) => jobs.some((j) => j.id === a.jobId))
     .filter((a) => !jobFilter || a.jobId === jobFilter)
     .filter((a) => statusFilter.length === 0 || statusFilter.includes(a.status))
@@ -40,7 +41,7 @@ export function EmployerCandidates() {
               label="Status"
               multiple
               size="slim"
-              options={(Object.keys(APPLICATION_STATUS_LABEL) as ApplicationStatus[]).map((st) => ({ value: st, label: APPLICATION_STATUS_LABEL[st] }))}
+              options={(Object.keys(APPLICATION_STATUS_LABEL) as ApplicationStatus[]).filter((st) => st !== 'prepared').map((st) => ({ value: st, label: APPLICATION_STATUS_LABEL[st] }))}
               value={statusFilter}
               onChange={(v) => {
                 const n = new URLSearchParams(sp);

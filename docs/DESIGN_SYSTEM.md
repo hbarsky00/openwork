@@ -68,6 +68,21 @@ as the component foundation; the reference supplies the look and the IA.
 - **Applications:** tabs · list · sticky detail panel (Status timeline / What
   they received / Job details).
 
+## 0e. Openwork applies for you (Review · Assist · Auto)
+
+Plans map to modes: Free = **Review** (you apply), Plus = **Assist**
+(Openwork prepares, you approve), Pro = **Auto** (Openwork sends within your
+rules). `lib/apply.ts` holds the engine: `autoApplyBlocker()` says why a job
+is ineligible, `planAutoApply()` produces one day's applications. Rules
+(`CandidateProfile.autoRules`): only Strong/Good matches, every required need
+confirmed, pay floor, arrangements, types, daily cap. Jobs with employer
+questions are always *prepared*, never sent. Prepared applications
+(`status: 'prepared'`) live on the candidate's Applications page under
+**Ready to send** and are invisible to employers (`employerVisible()`).
+Employers can opt a job out (`Job.acceptsAutoApply`); anything Openwork sends
+is marked "sent by Openwork" on both sides. The run happens once per day when
+Matches loads; the Matches page shows the digest.
+
 ## 0a. Apply control (one button, learned once)
 
 `QuickApplyButton` is the only apply control. Signed in and the job has no

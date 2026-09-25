@@ -1,7 +1,8 @@
-import { Banner, BlockStack, Button, Card, FormLayout, InlineGrid, InlineStack, Page, Select, Text, TextField } from '@shopify/polaris';
+import { Banner, BlockStack, Button, Card, Checkbox, FormLayout, InlineGrid, InlineStack, Select, Text, TextField } from '@shopify/polaris';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChoiceChips } from '../../components/ChoiceChips';
+import { OptionCard, OptionCards } from '../../components/OptionCard';
 import { CompletenessMeter } from '../../components/CompletenessMeter';
 import { EvidencePicker } from '../../components/EvidencePicker';
 import { COMMUNICATION_REQUIREMENTS, COMM_LEVEL_LABEL, HIRING_OPTIONS, JOB_EVIDENCE_FEATURES, JOB_FAMILIES, PHYSICAL_REQUIREMENTS, STRENGTHS, TECH_A11Y, type CommLevel, type Evidence, type EvidenceStatus, type HiringOptionId } from '../../lib/access';
@@ -12,7 +13,16 @@ import type { EmploymentType, ExperienceLevel, HiringStage, Job } from '../../li
 import { useTitle } from '../../lib/useTitle';
 import { useStore } from '../../state/store';
 
-const STEPS = ['The job', 'What the person does', 'Requirements and tools', 'Work environment', 'Accessibility and support', 'Hiring process', 'Publish'] as const;
+const STEPS = ['Basics', 'What they’ll do', 'Skills and tools', 'How the job works', 'Accessibility and support', 'Hiring process', 'Preview and publish'] as const;
+const STEP_TITLE: Record<number, [string, string]> = {
+  0: ['Tell us about the job.', 'Title, where, how much. Candidates see pay on every job.'],
+  1: ['What will they actually do?', 'A typical day as steps, and what the person must be able to do. Plain words beat corporate ones.'],
+  2: ['What does the job really require?', 'Physical, communication, and the software they’ll use. “Not sure” is shown honestly as not provided.'],
+  3: ['How does this job work day to day?', 'Schedule, meetings, instructions, feedback. Candidates compare this with how they work best.'],
+  4: ['What does this job provide?', 'Job-specific accessibility and support. Workplace-wide answers come from your workplace profile.'],
+  5: ['How does hiring work?', 'The steps, the options you offer, and any questions candidates must answer.'],
+  6: ['Ready to publish?', 'See exactly what candidates will see.'],
+};
 const TECH_STATUS = [
   { value: 'confirmed', label: 'Yes' },
   { value: 'notAvailable', label: 'No' },
@@ -21,7 +31,7 @@ const TECH_STATUS = [
 ];
 
 function blankJob(employerId: string): Job {
-  return { id: `j-${Date.now().toString(36)}`, employerId, title: '', department: '', family: 'records', location: '', employmentType: 'fullTime', experienceLevel: 'entry', salaryMin: 0, salaryMax: 0, salaryUnit: 'hour', postedOn: new Date().toISOString().slice(0, 10), status: 'draft', summary: '', tasks: [], essentialRequirements: [], preferredRequirements: [], skills: [], strengthsUsed: [], physical: {}, communication: {}, technology: [], environment: {}, environmentNotes: {}, accessibility: {}, hiringOptions: [], screeningQuestions: [], baseApplicants: 0, hiringStages: [{ id: 's1', name: 'Application review', description: 'We read every application.', duration: 'within 1 week' }, { id: 's2', name: 'Interview', description: '', duration: '' }, { id: 's3', name: 'Decision', description: 'Written decision.', duration: 'within 1 week' }], decisionTimeframe: '', accommodationRoute: '', supportAvailable: [] };
+  return { id: `j-${Date.now().toString(36)}`, employerId, title: '', department: '', family: 'records', location: '', employmentType: 'fullTime', experienceLevel: 'entry', salaryMin: 0, salaryMax: 0, salaryUnit: 'hour', postedOn: new Date().toISOString().slice(0, 10), status: 'draft', summary: '', tasks: [], essentialRequirements: [], preferredRequirements: [], skills: [], strengthsUsed: [], physical: {}, communication: {}, technology: [], environment: {}, environmentNotes: {}, accessibility: {}, hiringOptions: [], screeningQuestions: [], baseApplicants: 0, acceptsAutoApply: true, hiringStages: [{ id: 's1', name: 'Application review', description: 'We read every application.', duration: 'within 1 week' }, { id: 's2', name: 'Interview', description: '', duration: '' }, { id: 's3', name: 'Decision', description: 'Written decision.', duration: 'within 1 week' }], decisionTimeframe: '', accommodationRoute: '', supportAvailable: [] };
 }
 const lines = (s: string) => s.split('\n').map((l) => l.trim()).filter(Boolean);
 const today = () => new Date().toISOString().slice(0, 10);
@@ -81,18 +91,41 @@ export function JobBuilder() {
     set({ technology: job.technology.map((t, idx) => { if (idx !== i) return t; const acc = { ...t.accessibility }; if (!status) delete acc[attr]; else acc[attr] = { status, source: 'employer', confirmedOn: today() }; return { ...t, accessibility: acc }; }) });
 
   return (
-    <Page fullWidth title={existing ? 'Edit job' : 'Create job'} subtitle={`${STEPS[step]} · Step ${step + 1} of ${STEPS.length}`} backAction={{ content: 'Jobs', url: '/employer/jobs' }} secondaryActions={[{ content: 'Save and exit', onAction: saveDraft }]}>
-      <BlockStack gap="500">
-        <ol className="ow-steps" aria-label="Progress">
-          {STEPS.map((s, i) => (
-            <li key={s} className={`ow-steps__item ${i < step ? 'ow-steps__item--done' : i === step ? 'ow-steps__item--current' : ''}`} aria-current={i === step ? 'step' : undefined}>
-              <span className="ow-visually-hidden">{s}</span>
-            </li>
-          ))}
-        </ol>
+    <div className="ow-container">
+      <div className="ow-pagehead">
+        <Button variant="plain" url="/employer/jobs">
+          ← Jobs
+        </Button>
+        <InlineStack gap="200">
+          <Button onClick={saveDraft}>Save and exit</Button>
+        </InlineStack>
+      </div>
+      <div className="ow-sheet ow-onboard">
+      <BlockStack gap="600">
+        <BlockStack gap="200">
+          <InlineStack align="space-between" blockAlign="center">
+            <Text as="p" variant="bodyXs" fontWeight="bold" tone="magic">
+              STEP {step + 1} OF {STEPS.length}
+            </Text>
+            <Text as="p" variant="bodyXs" tone="subdued">
+              {STEPS[step]}
+            </Text>
+          </InlineStack>
+          <div className="ow-progress" role="progressbar" aria-valuemin={1} aria-valuemax={STEPS.length} aria-valuenow={step + 1} aria-label="Job progress">
+            <div style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
+          </div>
+        </BlockStack>
+        <BlockStack gap="200" inlineAlign="center">
+          <Text as="h1" variant="heading2xl" alignment="center">
+            {existing && step === 0 ? `Edit ${existing.title}` : STEP_TITLE[step][0]}
+          </Text>
+          <Text as="p" tone="subdued" alignment="center">
+            {STEP_TITLE[step][1]}
+          </Text>
+        </BlockStack>
 
         {step === 0 && (
-          <Card>
+          <div>
             <FormLayout>
               <FormLayout.Group>
                 <TextField label="Job title" value={job.title} onChange={(v) => set({ title: v })} autoComplete="off" error={errors.title} requiredIndicator />
@@ -102,8 +135,28 @@ export function JobBuilder() {
                 <TextField label="Location" value={job.location} onChange={(v) => set({ location: v })} autoComplete="off" error={errors.location} requiredIndicator placeholder="City, ST or Remote (United States)" />
                 <Select label="Kind of work" options={JOB_FAMILIES.map((f) => ({ label: f.label, value: f.id }))} value={job.family} onChange={(v) => set({ family: v })} />
               </FormLayout.Group>
-              <ChoiceChips label="Employment type" allowNone={false} options={Object.entries(EMPLOYMENT_TYPE_LABEL).map(([value, label]) => ({ value, label }))} value={job.employmentType} onChange={(v) => set({ employmentType: v as EmploymentType })} />
-              <ChoiceChips label="Experience level" allowNone={false} options={Object.entries(EXPERIENCE_LEVEL_LABEL).map(([value, label]) => ({ value, label }))} value={job.experienceLevel} onChange={(v) => set({ experienceLevel: v as ExperienceLevel })} />
+              <InlineGrid columns={{ xs: 1, md: 2 }} gap="400">
+                <BlockStack gap="200">
+                  <Text as="h2" variant="headingSm">
+                    Employment type
+                  </Text>
+                  <OptionCards>
+                    {Object.entries(EMPLOYMENT_TYPE_LABEL).map(([value, label]) => (
+                      <OptionCard key={value} title={label} selected={job.employmentType === value} onClick={() => set({ employmentType: value as EmploymentType })} />
+                    ))}
+                  </OptionCards>
+                </BlockStack>
+                <BlockStack gap="200">
+                  <Text as="h2" variant="headingSm">
+                    Experience level
+                  </Text>
+                  <OptionCards>
+                    {Object.entries(EXPERIENCE_LEVEL_LABEL).map(([value, label]) => (
+                      <OptionCard key={value} title={label} selected={job.experienceLevel === value} onClick={() => set({ experienceLevel: value as ExperienceLevel })} />
+                    ))}
+                  </OptionCards>
+                </BlockStack>
+              </InlineGrid>
               <FormLayout.Group condensed>
                 <Select label="Pay is" options={[{ label: 'Per hour', value: 'hour' }, { label: 'Per year', value: 'year' }]} value={job.salaryUnit} onChange={(v) => set({ salaryUnit: v as 'hour' | 'year' })} />
                 <TextField label="From" type="number" prefix="$" value={job.salaryMin ? String(job.salaryMin) : ''} onChange={(v) => set({ salaryMin: Number(v) })} autoComplete="off" error={!!errors.salary} requiredIndicator />
@@ -111,7 +164,7 @@ export function JobBuilder() {
               </FormLayout.Group>
               <TextField label="Summary" value={job.summary} onChange={(v) => set({ summary: v })} multiline={3} autoComplete="off" error={errors.summary} requiredIndicator helpText="Two or three sentences a candidate can picture." />
             </FormLayout>
-          </Card>
+          </div>
         )}
 
         {step === 1 && (
@@ -276,6 +329,7 @@ export function JobBuilder() {
                   <Button onClick={() => set({ hiringStages: [...job.hiringStages, { id: `s${Date.now()}`, name: '', description: '', duration: '' }] })}>Add a step</Button>
                 </InlineStack>
                 <TextField label="Questions candidates must answer to apply (optional, one per line, up to 3)" value={job.screeningQuestions.join('\n')} onChange={(v) => set({ screeningQuestions: v.split('\n').slice(0, 3) })} onBlur={() => set({ screeningQuestions: lines(job.screeningQuestions.join('\n')).slice(0, 3) })} multiline={3} autoComplete="off" helpText="Leave empty and people apply with just a résumé. If you add questions, nobody can send without answering them — so keep them friendly: why they want to work with you, what they would enjoy." />
+                <Checkbox label="Accept applications Openwork sends on a candidate’s behalf" helpText="Candidates on Pro can let Openwork apply for them within rules they set. Their profile and résumé arrive exactly as a manual application would, marked “sent by Openwork”. Turn off to receive only applications the person sent themselves." checked={job.acceptsAutoApply} onChange={(v) => set({ acceptsAutoApply: v })} />
                 <TextField label="Overall timeframe" value={job.decisionTimeframe} onChange={(v) => set({ decisionTimeframe: v })} autoComplete="off" placeholder="About three weeks from application to decision." />
               </BlockStack>
             </Card>
@@ -310,13 +364,14 @@ export function JobBuilder() {
           </BlockStack>
         )}
 
-        <div className="ow-actionbar">
-        <InlineStack align="space-between" wrap gap="300">
+        <div className="ow-onboard__foot">
           <Button onClick={() => { setStep((s) => Math.max(0, s - 1)); window.scrollTo({ top: 0 }); }} disabled={step === 0}>
             Back
           </Button>
           <InlineStack gap="200">
-            <Button onClick={saveDraft}>Save draft</Button>
+            <Button variant="plain" onClick={saveDraft}>
+              Save draft
+            </Button>
             {step < STEPS.length - 1 ? (
               <Button variant="primary" size="large" onClick={next}>
                 Continue
@@ -327,9 +382,9 @@ export function JobBuilder() {
               </Button>
             )}
           </InlineStack>
-        </InlineStack>
         </div>
       </BlockStack>
-    </Page>
+      </div>
+    </div>
   );
 }

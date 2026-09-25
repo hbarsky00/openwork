@@ -54,6 +54,8 @@ export const SAMPLE_CANDIDATES: CandidateProfile[] = [
     privacy: { supportNotes: 'private', hiringPreferences: 'shared', workExamples: 'shared' },
     onboardingComplete: true,
     assistMode: 'review',
+    plan: 'free',
+    autoRules: { onlyStrongMatches: true, requireNeedsConfirmed: true, minPay: null, arrangements: [], types: [], dailyCap: 3 },
     goal: 'better-fit',
   },
 
@@ -99,6 +101,8 @@ export const SAMPLE_CANDIDATES: CandidateProfile[] = [
     privacy: { supportNotes: 'shared', hiringPreferences: 'shared', workExamples: 'shared' },
     onboardingComplete: true,
     assistMode: 'review',
+    plan: 'free',
+    autoRules: { onlyStrongMatches: true, requireNeedsConfirmed: true, minPay: null, arrangements: [], types: [], dailyCap: 3 },
     goal: 'better-fit',
   },
 
@@ -145,6 +149,8 @@ export const SAMPLE_CANDIDATES: CandidateProfile[] = [
     privacy: { supportNotes: 'shared', hiringPreferences: 'shared', workExamples: 'shared' },
     onboardingComplete: true,
     assistMode: 'review',
+    plan: 'free',
+    autoRules: { onlyStrongMatches: true, requireNeedsConfirmed: true, minPay: null, arrangements: [], types: [], dailyCap: 3 },
     goal: 'better-fit',
   },
 
@@ -190,6 +196,8 @@ export const SAMPLE_CANDIDATES: CandidateProfile[] = [
     privacy: { supportNotes: 'shared', hiringPreferences: 'shared', workExamples: 'shared' },
     onboardingComplete: true,
     assistMode: 'review',
+    plan: 'free',
+    autoRules: { onlyStrongMatches: true, requireNeedsConfirmed: true, minPay: null, arrangements: [], types: [], dailyCap: 3 },
     goal: 'better-fit',
   },
 
@@ -238,6 +246,8 @@ export const SAMPLE_CANDIDATES: CandidateProfile[] = [
     privacy: { supportNotes: 'shared', hiringPreferences: 'shared', workExamples: 'shared' },
     onboardingComplete: true,
     assistMode: 'review',
+    plan: 'free',
+    autoRules: { onlyStrongMatches: true, requireNeedsConfirmed: true, minPay: null, arrangements: [], types: [], dailyCap: 3 },
     goal: 'first-job',
   },
 ];
@@ -256,6 +266,7 @@ export const SAMPLE_APPLICATIONS: Application[] = [
     ],
     answers: {},
     shared: { profile: true, resume: true, workExamples: true, sharedPreferences: ['instructions', 'schedulePredictability'], sharedAccessNeeds: [], hiringPreferences: ['questionsInAdvance', 'workSample'], accommodationRequest: null },
+    sentBy: 'candidate',
   },
   {
     id: 'app-tyler-inventory',
@@ -269,6 +280,7 @@ export const SAMPLE_APPLICATIONS: Application[] = [
     ],
     answers: { note: 'I did a stockroom placement for a school year and I volunteer at the food bank every Saturday. My job coach Marisol will come with me.' },
     shared: { profile: true, resume: false, workExamples: false, sharedPreferences: ['instructions', 'schedulePredictability'], sharedAccessNeeds: ['jobCoach', 'stepByStep', 'supportPerson'], hiringPreferences: ['supportPersonWelcome', 'workSample'], accommodationRequest: { options: ['supportPersonWelcome', 'workSample'], custom: 'Please send the interview questions to my job coach as well.' } },
+    sentBy: 'candidate',
   },
   {
     id: 'app-sam-inspector',
@@ -284,6 +296,7 @@ export const SAMPLE_APPLICATIONS: Application[] = [
     ],
     answers: {},
     shared: { profile: true, resume: true, workExamples: false, sharedPreferences: ['instructions'], sharedAccessNeeds: ['captions', 'textBasedCommunication', 'interpreter'], hiringPreferences: ['interpreterAtInterview', 'workSample'], accommodationRequest: { options: ['interpreterAtInterview', 'questionsInAdvance'], custom: '' } },
+    sentBy: 'candidate',
   },
   {
     id: 'app-rosa-ap',
@@ -298,6 +311,7 @@ export const SAMPLE_APPLICATIONS: Application[] = [
     ],
     answers: {},
     shared: { profile: true, resume: true, workExamples: false, sharedPreferences: [], sharedAccessNeeds: ['stepFreeEntrance', 'accessibleRestroom'], hiringPreferences: ['videoInterview'], accommodationRequest: null },
+    sentBy: 'candidate',
   },
 ];
 
@@ -332,6 +346,8 @@ export function emptyProfile(id: string, name: string, email: string): Candidate
     privacy: { supportNotes: 'private', hiringPreferences: 'matching', workExamples: 'shared' },
     onboardingComplete: true,
     assistMode: 'review',
+    plan: 'free',
+    autoRules: { onlyStrongMatches: true, requireNeedsConfirmed: true, minPay: null, arrangements: [], types: [], dailyCap: 3 },
     goal: null,
   };
 }

@@ -46,7 +46,7 @@ export function JobCard({ job, onSelect, selected = false, strengthsUsed }: Prop
   const profile = state.role === 'candidate' ? state.candidate : null;
   const hasInputs = !!profile && (Object.keys(profile.workPreferences).length > 0 || Object.keys(profile.accessNeeds).length > 0);
   const result = profile && employer && hasInputs ? matchJob(profile, job, employer) : null;
-  const applied = profile ? state.applications.some((a) => a.jobId === job.id && a.candidateId === profile.id) : false;
+  const applied = profile ? state.applications.some((a) => a.jobId === job.id && a.candidateId === profile.id && a.status !== 'prepared') : false;
 
   const open = () => {
     if (onSelect && state.displayMode !== 'simplified' && window.matchMedia('(min-width: 1024px)').matches) onSelect(job.id);

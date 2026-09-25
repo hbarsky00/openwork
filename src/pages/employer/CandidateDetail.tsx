@@ -9,10 +9,11 @@ import { APPLICATION_STATUS_LABEL, longDate } from '../../lib/format';
 import { jobSatisfies, MATCH_STATE_LABEL } from '../../lib/match';
 import type { ApplicationStatus } from '../../lib/types';
 import { useTitle } from '../../lib/useTitle';
-import { useStore } from '../../state/store';
+import { employerVisible, useStore } from '../../state/store';
 import { NotFound } from '../public/NotFound';
 
 const NEXT: Record<ApplicationStatus, ApplicationStatus[]> = {
+  prepared: [],
   applied: ['assessment', 'interview', 'notSelected'],
   viewed: ['assessment', 'interview', 'notSelected'],
   assessment: ['interview', 'offer', 'notSelected'],
@@ -40,7 +41,7 @@ const KIND_LABEL = { paid: 'Paid work', volunteer: 'Volunteering', school: 'Scho
 export function CandidateDetail() {
   const { id } = useParams();
   const { state, dispatch } = useStore();
-  const app = state.applications.find((a) => a.id === id);
+  const app = state.applications.find((a) => a.id === id && employerVisible(a));
   const job = app ? state.jobs.find((j) => j.id === app.jobId && j.employerId === state.employerId) : null;
   const cand = app ? state.candidates.find((c) => c.id === app.candidateId) : null;
   const employer = state.employers.find((e) => e.id === state.employerId)!;
@@ -70,6 +71,11 @@ export function CandidateDetail() {
   return (
     <Page fullWidth title={cand.name} subtitle={`${job.title} · ${APPLICATION_STATUS_LABEL[app.status]}`} backAction={{ content: 'Candidates', url: '/employer/candidates' }}>
       <BlockStack gap="500">
+        {app.sentBy === 'openwork' && (
+          <Banner tone="info" title="Sent by Openwork on the candidate’s behalf">
+            <p>{cand.name.split(' ')[0]} set rules — pay, arrangement, required access needs — and this job met them. The profile and résumé are exactly what a manual application would carry.</p>
+          </Banner>
+        )}
         <Banner tone="info" title="You are seeing only what this candidate chose to share">
           <p>Openwork does not pass on private needs, preferences, or anything not confirmed on the candidate’s sharing review. There is no diagnosis anywhere on Openwork. Judge the application on the work.</p>
         </Banner>

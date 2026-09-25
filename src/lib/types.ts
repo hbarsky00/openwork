@@ -96,6 +96,25 @@ export interface CandidateProfile {
   goal: string | null;
   /** How much Openwork does for you: you review, we prepare, or we send within your rules. */
   assistMode: 'review' | 'assist' | 'auto';
+  /** Subscription. Free = Review, Plus = Assist, Pro = Auto. Prototype: no billing. */
+  plan: 'free' | 'plus' | 'pro';
+  /** Rules Openwork must respect before preparing or sending anything for you. */
+  autoRules: AutoRules;
+}
+
+export interface AutoRules {
+  /** Only Strong and Good matches; never Worth reviewing. */
+  onlyStrongMatches: boolean;
+  /** Every access need you marked required must be confirmed by the employer. */
+  requireNeedsConfirmed: boolean;
+  /** Per hour. Null = no floor. */
+  minPay: number | null;
+  /** workLocation values allowed; empty = any. */
+  arrangements: string[];
+  /** Employment types allowed; empty = any. */
+  types: EmploymentType[];
+  /** Applications Openwork may send or prepare per day. */
+  dailyCap: number;
 }
 
 export type VerificationLevel = 'listed' | 'practicesCompleted' | 'verifiedPractices';
@@ -167,6 +186,8 @@ export interface Job {
   screeningQuestions: string[];
   /** Applicants before any on this platform; live count adds to it. */
   baseApplicants: number;
+  /** Employer opt-out for applications Openwork sends on a candidate's behalf. */
+  acceptsAutoApply: boolean;
   hiringStages: HiringStage[];
   decisionTimeframe: string;
   accommodationRoute: string;
@@ -179,6 +200,8 @@ export interface SavedJob {
 }
 
 export type ApplicationStatus =
+  /** Prepared by Openwork, waiting for the candidate to approve. Employers never see it. */
+  | 'prepared'
   | 'applied'
   | 'viewed'
   | 'assessment'
@@ -216,6 +239,8 @@ export interface Application {
   history: ApplicationEvent[];
   answers: Record<string, string>;
   shared: ApplicationSharedData;
+  /** Who pressed send. Shown to the employer. */
+  sentBy: 'candidate' | 'openwork';
 }
 
 /** A candidate asking an employer to confirm something the job does not say. */
