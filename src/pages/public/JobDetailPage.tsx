@@ -5,16 +5,52 @@ import { JobDetailContent } from '../../components/JobDetailContent';
 import { QuickApplyButton, applyHint } from '../../components/QuickApplyButton';
 import { SaveButton } from '../../components/SaveButton';
 import { VerificationBadge } from '../../components/VerificationBadge';
-import { salary } from '../../lib/format';
+import { MATCH_TIER_LABEL, matchJob, matchTier, type MatchResult } from '../../lib/match';
 import { useTitle } from '../../lib/useTitle';
 import { useApplicantCount, useJob, useMyApplication, useStore } from '../../state/store';
 import { NotFound } from './NotFound';
 
-/**
- * Full job page: article + sidebar. The job reads on one white sheet; the
- * apply card sits beside it and stays put while you scroll. Same shape as
- * every other job site, which is the point.
- */
+function Bar({ label, value, total }: { label: string; value: number; total: number }) {
+  const pct = total ? Math.round((value / total) * 100) : 0;
+  const word = total === 0 ? 'Not compared' : pct >= 80 ? 'Strong' : pct >= 50 ? 'Good' : 'Worth reviewing';
+  return (
+    <div className={`ow-bar${total === 0 ? ' ow-bar--none' : pct < 50 ? ' ow-bar--warn' : ''}`}>
+      <div className="ow-bar__head">
+        <span>{label}</span>
+        <strong>{word}</strong>
+      </div>
+      <div className="ow-bar__track">
+        <div className="ow-bar__fill" style={{ width: `${total === 0 ? 100 : pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function YourMatch({ r }: { r: MatchResult }) {
+  const needsOk = r.confirmed.filter((x) => x.kind === 'need').length;
+  const needsAll = r.confirmed.concat(r.review, r.different, r.needsConfirmation).filter((x) => x.kind === 'need').length;
+  const prefsOk = r.confirmed.filter((x) => x.kind === 'preference').length;
+  const prefsAll = r.confirmed.concat(r.review, r.different).filter((x) => x.kind === 'preference').length;
+  const tier = matchTier(r);
+  return (
+    <BlockStack gap="400">
+      <InlineStack align="space-between" blockAlign="center">
+        <Text as="h2" variant="headingMd">
+          Your match
+        </Text>
+        <span className={`ow-matchlabel ow-matchlabel--${tier}`}>{MATCH_TIER_LABEL[tier]}</span>
+      </InlineStack>
+      <Bar label="Skills" value={r.skillsMatched.length + r.strengthsMatched.length} total={r.skillsMatched.length + r.strengthsMatched.length > 0 ? r.skillsMatched.length + r.strengthsMatched.length + 1 : 0} />
+      <Bar label="How you work" value={prefsOk} total={prefsAll} />
+      <Bar label="Accessibility" value={needsOk} total={needsAll} />
+      <Button url="#why" variant="plain">
+        See full match
+      </Button>
+    </BlockStack>
+  );
+}
+
+/** Full job page, reference layout: sheet + sticky sidebar (Your match, About the company). */
 export function JobDetailPage() {
   const { id } = useParams();
   const job = useJob(id);
@@ -25,6 +61,8 @@ export function JobDetailPage() {
   if (!job) return <NotFound message="This job may have been removed or the link is wrong." />;
   const employer = state.employers.find((e) => e.id === job.employerId);
   if (!employer) return null;
+  const profile = state.role === 'candidate' ? state.candidate : null;
+  const result = profile ? matchJob(profile, job, employer) : null;
 
   const back = state.lastSearch ? `/jobs?${state.lastSearch}` : '/jobs';
   const closed = job.status !== 'published';
@@ -33,27 +71,16 @@ export function JobDetailPage() {
     <div className="ow-container">
       <div className="ow-pagehead">
         <Link to={back} className="ow-backlink">
-          ← Back to jobs
+          ← Back to search
         </Link>
       </div>
       <div className="ow-cols">
-        <article className="ow-sheet ow-article">
+        <article className="ow-article">
           <JobDetailContent job={job} />
         </article>
         <aside className="ow-aside">
           <div className="ow-sheet ow-aside__card">
             <BlockStack gap="400">
-              <BlockStack gap="100">
-                <Text as="p" variant="headingLg">
-                  {salary(job)}
-                </Text>
-                <Text as="p" tone="subdued">
-                  {job.location}
-                </Text>
-                <Text as="p" variant="bodySm" tone="subdued">
-                  {applicants} applicant{applicants === 1 ? '' : 's'} · {employer.name} replies {employer.typicalResponse}
-                </Text>
-              </BlockStack>
               <QuickApplyButton job={job} fullWidth />
               <SaveButton jobId={job.id} size="large" fullWidth />
               {!myApplication && !closed && (
@@ -61,25 +88,31 @@ export function JobDetailPage() {
                   {applyHint(job, state.role === 'candidate')}
                 </Text>
               )}
+              <Text as="p" variant="bodySm" tone="subdued" alignment="center">
+                {applicants} applicant{applicants === 1 ? '' : 's'} · replies {employer.typicalResponse}
+              </Text>
             </BlockStack>
           </div>
+          {result && result.comparable + result.skillsMatched.length + result.strengthsMatched.length > 0 && (
+            <div className="ow-sheet ow-aside__card">
+              <YourMatch r={result} />
+            </div>
+          )}
           <div className="ow-sheet ow-aside__card">
             <BlockStack gap="300">
+              <Text as="h2" variant="headingMd">
+                About {employer.name}
+              </Text>
               <InlineStack gap="300" blockAlign="center" wrap={false}>
-                <EmployerLogo employer={employer} size={48} />
-                <BlockStack gap="050">
-                  <Text as="p" variant="headingMd">
-                    {employer.name}
-                  </Text>
-                  <Text as="p" variant="bodySm" tone="subdued">
-                    {employer.industry} · {employer.size}
-                  </Text>
-                </BlockStack>
+                <EmployerLogo employer={employer} size={44} />
+                <Text as="p" variant="bodySm" tone="subdued">
+                  {employer.industry} · {employer.size} · {employer.headquarters}
+                </Text>
               </InlineStack>
-              <VerificationBadge level={employer.verification} />
               <Text as="p">{employer.mission}</Text>
+              <VerificationBadge level={employer.verification} />
               <Button url={`/companies/${employer.id}`} variant="plain">
-                All jobs at {employer.name}
+                View company profile
               </Button>
             </BlockStack>
           </div>

@@ -1,173 +1,330 @@
-import { Banner, BlockStack, Button, Checkbox, InlineStack, Tag, Text, TextField } from '@shopify/polaris';
-import { useMemo, useState } from 'react';
+import { BlockStack, Button, DropZone, FormLayout, InlineStack, Tag, Text, TextField } from '@shopify/polaris';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AccessNeedsForm } from '../../components/AccessNeedsForm';
-import { ChoiceChips } from '../../components/ChoiceChips';
+import { OptionCard, OptionCards } from '../../components/OptionCard';
 import { PreferenceControl } from '../../components/PreferenceControl';
-import { Stepper } from '../../components/Stepper';
 import { StrengthsPicker } from '../../components/StrengthsPicker';
-import { ACCESS_CATEGORIES, ACCESS_FEATURE_BY_ID, JOB_FAMILIES, type AccessCategoryId } from '../../lib/access';
+import { ACCESS_CATEGORIES, JOB_FAMILIES, type AccessCategoryId } from '../../lib/access';
 import { DIMENSION_BY_ID, type DimensionId } from '../../lib/dimensions';
-import { VISIBILITY_HELP, VISIBILITY_LABEL } from '../../lib/format';
-import type { CandidatePreference, Visibility } from '../../lib/types';
+import { EMPLOYMENT_TYPE_LABEL, VISIBILITY_HELP, VISIBILITY_LABEL, WORK_LOCATION_LABEL } from '../../lib/format';
+import { matchJob, matchTier } from '../../lib/match';
+import type { CandidatePreference, EmploymentType, Visibility } from '../../lib/types';
 import { useTitle } from '../../lib/useTitle';
 import { useStore } from '../../state/store';
 
-const GOALS = [
-  { value: 'first-job', label: 'My first regular job' },
-  { value: 'better-fit', label: 'A job that fits me better' },
-  { value: 'return', label: 'Back to work after time away' },
-  { value: 'explore', label: 'Help me discover what I could do' },
-];
-const DIMS: DimensionId[] = ['instructions', 'schedulePredictability', 'noise', 'taskStructure', 'workLocation'];
-
-type Step = { kind: 'goal' } | { kind: 'interests' } | { kind: 'strengths' } | { kind: 'dim'; id: DimensionId } | { kind: 'needCats' } | { kind: 'needs'; cat: AccessCategoryId } | { kind: 'privacy' };
+const TOTAL = 6;
+const TITLES = ['Welcome', 'Job goals', 'Experience', 'How I work best', 'Accessibility', 'Privacy'];
+const DIMS: DimensionId[] = ['instructions', 'schedulePredictability', 'noise', 'feedbackStyle'];
+const MODES = [
+  { v: 'review', t: 'Review', h: 'Openwork finds jobs. You review and apply.' },
+  { v: 'assist', t: 'Assist', h: 'Openwork finds jobs and prepares the application. You approve before anything is sent.' },
+  { v: 'auto', t: 'Auto', h: 'Openwork can prepare and send applications that meet your rules: pay, location, work type, required needs, sharing.' },
+] as const;
 
 /**
- * One question per screen. The list of screens is built from the answers:
- * pick two access categories and you get two screens, pick none and you get
- * none. Everything saves as you go; "Do this later" is on every screen.
+ * Six steps, reference layout: STEP X OF 6 + progress bar, one question, option
+ * cards, Skip / Back / Continue. Everything saves as you go. Ends on
+ * "Your matches are ready."
  */
 export function Onboarding() {
-  useTitle('Let’s find work that works for you');
+  useTitle('Set up');
   const { state, dispatch } = useStore();
   const navigate = useNavigate();
   const [sp] = useSearchParams();
   const p = state.candidate!;
   const patch = (x: Partial<typeof p>) => dispatch({ type: 'updateCandidate', patch: x });
   const [i, setI] = useState(0);
-  const [cats, setCats] = useState<AccessCategoryId[]>(() => ACCESS_CATEGORIES.filter((c) => Object.keys(p.accessNeeds).some((id) => ACCESS_FEATURE_BY_ID[id]?.category === c.id)).map((c) => c.id));
+  const [done, setDone] = useState(false);
   const [roleDraft, setRoleDraft] = useState('');
+  const [cats, setCats] = useState<AccessCategoryId[]>(() => ACCESS_CATEGORIES.filter((c) => Object.keys(p.accessNeeds).some((id) => id && state.jobs && true && c.id === (Object.keys(p.accessNeeds).length ? c.id : ''))).map((c) => c.id));
+  const top = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    top.current?.focus();
+    window.scrollTo({ top: 0 });
+  }, [i, done]);
 
-  const steps = useMemo<Step[]>(() => [{ kind: 'goal' }, { kind: 'interests' }, { kind: 'strengths' }, ...DIMS.map((id) => ({ kind: 'dim', id }) as Step), { kind: 'needCats' }, ...cats.map((cat) => ({ kind: 'needs', cat }) as Step), { kind: 'privacy' }], [cats]);
-  const step = steps[Math.min(i, steps.length - 1)];
-  const last = i >= steps.length - 1;
-
-  const finish = (dest?: string) => {
-    patch({ onboardingComplete: true });
-    navigate(dest ?? sp.get('next') ?? (p.goal === 'explore' ? '/discover' : '/jobs'));
-  };
+  const discover = p.goal === 'explore';
   const setPref = (id: DimensionId, next: CandidatePreference | undefined) => {
     const wp = { ...p.workPreferences };
     if (next) wp[id] = next;
     else delete wp[id];
     patch({ workPreferences: wp });
   };
+  const currentVisibility = (Object.values(p.accessNeeds)[0]?.visibility ?? Object.values(p.workPreferences)[0]?.visibility ?? 'matching') as Visibility;
   const setAllVisibility = (visibility: Visibility) =>
     patch({
       workPreferences: Object.fromEntries(Object.entries(p.workPreferences).map(([k, v]) => [k, { ...v!, visibility }])) as typeof p.workPreferences,
       accessNeeds: Object.fromEntries(Object.entries(p.accessNeeds).map(([k, v]) => [k, { ...v, visibility }])),
     });
-  const currentVisibility = (Object.values(p.accessNeeds)[0]?.visibility ?? Object.values(p.workPreferences)[0]?.visibility ?? 'matching') as Visibility;
+  const toggle = <T,>(list: T[], v: T) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
-  const label = step.kind === 'dim' ? DIMENSION_BY_ID[step.id].label : step.kind === 'needs' ? ACCESS_CATEGORIES.find((c) => c.id === step.cat)!.label : { goal: 'What you want', interests: 'Kinds of work', strengths: 'Strengths', needCats: 'Access', privacy: 'Privacy' }[step.kind];
+  const finish = () => {
+    patch({ onboardingComplete: true });
+    setDone(true);
+  };
+  const next = () => (i >= TOTAL - 1 ? finish() : setI(i + 1));
+
+  if (done) {
+    const strong = state.jobs.filter((j) => j.status === 'published').filter((j) => matchTier(matchJob(p, j, state.employers.find((e) => e.id === j.employerId)!)) !== 'new').length;
+    return (
+      <div className="ow-container ow-container--narrow">
+        <div className="ow-sheet ow-onboard" ref={top} tabIndex={-1}>
+          <BlockStack gap="500" inlineAlign="center">
+            <span className="ow-done__icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" width="32" height="32"><path fill="#fff" d="M7.5 13.6 4.4 10.5l1.4-1.4 1.7 1.7 6.3-6.3 1.4 1.4z" /></svg>
+            </span>
+            <Text as="h1" variant="heading2xl" alignment="center">
+              Your matches are ready.
+            </Text>
+            <Text as="p" variant="bodyLg" tone="subdued" alignment="center">
+              {strong > 0 ? `${strong} job${strong === 1 ? '' : 's'} already line up with what you told us.` : 'Add more to your profile any time and the matches sharpen.'} Nothing you entered is shared until you apply.
+            </Text>
+            <InlineStack gap="300">
+              <Button url={sp.get('next') ?? '/matches'} variant="primary" size="large">
+                View my matches
+              </Button>
+              <Button url="/passport" size="large">
+                View profile
+              </Button>
+            </InlineStack>
+          </BlockStack>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <Stepper title="Let’s find work that works for you" step={i} total={steps.length} stepLabel={label} onBack={i > 0 ? () => setI(i - 1) : undefined} onNext={() => (last ? finish() : setI(i + 1))} onSkip={last ? undefined : () => setI(i + 1)} nextLabel={last ? (p.goal === 'explore' ? 'Show me kinds of work' : 'Show me jobs that work for me') : 'Continue'} onLater={last ? undefined : () => finish()}>
-      {step.kind === 'goal' && (
-        <BlockStack gap="500">
-          <Text as="h1" variant="headingXl">
-            What are you looking for?
-          </Text>
-          <ChoiceChips label="What are you looking for?" labelHidden size="large" options={GOALS} value={p.goal} onChange={(v) => patch({ goal: v as string | null, firstJob: v === 'first-job' ? true : p.firstJob })} />
-          <Checkbox label="I don’t have much traditional work history yet" helpText="Changes the words we use, not what you can apply for. School, volunteering and projects all count." checked={p.firstJob} onChange={(v) => patch({ firstJob: v })} />
-          <Text as="p" variant="bodySm" tone="subdued">
-            Every question is optional. Nothing here asks about a diagnosis — there is no field for one anywhere.
-          </Text>
-        </BlockStack>
-      )}
-
-      {step.kind === 'interests' && (
-        <BlockStack gap="500">
-          <Text as="h1" variant="headingXl">
-            What kinds of work interest you?
-          </Text>
-          <ChoiceChips label="Kinds of work" labelHidden multiple size="large" options={JOB_FAMILIES.map((f) => ({ value: f.id, label: f.label, helpText: f.description }))} value={p.interestedFamilies} onChange={(v) => patch({ interestedFamilies: v as string[] })} helpText="Pick any. Not sure? Skip — your strengths are enough to start." />
-          <InlineStack gap="200" blockAlign="end" wrap>
-            <div style={{ flex: '1 1 240px' }}>
-              <TextField label="Job titles, if you know them (optional)" value={roleDraft} onChange={setRoleDraft} autoComplete="off" onBlur={() => { const t = roleDraft.trim(); if (t && !p.desiredRoles.includes(t)) patch({ desiredRoles: [...p.desiredRoles, t] }); setRoleDraft(''); }} />
+    <div className="ow-container ow-container--narrow">
+      <div className="ow-sheet ow-onboard" ref={top} tabIndex={-1}>
+        <BlockStack gap="600">
+          <BlockStack gap="200">
+            <InlineStack align="space-between" blockAlign="center">
+              <Text as="p" variant="bodyXs" fontWeight="bold" tone="magic">
+                STEP {i + 1} OF {TOTAL}
+              </Text>
+              <Text as="p" variant="bodyXs" tone="subdued">
+                {TITLES[i]}
+              </Text>
+            </InlineStack>
+            <div className="ow-progress" role="progressbar" aria-valuemin={1} aria-valuemax={TOTAL} aria-valuenow={i + 1} aria-label="Setup progress">
+              <div style={{ width: `${((i + 1) / TOTAL) * 100}%` }} />
             </div>
-            {p.desiredRoles.map((r) => (
-              <Tag key={r} onRemove={() => patch({ desiredRoles: p.desiredRoles.filter((x) => x !== r) })}>
-                {r}
-              </Tag>
-            ))}
-          </InlineStack>
-        </BlockStack>
-      )}
-
-      {step.kind === 'strengths' && (
-        <BlockStack gap="500">
-          <BlockStack gap="200">
-            <Text as="h1" variant="headingXl">
-              What are you good at?
-            </Text>
-            <Text as="p" tone="subdued">
-              Plain words, not job titles. Jobs list the strengths they use, so this is how we find work you could do.
-            </Text>
           </BlockStack>
-          <StrengthsPicker value={p.strengths} onChange={(v) => patch({ strengths: v })} labelHidden />
-        </BlockStack>
-      )}
 
-      {step.kind === 'dim' && (
-        <BlockStack gap="300">
-          <PreferenceControl dimension={DIMENSION_BY_ID[step.id]} value={p.workPreferences[step.id]} onChange={(v) => setPref(step.id, v)} showVisibility={false} hero />
-          <Text as="p" variant="bodySm" tone="subdued">
-            You never have to say why. Six more questions like this live on your passport for later.
-          </Text>
-        </BlockStack>
-      )}
+          {i === 0 && (
+            <BlockStack gap="500">
+              <BlockStack gap="200" inlineAlign="center">
+                <Text as="h1" variant="heading2xl" alignment="center">
+                  Let’s find work that works for you.
+                </Text>
+                <Text as="p" tone="subdued" alignment="center">
+                  Two ways in. Both end at the same matches.
+                </Text>
+              </BlockStack>
+              <OptionCards>
+                <OptionCard title="I know what work I want" help="Search by role, skills or industry." selected={p.goal !== null && p.goal !== 'explore'} onClick={() => patch({ goal: 'know' })} />
+                <OptionCard title="Help me discover work" help="Use strengths, interests and work preferences to suggest directions. No résumé needed." selected={p.goal === 'explore'} onClick={() => patch({ goal: 'explore', firstJob: true })} />
+              </OptionCards>
+            </BlockStack>
+          )}
 
-      {step.kind === 'needCats' && (
-        <BlockStack gap="500">
-          <BlockStack gap="200">
-            <Text as="h1" variant="headingXl">
-              What would make work more accessible for you?
-            </Text>
-            <Text as="p">
-              Pick any areas that apply — or none. You only share what you are comfortable sharing; it stays private and improves your matches unless you decide otherwise.
-            </Text>
-          </BlockStack>
-          <ChoiceChips label="Areas" labelHidden multiple size="large" options={ACCESS_CATEGORIES.map((c) => ({ value: c.id, label: c.label, helpText: c.intro }))} value={cats} onChange={(v) => setCats(v as AccessCategoryId[])} helpText="One short screen per area you pick." />
-        </BlockStack>
-      )}
+          {i === 1 && !discover && (
+            <BlockStack gap="500">
+              <BlockStack gap="200" inlineAlign="center">
+                <Text as="h1" variant="heading2xl" alignment="center">
+                  What are you looking for?
+                </Text>
+                <Text as="p" tone="subdued" alignment="center">
+                  This shapes your matches. Everything can change later.
+                </Text>
+              </BlockStack>
+              <FormLayout>
+                <TextField label="Roles you want" value={roleDraft} onChange={setRoleDraft} autoComplete="off" placeholder="Type a title and press Enter" onBlur={() => { const t = roleDraft.trim(); if (t && !p.desiredRoles.includes(t)) patch({ desiredRoles: [...p.desiredRoles, t] }); setRoleDraft(''); }} />
+                {p.desiredRoles.length > 0 && (
+                  <InlineStack gap="200" wrap>
+                    {p.desiredRoles.map((r) => (
+                      <Tag key={r} onRemove={() => patch({ desiredRoles: p.desiredRoles.filter((x) => x !== r) })}>
+                        {r}
+                      </Tag>
+                    ))}
+                  </InlineStack>
+                )}
+                <TextField label="Location" value={p.location} onChange={(v) => patch({ location: v })} autoComplete="address-level2" placeholder="City, state — or leave blank for anywhere" />
+              </FormLayout>
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingSm">
+                  Where you want to work
+                </Text>
+                <OptionCards>
+                  {Object.entries(WORK_LOCATION_LABEL).map(([v, l]) => (
+                    <OptionCard key={v} multiple title={l} selected={(p.workPreferences.workLocation?.value ?? '') === v} onClick={() => setPref('workLocation', p.workPreferences.workLocation?.value === v ? undefined : { value: v, importance: 'preferred', visibility: 'matching' })} />
+                  ))}
+                </OptionCards>
+              </BlockStack>
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingSm">
+                  Employment type
+                </Text>
+                <OptionCards>
+                  {Object.entries(EMPLOYMENT_TYPE_LABEL).map(([v, l]) => (
+                    <OptionCard key={v} multiple title={l} selected={p.employmentTypes.includes(v as EmploymentType)} onClick={() => patch({ employmentTypes: toggle(p.employmentTypes, v as EmploymentType) })} />
+                  ))}
+                </OptionCards>
+              </BlockStack>
+              <TextField label="Minimum pay per hour (optional)" type="number" prefix="$" value={p.desiredSalaryMin?.toString() ?? ''} onChange={(v) => patch({ desiredSalaryMin: v ? Number(v) : null })} autoComplete="off" helpText="Private to you. Used to rank matches." />
+            </BlockStack>
+          )}
 
-      {step.kind === 'needs' && (
-        <BlockStack gap="500">
-          <BlockStack gap="200">
-            <Text as="h1" variant="headingXl">
-              {ACCESS_CATEGORIES.find((c) => c.id === step.cat)!.label}: what helps?
-            </Text>
-            <Text as="p" tone="subdued">
-              Tap anything that applies. You can mark how much each matters, or leave the defaults.
-            </Text>
-          </BlockStack>
-          <AccessNeedsForm value={p.accessNeeds} onChange={(v) => patch({ accessNeeds: v })} showVisibility={false} only={[step.cat]} hero />
-        </BlockStack>
-      )}
+          {i === 1 && discover && (
+            <BlockStack gap="500">
+              <BlockStack gap="200" inlineAlign="center">
+                <Text as="h1" variant="heading2xl" alignment="center">
+                  What are you good at?
+                </Text>
+                <Text as="p" tone="subdued" alignment="center">
+                  Plain words, not job titles. Jobs list the strengths they use.
+                </Text>
+              </BlockStack>
+              <StrengthsPicker value={p.strengths} onChange={(v) => patch({ strengths: v })} labelHidden />
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingSm">
+                  Kinds of work that interest you (optional)
+                </Text>
+                <OptionCards>
+                  {JOB_FAMILIES.map((f) => (
+                    <OptionCard key={f.id} multiple title={f.label} help={f.description} selected={p.interestedFamilies.includes(f.id)} onClick={() => patch({ interestedFamilies: toggle(p.interestedFamilies, f.id) })} />
+                  ))}
+                </OptionCards>
+              </BlockStack>
+            </BlockStack>
+          )}
 
-      {step.kind === 'privacy' && (
-        <BlockStack gap="500">
-          <BlockStack gap="200">
-            <Text as="h1" variant="headingXl">
-              Who can see how you work and what you need?
-            </Text>
-            <Text as="p" tone="subdued">
-              One setting for everything for now. Change it per answer on your passport later.
-            </Text>
-          </BlockStack>
-          <ChoiceChips label="Your answers are" size="large" allowNone={false} options={(Object.keys(VISIBILITY_LABEL) as Visibility[]).map((k) => ({ value: k, label: VISIBILITY_LABEL[k] }))} value={currentVisibility} onChange={(v) => setAllVisibility(v as Visibility)} helpText={VISIBILITY_HELP[currentVisibility]} />
-          <Banner tone="success" title="Nothing is sent automatically">
-            <p>Even “Shared with employer” answers go only when you apply, and only after you confirm the exact list.</p>
-          </Banner>
-          <InlineStack>
-            <Button variant="plain" url="/passport">
-              Review my whole passport first
+          {i === 2 && (
+            <BlockStack gap="500">
+              <BlockStack gap="200" inlineAlign="center">
+                <Text as="h1" variant="heading2xl" alignment="center">
+                  Tell us what you’ve done.
+                </Text>
+                <Text as="p" tone="subdued" alignment="center">
+                  A résumé if you have one. School, volunteering, projects and training all count if you don’t.
+                </Text>
+              </BlockStack>
+              {p.resumeFileName ? (
+                <div className="ow-optcard" aria-pressed="true" style={{ cursor: 'default' }}>
+                  <span className="ow-optcard__dot" aria-hidden="true" />
+                  <span>
+                    <Text as="span" variant="headingSm">
+                      {p.resumeFileName}
+                    </Text>
+                    <Text as="p" variant="bodySm" tone="subdued">
+                      Saved to your profile. <Button variant="plain" onClick={() => patch({ resumeFileName: null })}>Remove</Button>
+                    </Text>
+                  </span>
+                </div>
+              ) : (
+                <div className="ow-drop">
+                  <DropZone accept=".pdf,.doc,.docx,.txt" type="file" allowMultiple={false} onDrop={(_d, a) => a[0] && patch({ resumeFileName: a[0].name, firstJob: false })}>
+                    <DropZone.FileUpload actionTitle="Upload résumé" actionHint="PDF, DOCX or TXT. We use it to fill your profile." />
+                  </DropZone>
+                </div>
+              )}
+              <OptionCards>
+                <OptionCard title="I don’t have a résumé" help="No problem. Your strengths, school and any volunteering or projects become your profile." selected={p.firstJob && !p.resumeFileName} onClick={() => patch({ firstJob: true, resumeFileName: null })} />
+              </OptionCards>
+            </BlockStack>
+          )}
+
+          {i === 3 && (
+            <BlockStack gap="500">
+              <BlockStack gap="200" inlineAlign="center">
+                <Text as="h1" variant="heading2xl" alignment="center">
+                  How do you work best?
+                </Text>
+                <Text as="p" tone="subdued" alignment="center">
+                  Not a test. We match you with employers whose work runs this way. Mark each as required, preferred or doesn’t matter.
+                </Text>
+              </BlockStack>
+              {DIMS.map((id) => (
+                <PreferenceControl key={id} dimension={DIMENSION_BY_ID[id]} value={p.workPreferences[id]} onChange={(v) => setPref(id, v)} showVisibility={false} />
+              ))}
+            </BlockStack>
+          )}
+
+          {i === 4 && (
+            <BlockStack gap="500">
+              <BlockStack gap="200" inlineAlign="center">
+                <Text as="h1" variant="heading2xl" alignment="center">
+                  Anything you need to make work more accessible?
+                </Text>
+                <Text as="p" tone="subdued" alignment="center">
+                  Optional. You control what is used for matching and what employers can see. Pick areas, then what helps.
+                </Text>
+              </BlockStack>
+              <OptionCards>
+                {ACCESS_CATEGORIES.map((c) => (
+                  <OptionCard key={c.id} multiple title={c.label} help={c.intro} selected={cats.includes(c.id)} onClick={() => setCats(toggle(cats, c.id))} />
+                ))}
+              </OptionCards>
+              {cats.length > 0 && <AccessNeedsForm value={p.accessNeeds} onChange={(v) => patch({ accessNeeds: v })} showVisibility={false} only={cats} hero />}
+            </BlockStack>
+          )}
+
+          {i === 5 && (
+            <BlockStack gap="500">
+              <BlockStack gap="200" inlineAlign="center">
+                <Text as="h1" variant="heading2xl" alignment="center">
+                  Who sees what, and how much Openwork does.
+                </Text>
+                <Text as="p" tone="subdued" alignment="center">
+                  Sensible defaults. Change either any time.
+                </Text>
+              </BlockStack>
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingSm">
+                  Your work preferences and access needs are
+                </Text>
+                <OptionCards>
+                  {(Object.keys(VISIBILITY_LABEL) as Visibility[]).map((k) => (
+                    <OptionCard key={k} title={VISIBILITY_LABEL[k]} help={VISIBILITY_HELP[k]} selected={currentVisibility === k} onClick={() => setAllVisibility(k)} />
+                  ))}
+                </OptionCards>
+              </BlockStack>
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingSm">
+                  How Openwork helps
+                </Text>
+                <OptionCards>
+                  {MODES.map((m) => (
+                    <OptionCard key={m.v} title={m.t} help={m.h} selected={p.assistMode === m.v} onClick={() => patch({ assistMode: m.v })} />
+                  ))}
+                </OptionCards>
+              </BlockStack>
+            </BlockStack>
+          )}
+
+          <div className="ow-onboard__foot">
+            <Button variant="plain" onClick={next}>
+              Skip this step
             </Button>
-          </InlineStack>
+            <InlineStack gap="200">
+              {i > 0 && (
+                <Button size="large" onClick={() => setI(i - 1)}>
+                  Back
+                </Button>
+              )}
+              <Button variant="primary" size="large" onClick={next}>
+                {i >= TOTAL - 1 ? 'See my matches' : 'Continue'}
+              </Button>
+            </InlineStack>
+          </div>
         </BlockStack>
-      )}
-    </Stepper>
+      </div>
+      <div style={{ textAlign: 'center', marginTop: 16 }}>
+        <Button variant="plain" onClick={() => navigate('/matches')}>
+          Save and continue later
+        </Button>
+      </div>
+    </div>
   );
 }

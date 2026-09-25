@@ -53,6 +53,7 @@ export const SAMPLE_CANDIDATES: CandidateProfile[] = [
     phone: '(614) 555-0142',
     privacy: { supportNotes: 'private', hiringPreferences: 'shared', workExamples: 'shared' },
     onboardingComplete: true,
+    assistMode: 'review',
     goal: 'better-fit',
   },
 
@@ -97,6 +98,7 @@ export const SAMPLE_CANDIDATES: CandidateProfile[] = [
     phone: '',
     privacy: { supportNotes: 'shared', hiringPreferences: 'shared', workExamples: 'shared' },
     onboardingComplete: true,
+    assistMode: 'review',
     goal: 'better-fit',
   },
 
@@ -142,6 +144,7 @@ export const SAMPLE_CANDIDATES: CandidateProfile[] = [
     phone: '(401) 555-0188',
     privacy: { supportNotes: 'shared', hiringPreferences: 'shared', workExamples: 'shared' },
     onboardingComplete: true,
+    assistMode: 'review',
     goal: 'better-fit',
   },
 
@@ -186,6 +189,7 @@ export const SAMPLE_CANDIDATES: CandidateProfile[] = [
     phone: '',
     privacy: { supportNotes: 'shared', hiringPreferences: 'shared', workExamples: 'shared' },
     onboardingComplete: true,
+    assistMode: 'review',
     goal: 'better-fit',
   },
 
@@ -233,6 +237,7 @@ export const SAMPLE_CANDIDATES: CandidateProfile[] = [
     phone: '(775) 555-0101',
     privacy: { supportNotes: 'shared', hiringPreferences: 'shared', workExamples: 'shared' },
     onboardingComplete: true,
+    assistMode: 'review',
     goal: 'first-job',
   },
 ];
@@ -326,6 +331,7 @@ export function emptyProfile(id: string, name: string, email: string): Candidate
     phone: '',
     privacy: { supportNotes: 'private', hiringPreferences: 'matching', workExamples: 'shared' },
     onboardingComplete: true,
+    assistMode: 'review',
     goal: null,
   };
 }

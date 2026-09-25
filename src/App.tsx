@@ -36,6 +36,7 @@ import { CandidateDetail } from './pages/employer/CandidateDetail';
 import { EmployerCompany } from './pages/employer/EmployerCompany';
 import { EmployerAccessibility } from './pages/employer/EmployerAccessibility';
 import { EmployerSignUp } from './pages/employer/EmployerSignUp';
+import { EmployerInterviews } from './pages/employer/EmployerInterviews';
 
 import { Admin } from './pages/admin/Admin';
 
@@ -108,6 +109,7 @@ export function App() {
         <Route path="/employer/jobs/:id/edit" element={<E><JobBuilder /></E>} />
         <Route path="/employer/jobs/:id/preview" element={<E><JobPreview /></E>} />
         <Route path="/employer/candidates" element={<E><EmployerCandidates /></E>} />
+        <Route path="/employer/interviews" element={<E><EmployerInterviews /></E>} />
         <Route path="/employer/candidates/:id" element={<E><CandidateDetail /></E>} />
         <Route path="/employer/accessibility" element={<E><EmployerAccessibility /></E>} />
         <Route path="/employer/company" element={<E><EmployerCompany /></E>} />

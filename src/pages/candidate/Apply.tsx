@@ -1,5 +1,5 @@
 import { Badge, Banner, BlockStack, Button, DropZone, Form, FormLayout, Icon, InlineStack, List, Text, TextField } from '@shopify/polaris';
-import { CheckCircleIcon } from '@shopify/polaris-icons';
+import { CheckCircleIcon, InfoIcon } from '@shopify/polaris-icons';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { EmployerLogo } from '../../components/EmployerLogo';
@@ -119,11 +119,11 @@ export function Apply() {
             <BlockStack gap="100">
               <Text as="h1" variant="heading2xl">
                 <span ref={doneHeading} tabIndex={-1}>
-                  Sent to {employer.name}
+                  Application submitted
                 </span>
               </Text>
               <Text as="p" variant="bodyLg">
-                Your application for {job.title} is in. A copy is in your email.
+                Sent to {employer.name} for {job.title}. A copy is in your email.
               </Text>
             </BlockStack>
           </div>
@@ -146,7 +146,7 @@ export function Apply() {
               </Text>
               <InlineStack gap="300">
                 <Button url={`/applications/${sentId}`} variant="primary" size="large">
-                  Track this application
+                  Track application
                 </Button>
                 <Button url="/jobs" size="large">
                   Back to jobs
@@ -181,10 +181,10 @@ export function Apply() {
             <EmployerLogo employer={employer} size={56} />
             <BlockStack gap="050">
               <Text as="h1" variant="heading2xl">
-                Apply to {job.title}
+                Prepare your application
               </Text>
               <Text as="p" variant="bodyMd" tone="subdued">
-                {employer.name} · {salary(job)} · {job.location}
+                {job.title} · {employer.name} · {salary(job)} · {job.location}
               </Text>
             </BlockStack>
           </InlineStack>
@@ -193,6 +193,23 @@ export function Apply() {
               Applied before? <Link to={`/signin?next=${encodeURIComponent(`/jobs/${job.id}/apply`)}`}>Sign in</Link> and this fills itself in.
             </Text>
           )}
+        </div>
+
+        <div className="ow-why" role="status" aria-label="Application readiness">
+          <Text as="p" variant="bodySm" fontWeight="semibold">
+            Application readiness
+          </Text>
+          {[
+            { ok: !!name.trim() && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email), t: name.trim() ? `Contact details: ${name.trim()}` : 'Contact details needed' },
+            { ok: !!resume, t: resume ? `Résumé: ${resume}` : 'No résumé — optional, your profile goes instead' },
+            { ok: missing === 0, t: job.screeningQuestions.length ? (missing ? `${missing} of ${job.screeningQuestions.length} employer question${job.screeningQuestions.length === 1 ? '' : 's'} left` : `${job.screeningQuestions.length} employer question${job.screeningQuestions.length === 1 ? '' : 's'} answered`) : 'No employer questions for this job' },
+            { ok: true, t: sharedNeeds.length ? `Sharing ${sharedNeeds.length} access need${sharedNeeds.length === 1 ? '' : 's'} you marked okay to share` : 'No access needs shared (your choice)' },
+          ].map((r) => (
+            <div key={r.t} className={`ow-why__row ow-why__row--${r.ok ? 'ok' : 'info'}`}>
+              {r.ok ? <CheckCircleIcon /> : <InfoIcon />}
+              <span>{r.t}</span>
+            </div>
+          ))}
         </div>
 
         {Object.keys(errors).length > 0 && (
@@ -279,6 +296,24 @@ export function Apply() {
             </BlockStack>
           </div>
 
+          <div className="ow-sheet" style={{ marginTop: 16 }}>
+            <BlockStack gap="300">
+              <Text as="h2" variant="headingLg">
+                What {employer.name} will see
+              </Text>
+              <List type="bullet">
+                <List.Item>Your name{phone.trim() ? ', phone' : ''} and email</List.Item>
+                {resume ? <List.Item>Résumé: {resume}</List.Item> : <List.Item>Your profile: strengths, skills, experience</List.Item>}
+                {job.screeningQuestions.length > 0 && <List.Item>Your answers to {job.screeningQuestions.length} question{job.screeningQuestions.length === 1 ? '' : 's'}</List.Item>}
+                {need.trim() && <List.Item>Your interview request</List.Item>}
+                {sharedNeeds.length > 0 && <List.Item>Access needs you marked okay to share: {sharedNeeds.map((n) => ACCESS_FEATURE_BY_ID[n]?.label).join(', ')}</List.Item>}
+              </List>
+              <Text as="p" variant="bodySm" tone="subdued">
+                Nothing else. Private and matching-only information never leaves your profile.
+              </Text>
+            </BlockStack>
+          </div>
+
           <div className="ow-actionbar">
             <InlineStack align="space-between" blockAlign="center" wrap gap="300">
               <Text as="p" variant="bodySm" tone={missing > 0 ? 'critical' : 'subdued'}>
@@ -289,7 +324,7 @@ export function Apply() {
                     : 'Sending creates your free account so you can track the reply.'}
               </Text>
               <Button submit variant="primary" size="large">
-                Send application
+                Submit application
               </Button>
             </InlineStack>
           </div>

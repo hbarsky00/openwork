@@ -1,9 +1,10 @@
-import { Badge, Banner, BlockStack, InlineStack, List, Text } from '@shopify/polaris';
+import { Badge, Banner, BlockStack, InlineGrid, InlineStack, List, Text } from '@shopify/polaris';
+import { CheckCircleIcon } from '@shopify/polaris-icons';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ACCESS_FEATURES, HIRING_OPTION_BY_ID, PHYSICAL_REQUIREMENTS } from '../lib/access';
+import { ACCESS_FEATURES, EVIDENCE_SOURCE_LABEL, HIRING_OPTION_BY_ID, PHYSICAL_REQUIREMENTS } from '../lib/access';
 import { DIMENSIONS, optionOf } from '../lib/dimensions';
-import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL, postedAgo, salary } from '../lib/format';
+import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL, longDate, postedAgo, salary } from '../lib/format';
 import { matchJob } from '../lib/match';
 import type { Job } from '../lib/types';
 import { useApplicantCount, useMyApplication, useStore } from '../state/store';
@@ -20,7 +21,7 @@ interface Props {
 }
 
 /** The six facts a job seeker actually asks about. The rest is noise. */
-const KEY_DIMENSIONS = ['workLocation', 'schedulePredictability', 'noise', 'meetingFrequency', 'instructions', 'socialInteraction'] as const;
+const KEY_DIMENSIONS = ['schedulePredictability', 'meetingFrequency', 'collaboration', 'customerInteraction', 'taskSwitching', 'feedbackStyle', 'instructions', 'noise'] as const;
 
 /**
  * Job page in the order a job seeker reads it. Apply stays on screen.
@@ -60,6 +61,7 @@ export function JobDetailContent({ job, pane = false }: Props) {
   const onRequest = evidence.filter((x) => x.ev?.status === 'contact');
   const answered = state.questions.filter((q) => q.jobId === job.id && q.answer);
 
+  const verified = provided.slice(0, 6);
   return (
     <div className={pane ? 'ow-jobdetail ow-jobdetail--pane' : 'ow-jobdetail'}>
       <BlockStack gap="500">
@@ -71,164 +73,208 @@ export function JobDetailContent({ job, pane = false }: Props) {
           </Banner>
         )}
 
-        <InlineStack gap="300" blockAlign="start" wrap={false}>
-          <EmployerLogo employer={employer} size={pane ? 48 : 56} />
-          <BlockStack gap="100">
-            <Text as="h1" variant={pane ? 'headingXl' : 'heading2xl'}>
-              {job.title}
-            </Text>
-            <Text as="p" variant="bodyMd">
-              <Link to={`/companies/${employer.id}`}>{employer.name}</Link> · {job.location}
-            </Text>
-            <InlineStack gap="150" blockAlign="center" wrap>
-              <Badge>{salary(job)}</Badge>
-              <Badge>{WORK_LOCATION_LABEL[job.environment.workLocation ?? ''] ?? 'On-site'}</Badge>
-              <Badge>{EMPLOYMENT_TYPE_LABEL[job.employmentType]}</Badge>
-              <VerificationBadge level={employer.verification} />
-              <Text as="span" variant="bodySm" tone="subdued">
-                {postedAgo(job.postedOn)} · {applicants} applicant{applicants === 1 ? '' : 's'} · replies {employer.typicalResponse}
-              </Text>
+        <div className={pane ? '' : 'ow-sheet'}>
+          <BlockStack gap="400">
+            <InlineStack gap="400" blockAlign="start" wrap={false}>
+              <EmployerLogo employer={employer} size={pane ? 48 : 64} />
+              <BlockStack gap="200">
+                <Text as="h1" variant={pane ? 'headingXl' : 'heading2xl'}>
+                  {job.title}
+                </Text>
+                <Text as="p" tone="subdued">
+                  <Link to={`/companies/${employer.id}`}>{employer.name}</Link> • {job.location}
+                </Text>
+                <InlineStack gap="150" blockAlign="center" wrap>
+                  <Badge>{EMPLOYMENT_TYPE_LABEL[job.employmentType]}</Badge>
+                  <Badge>{salary(job)}</Badge>
+                  <Badge>{WORK_LOCATION_LABEL[job.environment.workLocation ?? ''] ?? 'On-site'}</Badge>
+                  <VerificationBadge level={employer.verification} />
+                  <Text as="span" variant="bodySm" tone="subdued">
+                    {postedAgo(job.postedOn)} · {applicants} applicant{applicants === 1 ? '' : 's'}
+                  </Text>
+                </InlineStack>
+              </BlockStack>
             </InlineStack>
+            {pane && (
+              <div className="ow-applybar">
+                <QuickApplyButton job={job} />
+                <SaveButton jobId={job.id} size="large" />
+                {!myApplication && !closed && (
+                  <Text as="span" variant="bodySm" tone="subdued">
+                    {applyHint(job, !!profile)}
+                  </Text>
+                )}
+              </div>
+            )}
           </BlockStack>
-        </InlineStack>
-
-        {/* In the split view the apply bar pins to the top of the pane. The
-            full page has its own sidebar card instead. */}
-        {pane && (
-        <div className="ow-applybar">
-          <QuickApplyButton job={job} />
-          <SaveButton jobId={job.id} size="large" />
-          {!myApplication && !closed && (
-            <Text as="span" variant="bodySm" tone="subdued">
-              {applyHint(job, !!profile)}
-            </Text>
-          )}
         </div>
+
+        {verified.length > 0 && (
+          <section className="ow-verif" aria-labelledby="verif">
+            <BlockStack gap="400">
+              <BlockStack gap="050">
+                <Text as="h2" variant="headingLg" id="verif">
+                  Accessibility verification
+                </Text>
+                <Text as="p" variant="bodySm" tone="subdued">
+                  {result ? 'Verified practices matching your profile' : `What ${employer.name} has confirmed, with the source`}
+                </Text>
+              </BlockStack>
+              <InlineGrid columns={{ xs: 1, sm: 2 }} gap="300">
+                {verified.map(({ f, ev }) => (
+                  <div key={f.id} className="ow-evcard">
+                    <CheckCircleIcon />
+                    <div>
+                      <Text as="h3" variant="headingSm">
+                        {f.label}
+                      </Text>
+                      {ev!.note && (
+                        <Text as="p" variant="bodySm" tone="subdued">
+                          {ev!.note}
+                        </Text>
+                      )}
+                      <span className="ow-evcard__source">
+                        Source: {EVIDENCE_SOURCE_LABEL[ev!.source]} ({longDate(ev!.confirmedOn)})
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </InlineGrid>
+              {(provided.length > verified.length || onRequest.length > 0) && (
+                <Text as="p" variant="bodySm" tone="subdued">
+                  {provided.length > verified.length ? `Also confirmed: ${provided.slice(6).map((x) => x.f.label.toLowerCase()).join(', ')}. ` : ''}
+                  {onRequest.length > 0 ? `Ask about: ${onRequest.map((x) => x.f.label.toLowerCase()).join(', ')}.` : ''}
+                </Text>
+              )}
+            </BlockStack>
+          </section>
         )}
 
-        {result && <WhyThisCouldWork result={result} job={job} />}
+        {result && <div id="why"><WhyThisCouldWork result={result} job={job} /></div>}
 
-        <BlockStack gap="200">
-          <Text as="h2" variant="headingLg">
-            About the job
-          </Text>
-          <Text as="p" variant="bodyLg">
-            {job.summary}
-          </Text>
-          {job.tasks.length > 0 && (
-            <List type="number">
-              {job.tasks.map((t) => (
-                <List.Item key={t}>{t}</List.Item>
-              ))}
-            </List>
-          )}
-        </BlockStack>
+        <div className={pane ? '' : 'ow-sheet'}>
+          <BlockStack gap="600">
+            <BlockStack gap="200">
+              <Text as="h2" variant="headingLg">
+                What you’ll actually do
+              </Text>
+              <Text as="p" variant="bodyLg">
+                {job.summary}
+              </Text>
+              {job.tasks.length > 0 && (
+                <List type="bullet">
+                  {job.tasks.map((t) => (
+                    <List.Item key={t}>{t}</List.Item>
+                  ))}
+                </List>
+              )}
+            </BlockStack>
 
-        <BlockStack gap="200">
-          <Text as="h2" variant="headingLg">
-            What you need
-          </Text>
-          <List type="bullet">
-            {job.essentialRequirements.map((r) => (
-              <List.Item key={r}>{r}</List.Item>
-            ))}
-          </List>
-          {job.preferredRequirements.length > 0 && (
-            <Text as="p" tone="subdued">
-              Nice to have: {job.preferredRequirements.join(', ')}.
-            </Text>
-          )}
-        </BlockStack>
+            <BlockStack gap="200">
+              <Text as="h2" variant="headingLg">
+                Skills and experience
+              </Text>
+              <InlineGrid columns={{ xs: 1, sm: 2 }} gap="400">
+                <BlockStack gap="100">
+                  <Text as="h3" variant="headingSm">
+                    Required
+                  </Text>
+                  <List type="bullet">
+                    {job.essentialRequirements.map((r) => (
+                      <List.Item key={r}>{r}</List.Item>
+                    ))}
+                  </List>
+                </BlockStack>
+                {job.preferredRequirements.length > 0 && (
+                  <BlockStack gap="100">
+                    <Text as="h3" variant="headingSm">
+                      Preferred
+                    </Text>
+                    <List type="bullet">
+                      {job.preferredRequirements.map((r) => (
+                        <List.Item key={r}>{r}</List.Item>
+                      ))}
+                    </List>
+                  </BlockStack>
+                )}
+              </InlineGrid>
+            </BlockStack>
 
-        <BlockStack gap="200">
-          <Text as="h2" variant="headingLg">
-            Job details
-          </Text>
-          <dl className="ow-details">
-            {details.map((f) => (
-              <div key={f.label} className="ow-details__row">
-                <dt>{f.label}</dt>
-                <dd>{f.value}</dd>
-              </div>
-            ))}
-            {job.technology.length > 0 && (
-              <div className="ow-details__row">
-                <dt>Tools</dt>
-                <dd>{job.technology.map((t) => t.name).join(', ')}</dd>
-              </div>
+            <BlockStack gap="200">
+              <Text as="h2" variant="headingLg">
+                How this job works
+              </Text>
+              <dl className="ow-details">
+                {details.map((f) => (
+                  <div key={f.label} className="ow-details__row">
+                    <dt>{f.label}</dt>
+                    <dd>{f.value}</dd>
+                  </div>
+                ))}
+                {job.technology.length > 0 && (
+                  <div className="ow-details__row">
+                    <dt>Technology</dt>
+                    <dd>{job.technology.map((t) => t.name).join(', ')}</dd>
+                  </div>
+                )}
+                {job.environmentNotes.schedulePredictability && (
+                  <div className="ow-details__row">
+                    <dt>Hours</dt>
+                    <dd>{job.environmentNotes.schedulePredictability}</dd>
+                  </div>
+                )}
+              </dl>
+            </BlockStack>
+
+            {provided.length === 0 && (
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingLg">
+                  Workplace accessibility
+                </Text>
+                <Text as="p" tone="subdued">
+                  {employer.name} has not provided accessibility information yet. Not provided is not the same as not accessible.
+                </Text>
+              </BlockStack>
             )}
-            {job.environmentNotes.schedulePredictability && (
-              <div className="ow-details__row">
-                <dt>Hours</dt>
-                <dd>{job.environmentNotes.schedulePredictability}</dd>
-              </div>
-            )}
-          </dl>
-        </BlockStack>
-
-        <BlockStack gap="200">
-          <Text as="h2" variant="headingLg">
-            What {employer.name} provides
-          </Text>
-          {provided.length === 0 ? (
-            <Text as="p" tone="subdued">
-              {employer.name} has not told us yet.
-            </Text>
-          ) : (
-            <List type="bullet">
-              {provided.map(({ f, ev }) => (
-                <List.Item key={f.id}>
-                  {f.label}
-                  {ev!.note ? <Text as="span" tone="subdued">{` — ${ev!.note}`}</Text> : null}
-                </List.Item>
-              ))}
-            </List>
-          )}
-          {onRequest.length > 0 && (
-            <Text as="p" variant="bodySm" tone="subdued">
-              Ask about: {onRequest.map((x) => x.f.label.toLowerCase()).join(', ')}.
-            </Text>
-          )}
-          {answered.map((q) => (
-            <Text key={q.id} as="p" variant="bodySm">
-              <strong>Q:</strong> {q.text} <strong>A:</strong> {q.answer}
-            </Text>
-          ))}
-          <InlineStack gap="300" blockAlign="center" wrap>
-            <Text as="span" variant="bodySm" tone="subdued">
-              Need something not listed?
-            </Text>
-            <AskEmployerButton job={job} featureId={null} />
-          </InlineStack>
-        </BlockStack>
-
-        <BlockStack gap="200">
-          <Text as="h2" variant="headingLg">
-            How hiring works
-          </Text>
-          <List type="number">
-            {job.hiringStages.map((s) => (
-              <List.Item key={s.id}>
-                <strong>{s.name}</strong>
-                {s.duration ? ` (${s.duration})` : ''}. {s.description}
-              </List.Item>
+            {answered.map((q) => (
+              <Text key={q.id} as="p" variant="bodySm">
+                <strong>Q:</strong> {q.text} <strong>A:</strong> {q.answer}
+              </Text>
             ))}
-          </List>
-          <Text as="p" variant="bodySm" tone="subdued">
-            {job.decisionTimeframe}
-            {job.hiringOptions.length > 0 ? ` You can ask for ${job.hiringOptions.slice(0, 3).map((h) => HIRING_OPTION_BY_ID[h].label.toLowerCase()).join(', ')}${job.hiringOptions.length > 3 ? ' and more' : ''}.` : ''}
-          </Text>
-        </BlockStack>
+            <InlineStack gap="300" blockAlign="center" wrap>
+              <Text as="span" variant="bodySm" tone="subdued">
+                Need something not listed?
+              </Text>
+              <AskEmployerButton job={job} featureId={null} />
+            </InlineStack>
 
-        <BlockStack gap="100">
-          <Text as="h2" variant="headingLg">
-            About {employer.name}
-          </Text>
-          <Text as="p">{employer.about}</Text>
-          <Text as="p" variant="bodySm" tone="subdued">
-            {employer.industry} · {employer.size} · {employer.headquarters} · <Link to={`/companies/${employer.id}`}>Company page</Link>
-          </Text>
-        </BlockStack>
+            <BlockStack gap="200">
+              <Text as="h2" variant="headingLg">
+                Hiring process
+              </Text>
+              <ol className="ow-stages">
+                {job.hiringStages.map((s, i) => (
+                  <li key={s.id}>
+                    <span className="ow-stages__n" aria-hidden="true">{i + 1}</span>
+                    <div>
+                      <Text as="p" fontWeight="semibold">
+                        {s.name}
+                        {s.duration ? <Text as="span" tone="subdued" variant="bodySm">{` · ${s.duration}`}</Text> : null}
+                      </Text>
+                      <Text as="p" variant="bodySm" tone="subdued">
+                        {s.description}
+                      </Text>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <Text as="p" variant="bodySm" tone="subdued">
+                {job.decisionTimeframe}
+                {job.hiringOptions.length > 0 ? ` Available on request: ${job.hiringOptions.slice(0, 4).map((h) => HIRING_OPTION_BY_ID[h].label.toLowerCase()).join(', ')}${job.hiringOptions.length > 4 ? ' and more' : ''}.` : ''}
+              </Text>
+            </BlockStack>
+          </BlockStack>
+        </div>
       </BlockStack>
     </div>
   );

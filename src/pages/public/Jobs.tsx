@@ -1,4 +1,4 @@
-import { BlockStack, Box, Button, EmptySearchResult, InlineStack, Select, Text, TextField } from '@shopify/polaris';
+import { BlockStack, Box, Button, Checkbox, EmptySearchResult, InlineStack, Select, Text, TextField } from '@shopify/polaris';
 import { NotificationFilledIcon, NotificationIcon, SearchIcon } from '@shopify/polaris-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -50,12 +50,33 @@ export function Jobs() {
   const selected = results.find((j) => j.id === selectedId) ?? null;
   const alertOn = state.alerts.includes(sp.toString());
   const hasPassport = !!profile && (Object.keys(profile.accessNeeds).length > 0 || Object.keys(profile.workPreferences).length > 0);
+  const requiredNeeds = profile ? Object.entries(profile.accessNeeds).filter(([, n]) => n.importance === 'required').map(([k]) => k) : [];
 
   return (
     <div className="ow-container ow-container--fluid">
       <div className="ow-jobs">
         <aside className="ow-rail" aria-label="Filter jobs">
           <div className="ow-rail__inner">
+            <InlineStack align="space-between" blockAlign="center">
+              <Text as="h2" variant="headingSm">
+                Filters
+              </Text>
+              {activeFilterCount(params) + (params.q ? 1 : 0) + (params.where ? 1 : 0) > 0 && (
+                <Button variant="plain" onClick={clearAll}>
+                  Clear all
+                </Button>
+              )}
+            </InlineStack>
+            {profile && Object.keys(profile.accessNeeds).length > 0 && (
+              <div className="ow-why">
+                <Checkbox
+                  label="Use my saved profile"
+                  helpText="Applies the access needs you marked required"
+                  checked={requiredNeeds.length > 0 && requiredNeeds.every((n) => params.need.includes(n))}
+                  onChange={(on) => update({ need: on ? Array.from(new Set([...params.need, ...requiredNeeds])) : params.need.filter((n) => !requiredNeeds.includes(n)) })}
+                />
+              </div>
+            )}
             <Select label="Where" options={[{ label: 'Anywhere', value: ANY }, ...Object.entries(WORK_LOCATION_LABEL).map(([value, label]) => ({ value, label }))]} value={one(params.arrangement)} onChange={setOne('arrangement')} />
             <Select label="Job type" options={[{ label: 'Any', value: ANY }, ...Object.entries(EMPLOYMENT_TYPE_LABEL).map(([value, label]) => ({ value, label }))]} value={one(params.type)} onChange={setOne('type')} />
             <Select label="Pay" options={[{ label: 'Any', value: '' }, { label: '$20+/hr', value: '20' }, { label: '$25+/hr', value: '25' }, { label: '$30+/hr', value: '30' }, { label: '$40+/hr', value: '40' }]} value={params.minPay} onChange={(v) => update({ minPay: v })} />
@@ -64,11 +85,6 @@ export function Jobs() {
               <NeedsSearch compact jobs={state.jobs} employers={state.employers} needs={params.need} practices={params.practice} onChange={({ needs, practices }) => update({ need: needs, practice: practices })} />
             </div>
             <Select label="Sort" options={[{ label: hasPassport ? 'Best for you' : 'Newest', value: 'recommended' }, { label: 'Newest', value: 'newest' }, { label: 'Highest pay', value: 'pay' }]} value={params.sort} onChange={(v) => update({ sort: v as SearchParams['sort'] })} />
-            {activeFilterCount(params) + (params.q ? 1 : 0) + (params.where ? 1 : 0) > 0 && (
-              <Button variant="plain" onClick={clearAll}>
-                Clear all filters
-              </Button>
-            )}
           </div>
         </aside>
 

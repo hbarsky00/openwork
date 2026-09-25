@@ -94,6 +94,8 @@ export interface CandidateProfile {
   };
   onboardingComplete: boolean;
   goal: string | null;
+  /** How much Openwork does for you: you review, we prepare, or we send within your rules. */
+  assistMode: 'review' | 'assist' | 'auto';
 }
 
 export type VerificationLevel = 'listed' | 'practicesCompleted' | 'verifiedPractices';

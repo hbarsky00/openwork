@@ -1604,3 +1604,14 @@ ol.Polaris-BlockStack {
 
 .ow-plainlink { color: inherit; text-decoration: none; }
 .ow-plainlink:hover { text-decoration: underline; }
+
+/* Onboarding sheet and option-card lists */
+.ow-onboard { padding: var(--p-space-600); outline: none; }
+@media (min-width: 768px) { .ow-onboard { padding: var(--p-space-1000); } }
+.ow-optcards { display: grid; gap: var(--p-space-300); }
+.ow-onboard__foot { display: flex; justify-content: space-between; align-items: center; gap: var(--p-space-300); padding-top: var(--p-space-500); border-top: 1px solid var(--ow-line); flex-wrap: wrap; }
+
+/* Hiring stages: numbered rail */
+.ow-stages { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--p-space-300); }
+.ow-stages li { display: grid; grid-template-columns: 28px 1fr; gap: var(--p-space-300); align-items: start; }
+.ow-stages__n { width: 28px; height: 28px; border-radius: 50%; background: var(--ow-accent-tint); color: var(--ow-accent); font-weight: 700; font-size: 13px; display: grid; place-items: center; }
