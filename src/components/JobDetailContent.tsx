@@ -78,7 +78,7 @@ export function JobDetailContent({ job, pane = false }: Props) {
             <InlineStack gap="400" blockAlign="start" wrap={false}>
               <EmployerLogo employer={employer} size={pane ? 48 : 64} />
               <BlockStack gap="200">
-                <Text as="h1" variant={pane ? 'headingXl' : 'heading2xl'}>
+                <Text as={pane ? 'h2' : 'h1'} variant={pane ? 'headingXl' : 'heading2xl'}>
                   {job.title}
                 </Text>
                 <Text as="p" tone="subdued">

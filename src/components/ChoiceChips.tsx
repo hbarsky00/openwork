@@ -1,4 +1,5 @@
 import { BlockStack, Button, InlineStack, Text } from '@shopify/polaris';
+import { CheckIcon } from '@shopify/polaris-icons';
 import { useId } from 'react';
 
 export interface ChipOption {
@@ -49,7 +50,7 @@ export function ChoiceChips({ label, labelHidden = false, helpText, options, val
       <div role="group" aria-labelledby={id}>
         <InlineStack gap="200" wrap>
           {options.map((o) => (
-            <Button key={o.value} size={size} pressed={selected.has(o.value)} onClick={() => toggle(o.value)} accessibilityLabel={o.helpText ? `${o.label}. ${o.helpText}` : undefined}>
+            <Button key={o.value} size={size} pressed={selected.has(o.value)} icon={selected.has(o.value) ? CheckIcon : undefined} onClick={() => toggle(o.value)} accessibilityLabel={o.helpText ? `${o.label}. ${o.helpText}` : undefined}>
               {o.label}
             </Button>
           ))}

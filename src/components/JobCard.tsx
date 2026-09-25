@@ -67,7 +67,7 @@ export function JobCard({ job, onSelect, selected = false, strengthsUsed }: Prop
           <InlineStack gap="300" blockAlign="start" wrap={false}>
             {employer && <EmployerLogo employer={employer} size={44} />}
             <BlockStack gap="050">
-              <h3 className="ow-jobcard__title">
+              <h2 className="ow-jobcard__title">
                 <a
                   href={`/jobs/${job.id}`}
                   onClick={(e) => {
@@ -78,7 +78,7 @@ export function JobCard({ job, onSelect, selected = false, strengthsUsed }: Prop
                 >
                   {job.title}
                 </a>
-              </h3>
+              </h2>
               <Text as="p" variant="bodySm" tone="subdued">
                 {employer?.name} · {job.location}
               </Text>

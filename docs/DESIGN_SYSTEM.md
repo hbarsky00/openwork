@@ -92,14 +92,25 @@ Applicants = the job's seed baseline plus live applications; reply time is
 this" toggle for the current search (visitors are sent to sign in); alerts
 are listed and switched off on the Applications page.
 
+## 0d. Accessibility rules that came out of the audit
+
+- Pressed chips (`Button pressed`): tint fill, 2px accent ring, accent text
+  **and** a check icon. State is never colour alone. Contrast 8:1.
+- No text below 12px; sources and meta use `--ow-ink-2` (7:1), never
+  `--ow-ink-3`.
+- One heading tree per page: h1 = page or count, cards h2 in a list, h3
+  inside a pane or a hero card's siblings.
+- Tag remove buttons 32px; one 2px accent focus ring everywhere.
+- Match labels are sentence case at 12px.
+
 ## 1c. Page system (three templates, nothing else)
 
 1. **Rail + list + pane** (`.ow-jobs` → `.ow-rail`, `.ow-split`): jobs.
-   Filters live in a sticky 240px left rail with visible labels (Where, Job
-   type, Pay, Date posted, Accessibility needs, Sort). To the right: search
-   bar, count, list, and the job pane from 1024px. Tablet keeps the rail and
-   list; phone turns the rail into one swipeable row. Filters are never
-   stacked above the jobs and never behind a button.
+   From 1024px, filters live in a sticky 240px left rail with visible labels
+   (Where, Job type, Pay, Date posted, Accessibility needs, Sort). Below
+   1024px (phone and tablet) the rail is replaced by one **Filters (n)**
+   button that opens a full-screen sheet with the same controls stacked and a
+   "Show N jobs" action. Nothing scrolls sideways.
 2. **Article + sidebar** (`.ow-cols`): job, company, application. One white
    `.ow-sheet` for the reading column and a sticky 360px `.ow-aside` holding
    the action card (Apply / Save) and the employer card. On phone the action

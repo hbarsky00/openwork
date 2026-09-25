@@ -113,7 +113,7 @@
   --p-color-bg-surface-brand-hover: var(--ow-accent-tint-2);
   --p-color-bg-surface-brand-selected: var(--ow-accent-tint-2);
   --p-color-bg-surface-selected: var(--ow-accent-tint);
-  --p-color-bg-fill-selected: var(--ow-accent);
+  --p-color-bg-fill-selected: var(--ow-accent-tint);
 
   /* Headings: tighter, heavier, no admin timidity. */
   --p-text-heading-lg-font-weight: 700;
@@ -1346,13 +1346,26 @@ ol.Polaris-BlockStack {
   min-width: 0;
   max-width: 100%;
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .ow-jobs {
     grid-template-columns: var(--ow-rail-width) minmax(0, 1fr);
   }
   .ow-rail {
     position: sticky;
     top: calc(var(--ow-header-height) + var(--p-space-400));
+  }
+}
+@media (max-width: 1023px) {
+  .ow-rail {
+    display: none;
+  }
+}
+.ow-mobile-only {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .ow-mobile-only {
+    display: block;
   }
 }
 .ow-rail__inner {
@@ -1362,23 +1375,6 @@ ol.Polaris-BlockStack {
   background: var(--p-color-bg-surface);
   border: var(--p-border-width-025) solid var(--ow-line-2);
   border-radius: var(--p-border-radius-300);
-}
-/* Phone: the rail is one row you swipe. Nothing hidden behind a button. */
-@media (max-width: 767px) {
-  .ow-rail__inner {
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(180px, max-content);
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
-    padding: var(--p-space-300);
-  }
-  .ow-rail__inner > * {
-    scroll-snap-align: start;
-  }
-  .ow-rail__needs {
-    min-width: 260px;
-  }
 }
 .ow-jobs__main {
   min-width: 0;
@@ -1488,8 +1484,8 @@ ol.Polaris-BlockStack {
     gap: 2px;
     text-decoration: none;
     color: var(--ow-ink-2);
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 600;
   }
   .ow-bottomnav a svg {
     width: 22px;
@@ -1560,7 +1556,7 @@ ol.Polaris-BlockStack {
 }
 .ow-evcard svg { width: 20px; height: 20px; fill: var(--ow-success); }
 .ow-evcard--unknown svg { fill: var(--ow-ink-3); }
-.ow-evcard__source { color: var(--ow-ink-3); font-size: 11px; margin-top: 6px; display: block; }
+.ow-evcard__source { color: var(--ow-ink-2); font-size: 12px; margin-top: 6px; display: block; }
 .ow-verif {
   background: rgba(239, 246, 255, 0.5);
   border: 1px solid var(--ow-accent-tint-2);
@@ -1649,4 +1645,40 @@ ol.Polaris-BlockStack {
 .Polaris-ShadowBevel::before {
   box-shadow: 0 0 0 1px var(--ow-line), 0 1px 2px rgba(15, 23, 42, 0.04) !important;
   border-radius: var(--ow-radius-lg);
+}
+
+/* ACCESSIBILITY FIXES ------------------------------------------------------ */
+/* Pressed chips: tint fill, 2px accent ring, accent text, plus the check icon
+   the component adds — state is never colour alone, and contrast is 8:1. */
+.Polaris-Button.Polaris-Button--pressed {
+  background: var(--ow-accent-tint);
+  color: var(--ow-accent);
+  box-shadow: inset 0 0 0 2px var(--ow-accent);
+}
+.Polaris-Button.Polaris-Button--pressed .Polaris-Text--root,
+.Polaris-Button.Polaris-Button--pressed svg {
+  color: var(--ow-accent);
+  fill: var(--ow-accent);
+}
+/* Tag remove buttons: 32px targets (WCAG 2.5.8). */
+.Polaris-Tag__Button {
+  min-width: 32px;
+  min-height: 32px;
+}
+/* Focus: one visible ring everywhere, offset so it is never clipped. */
+.Polaris-Button:focus-visible,
+.Polaris-Select__Input:focus-visible ~ .Polaris-Select__Backdrop,
+.ow-optcard:focus-visible,
+.ow-tabs button:focus-visible,
+.ow-bottomnav a:focus-visible,
+.ow-nav__link:focus-visible,
+.ow-avatar:focus-visible {
+  outline: 2px solid var(--ow-accent);
+  outline-offset: 2px;
+}
+/* Match labels: 12px minimum and no all-caps for readers who need it. */
+.ow-matchlabel {
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
 }

@@ -44,7 +44,7 @@ export function MatchCard({ job, hero = false }: { job: Job; hero?: boolean }) {
             <InlineStack gap="300" blockAlign="center" wrap={false}>
               <EmployerLogo employer={employer} size={hero ? 64 : 48} />
               <BlockStack gap="050">
-                <Text as="h3" variant={hero ? 'headingXl' : 'headingMd'}>
+                <Text as={hero ? 'h2' : 'h3'} variant={hero ? 'headingXl' : 'headingMd'}>
                   <a href={`/jobs/${job.id}`} className="ow-plainlink" onClick={(e) => { e.preventDefault(); navigate(`/jobs/${job.id}`); }}>
                     {job.title}
                   </a>
