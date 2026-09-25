@@ -47,10 +47,12 @@ The product now follows `OPENWORK_UXPILOT_MASTER_FULL_FLOW.md` and the twelve
 UX Pilot screens (kept locally in `public/_ref/`, not committed). Polaris stays
 as the component foundation; the reference supplies the look and the IA.
 
-- **Look:** Inter; page `#f8fafc`; surfaces white with `#e2e8f0` hairlines,
-  12–16px radius, faint shadow; ink `#0f172a`, meta `#475569`; primary buttons
-  ink, links/active nav/focus `#2563eb`; tint panels `#eff6ff`; success
-  `#10b981`, warning `#f59e0b`. Pills are 6px-radius slate-100 tags.
+- **Look:** the reference's *structure* (sheets, 12–16px radius, faint
+  shadow, tint panels, match labels) rendered in Openwork's own identity,
+  which the user chose to keep: Atkinson Hyperlegible Next, warm paper
+  `#f7f5f0`, ink `#1c1a17`, deep violet `#4c2e8a` for primary buttons, links,
+  active nav, focus and selection; tints `#efeaf7`; muted green/amber for
+  success/warning. Not the export's Inter + slate + blue.
 - **IA:** Matches is home. Candidate nav Matches · Search jobs · Applications ·
   Saved · Profile; bottom nav on phone. Employer nav Overview · Jobs ·
   Candidates · Interviews · Workplace accessibility · Company · Settings.
