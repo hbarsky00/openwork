@@ -1,4 +1,5 @@
-import { Autocomplete, BlockStack, Button, Icon, InlineStack, Tag, Text } from '@shopify/polaris';
+import { Autocomplete, BlockStack, Button, Icon, InlineStack, Text } from '@shopify/polaris';
+import { PickedList } from './StrengthsPicker';
 import { SearchIcon } from '@shopify/polaris-icons';
 import { useMemo, useState } from 'react';
 import { ACCESS_CATEGORIES, ACCESS_FEATURES, ACCESS_FEATURE_BY_ID, HIRING_OPTIONS, HIRING_OPTION_BY_ID, type HiringOptionId } from '../lib/access';
@@ -41,13 +42,14 @@ export function NeedsSearch({ jobs, employers, needs, practices, onChange, compa
 
   const sections = useMemo(() => {
     const match = (label: string) => !q || label.toLowerCase().includes(q);
+    const opt = (value: string, label: string, n: number) => ({ value, label: (<span className="ow-opt"><span>{label}</span><span className="ow-opt__n">{n}</span></span>) as unknown as string });
     const out: { title: string; options: { value: string; label: string }[] }[] = [];
     for (const c of ACCESS_CATEGORIES) {
-      const opts = ACCESS_FEATURES.filter((f) => f.filter && f.category === c.id && match(f.label)).map((f) => ({ value: `need:${f.id}`, label: `${f.label} · ${counts[`need:${f.id}`] ?? 0}` }));
+      const opts = ACCESS_FEATURES.filter((f) => f.filter && f.category === c.id && match(f.label)).map((f) => opt(`need:${f.id}`, f.label, counts[`need:${f.id}`] ?? 0));
       if (opts.length) out.push({ title: c.label, options: opts });
     }
     for (const g of ['demonstrate', 'interview', 'workplace'] as const) {
-      const opts = HIRING_OPTIONS.filter((h) => h.group === g && match(h.filterLabel)).map((h) => ({ value: `practice:${h.id}`, label: `${h.filterLabel} · ${counts[`practice:${h.id}`] ?? 0}` }));
+      const opts = HIRING_OPTIONS.filter((h) => h.group === g && match(h.filterLabel)).map((h) => opt(`practice:${h.id}`, h.filterLabel, counts[`practice:${h.id}`] ?? 0));
       if (opts.length) out.push({ title: g === 'demonstrate' ? 'Ways to show your skills' : g === 'interview' ? 'Interview accessibility' : 'Workplace flexibility', options: opts });
     }
     return out;
@@ -81,18 +83,14 @@ export function NeedsSearch({ jobs, employers, needs, practices, onChange, compa
         textField={<Autocomplete.TextField label="Accessibility needs" labelHidden={compact} value={query} onChange={setQuery} autoComplete="off" prefix={<Icon source={SearchIcon} />} placeholder={compact ? (selected.length ? `${selected.length} need${selected.length === 1 ? '' : 's'} · add more` : 'Accessibility needs — captions, step-free, job coach…') : 'Type a need — captions, step-free, written instructions, job coach…'} helpText={compact ? undefined : 'Only jobs where the employer has confirmed it. Unknown never counts.'} />}
       />
 
-      <InlineStack gap="200" wrap blockAlign="center">
-        {selected.map((v) => (
-          <Tag key={v} onRemove={() => toggle(v)}>
-            {labelOf(v)}
-          </Tag>
-        ))}
-        {selected.length > 0 && (
+      <PickedList items={selected.map(labelOf)} label="Your needs" onRemove={(lab) => { const v = selected.find((x) => labelOf(x) === lab); if (v) toggle(v); }} />
+      {selected.length > 0 && (
+        <InlineStack>
           <Button variant="plain" onClick={() => apply([])}>
             Clear needs
           </Button>
-        )}
-      </InlineStack>
+        </InlineStack>
+      )}
 
       {!compact && selected.length === 0 && (
         <InlineStack gap="200" wrap blockAlign="center">

@@ -1,13 +1,14 @@
-import { Box, Button, ChoiceList, Popover, Text } from '@shopify/polaris';
+import { Button, Popover, Text } from '@shopify/polaris';
 import { ViewIcon } from '@shopify/polaris-icons';
 import { useState } from 'react';
 import type { DisplayMode } from '../lib/types';
 import { useStore } from '../state/store';
+import { OptionCard } from './OptionCard';
 
-const MODES: { value: DisplayMode; label: string; helpText: string }[] = [
-  { value: 'standard', label: 'Standard', helpText: 'Full layout.' },
-  { value: 'simplified', label: 'Simplified', helpText: 'One column, one thing at a time, larger controls. Same features.' },
-  { value: 'largeText', label: 'Large text', helpText: 'Everything one size up.' },
+const MODES: { value: DisplayMode; label: string; help: string }[] = [
+  { value: 'standard', label: 'Standard', help: 'Full layout.' },
+  { value: 'simplified', label: 'Simplified', help: 'One column, one thing at a time, larger controls.' },
+  { value: 'largeText', label: 'Large text', help: 'Everything one size up.' },
 ];
 
 /**
@@ -19,31 +20,20 @@ export function DisplaySettings() {
   const { state, dispatch } = useStore();
   const [open, setOpen] = useState(false);
   return (
-    <Popover
-      active={open}
-      onClose={() => setOpen(false)}
-      activator={
-        <Button icon={ViewIcon} onClick={() => setOpen((o) => !o)} ariaExpanded={open} accessibilityLabel="Display settings">
-        </Button>
-      }
-    >
-      <Box padding="400" minWidth="280px">
-        <ChoiceList
-          title={
-            <Text as="span" variant="headingSm">
-              Display
-            </Text>
-          }
-          choices={MODES}
-          selected={[state.displayMode]}
-          onChange={(v) => dispatch({ type: 'setDisplayMode', mode: (v[0] as DisplayMode) ?? 'standard' })}
-        />
-        <Box paddingBlockStart="300">
-          <Text as="p" variant="bodySm" tone="subdued">
-            Your browser’s zoom, contrast and reduced-motion settings always apply too.
-          </Text>
-        </Box>
-      </Box>
+    <Popover active={open} onClose={() => setOpen(false)} preferredAlignment="right" activator={<Button icon={ViewIcon} onClick={() => setOpen((o) => !o)} ariaExpanded={open} accessibilityLabel="Display settings" />}>
+      <div className="ow-menu" role="group" aria-label="Display">
+        <Text as="h2" variant="headingSm">
+          Display
+        </Text>
+        <div className="ow-optcards ow-optcards--tight">
+          {MODES.map((m) => (
+            <OptionCard key={m.value} title={m.label} help={m.help} selected={state.displayMode === m.value} onClick={() => dispatch({ type: 'setDisplayMode', mode: m.value })} />
+          ))}
+        </div>
+        <Text as="p" variant="bodySm" tone="subdued">
+          Your browser’s zoom, contrast and reduced-motion settings always apply too.
+        </Text>
+      </div>
     </Popover>
   );
 }

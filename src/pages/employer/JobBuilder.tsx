@@ -103,6 +103,7 @@ export function JobBuilder() {
 
   return (
     <div className="ow-container ow-container--tight">
+      <div className="ow-wizard">
       <div className="ow-pagehead">
         <Button variant="plain" url={guest ? '/for-employers' : '/employer/jobs'}>
           {guest ? '← For employers' : '← Jobs'}
@@ -396,6 +397,7 @@ export function JobBuilder() {
           </InlineStack>
         </div>
       </BlockStack>
+      </div>
       </div>
     </div>
   );

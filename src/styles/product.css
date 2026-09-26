@@ -1939,7 +1939,8 @@ ol.Polaris-BlockStack {
 .ow-progress--thin { height: 4px; }
 .ow-onboard--form .ow-pagehead { margin-block-end: 8px; }
 .ow-container--tight { padding-block-start: 16px; }
-.ow-container--tight .ow-pagehead { margin-block-end: 0; }
+.ow-wizard { max-width: 960px; margin: 0 auto; }
+.ow-wizard .ow-pagehead { margin-block-end: 12px; }
 @media (min-width: 768px) { .ow-onboard--form { padding: 20px 40px 32px; } }
 
 /* Overlays (menus, typeaheads, tooltips) paint above the sticky header and use the page type, never admin 13px. */
@@ -1958,3 +1959,15 @@ ol.Polaris-BlockStack {
   .ow-filterstrip { grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(240px, 1.6fr); gap: var(--p-space-200); }
   .ow-filterstrip__needs { grid-column: auto; }
 }
+
+/* Overlay spec: menus and typeaheads are 320–420px wide, 12px padding, 44px rows, page type. */
+.ow-menu { display: grid; gap: 12px; padding: 12px; width: min(340px, calc(100vw - 32px)); }
+.Polaris-PositionedOverlay:has(.Polaris-Listbox) { min-width: min(400px, calc(100vw - 32px)); }
+.Polaris-Listbox-Option { min-height: 44px; }
+.Polaris-Listbox-TextOption { padding: 6px 12px; }
+.Polaris-Listbox-TextOption__Content { align-items: center; gap: 10px; }
+.Polaris-Listbox-TextOption__Content .Polaris-Choice__Control { margin: 0; }
+.ow-opt { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; width: 100%; }
+.ow-opt__n { color: var(--ow-ink-2); font-size: 14px; font-variant-numeric: tabular-nums; }
+.Polaris-Listbox-Section .Polaris-Listbox-Section__SectionGroup > [role='presentation'] .Polaris-Text--root,
+.Polaris-Listbox-Section > li:first-child .Polaris-Text--root { font-size: 13px; font-weight: 600; color: var(--ow-ink-2); text-transform: uppercase; letter-spacing: 0.04em; }

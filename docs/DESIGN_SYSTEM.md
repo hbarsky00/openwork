@@ -65,6 +65,8 @@ Spacing uses Polaris steps only: 4 / 8 / 12 / 16 / 20 / 24 / 32 / 40. Sheet padd
 | Area nav | `.ow-areanav` | Pill anchors with counts for long single-page forms (workplace accessibility, support). |
 | Stat tile | `.ow-stat` | The tile is the link. No "View" buttons. |
 | Overflow | `Popover` + `ActionList` | For secondary row actions only (employer job rows). |
+| Menu / popover | `.ow-menu` | 12px padding, 320–340px wide, `headingSm` title, option cards for choices (Display settings), 44px rows. Never a raw Polaris `ChoiceList` in a popover. |
+| Typeahead list | `Autocomplete` + `.ow-opt` | List is at least 400px wide regardless of the input, 44px rows, label left and count right in tabular figures, section titles 16px semibold slate. |
 | Suggest rewrites | `SuggestRewrite` | Slim magic button; three options in tint rows; "Use this" / "Keep my words"; honest offline sentence. |
 
 ## 5. Patterns
@@ -93,4 +95,5 @@ axe (wcag2a/aa, 2.1aa, 2.2aa, best-practice) must report zero violations on ever
 - 2026-09-26 — Wizard header compacted so the first field is above the fold. Purple "magic" tone removed from step labels.
 - 2026-09-26 — Popovers were 13px and slid under the header (Polaris portal theme reset). Rule 11 added; portal theme container now receives every token block.
 - 2026-09-26 — Jobs page on tablet stacked filters in four rows under 60px of air. Rule 12 added; strip is one row from 768px, container top padding 24px.
+- 2026-09-26 — Display popover rebuilt on option cards; needs typeahead widened to 400px with label/count rows; wizard action row now shares the sheet's 960px and sits 12px above it. Overlay spec added to §4.
 - 2026-09-26 — Database will be Netlify DB (Neon) via Netlify Functions, not Supabase.
