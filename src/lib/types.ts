@@ -244,6 +244,22 @@ export interface Application {
   shared: ApplicationSharedData;
   /** Who pressed send. Shown to the employer. */
   sentBy: 'candidate' | 'openwork';
+  /** Set when the employer schedules a work sample or interview. */
+  interview?: Interview;
+}
+
+export interface Interview {
+  kind: 'assessment' | 'interview';
+  /** Plain words, e.g. "Tuesday 30 September, 10:00 AM". */
+  when: string;
+  format: string;
+  length: string;
+  interviewers?: string;
+  /** Arrangements the employer has confirmed, in the candidate's words. */
+  arrangements: string[];
+  /** Questions the employer shared in advance, if any. */
+  questions?: string[];
+  whatToExpect: string;
 }
 
 /** A candidate asking an employer to confirm something the job does not say. */

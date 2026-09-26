@@ -42,6 +42,7 @@ import { EmployerInterviews } from './pages/employer/EmployerInterviews';
 import { EmployerSettings } from './pages/employer/EmployerSettings';
 import { ImportJobs } from './pages/employer/ImportJobs';
 import { WhyThisMatches } from './pages/candidate/WhyThisMatches';
+import { InterviewPrep } from './pages/candidate/InterviewPrep';
 import { Pricing } from './pages/public/Pricing';
 import { ClaimCompany } from './pages/public/ClaimCompany';
 
@@ -109,6 +110,7 @@ export function App() {
         <Route path="/saved" element={<C><Saved /></C>} />
         <Route path="/applications" element={<C><Applications /></C>} />
         <Route path="/applications/:id" element={<C><ApplicationDetail /></C>} />
+        <Route path="/applications/:id/prepare" element={<C><InterviewPrep /></C>} />
         <Route path="/passport" element={<C><Passport /></C>} />
         <Route path="/passport/how-i-work" element={<C><WorkPreferences /></C>} />
         <Route path="/passport/access-needs" element={<C><AccessNeedsPage /></C>} />

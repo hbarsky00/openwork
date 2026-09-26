@@ -30,7 +30,8 @@ const NEXT: Partial<Record<ApplicationStatus, string>> = {
   offer: 'Read the offer and reply to the employer.',
 };
 
-type Tab = 'ready' | 'active' | 'interview' | 'closed';
+type Tab = 'all' | 'action' | 'applied' | 'interview' | 'offer' | 'closed';
+const NEEDS_ACTION: ApplicationStatus[] = ['prepared', 'assessment', 'interview', 'offer'];
 
 /**
  * Applications, reference layout: tabs, a list of cards on the left, and a
@@ -42,12 +43,23 @@ export function Applications() {
   const navigate = useNavigate();
   const p = state.candidate!;
   const mine = useMemo(() => state.applications.filter((a) => a.candidateId === p.id).sort((a, b) => b.submittedOn.localeCompare(a.submittedOn)), [state.applications, p.id]);
-  const ready = mine.filter((a) => a.status === 'prepared');
-  const active = mine.filter((a) => !CLOSED.includes(a.status) && a.status !== 'prepared');
-  const interviews = mine.filter((a) => a.status === 'interview' || a.status === 'assessment');
-  const closed = mine.filter((a) => CLOSED.includes(a.status));
-  const [tab, setTab] = useState<Tab>(ready.length ? 'ready' : 'active');
-  const list = tab === 'ready' ? ready : tab === 'active' ? active : tab === 'interview' ? interviews : closed;
+  const groups: Record<Tab, Application[]> = {
+    all: mine.filter((a) => !CLOSED.includes(a.status)),
+    action: mine.filter((a) => NEEDS_ACTION.includes(a.status)),
+    applied: mine.filter((a) => a.status === 'applied' || a.status === 'viewed'),
+    interview: mine.filter((a) => a.status === 'interview' || a.status === 'assessment'),
+    offer: mine.filter((a) => a.status === 'offer' || a.status === 'hired'),
+    closed: mine.filter((a) => CLOSED.includes(a.status)),
+  };
+  const [tab, setTab] = useState<Tab>(groups.action.length ? 'action' : 'all');
+  const list = groups[tab];
+  const nextAction = (a: Application): { label: string; to?: string; act?: () => void } | null => {
+    if (a.status === 'prepared') return { label: 'Review and send', act: () => dispatch({ type: 'approvePrepared', applicationId: a.id }) };
+    if (a.status === 'assessment') return { label: 'Prepare for the work sample', to: `/applications/${a.id}/prepare` };
+    if (a.status === 'interview') return { label: 'Prepare for the interview', to: `/applications/${a.id}/prepare` };
+    if (a.status === 'offer') return { label: 'Read the offer', to: `/applications/${a.id}` };
+    return null;
+  };
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = list.find((a) => a.id === selectedId) ?? list[0] ?? null;
   const [panel, setPanel] = useState<'timeline' | 'documents' | 'job'>('timeline');
@@ -72,10 +84,12 @@ export function Applications() {
         <div className="ow-tabs" role="tablist" aria-label="Application status">
           {(
             [
-              ...(ready.length ? ([['ready', `Ready to send (${ready.length})`]] as [Tab, string][]) : []),
-              ['active', `Active (${active.length})`],
-              ['interview', `Interviews (${interviews.length})`],
-              ['closed', `Closed (${closed.length})`],
+              ['all', `All (${groups.all.length})`],
+              ['action', `Needs action (${groups.action.length})`],
+              ['applied', `Applied (${groups.applied.length})`],
+              ['interview', `Interview (${groups.interview.length})`],
+              ['offer', `Offer (${groups.offer.length})`],
+              ['closed', `Closed (${groups.closed.length})`],
             ] as [Tab, string][]
           ).map(([k, label]) => (
             <button key={k} role="tab" aria-selected={tab === k} onClick={() => { setTab(k); setSelectedId(null); }}>
@@ -86,7 +100,7 @@ export function Applications() {
 
         {list.length === 0 ? (
           <div className="ow-sheet">
-            <EmptyState heading={tab === 'active' ? 'No active applications' : tab === 'interview' ? 'No interviews yet' : tab === 'ready' ? 'Nothing waiting' : 'Nothing closed yet'} image="" action={{ content: 'See your matches', url: '/matches' }}>
+            <EmptyState heading={tab === 'action' ? 'Nothing needs you right now' : tab === 'interview' ? 'No interviews yet' : tab === 'offer' ? 'No offers yet' : tab === 'closed' ? 'Nothing closed yet' : tab === 'applied' ? 'Nothing applied yet' : 'No applications yet'} image="" action={{ content: 'See your matches', url: '/matches' }}>
               <p>When you apply, every step the employer takes shows up here.</p>
             </EmptyState>
           </div>
@@ -102,7 +116,7 @@ export function Applications() {
                     <InlineStack gap="300" blockAlign="start" wrap={false}>
                       <EmployerLogo employer={emp} size={48} />
                       <BlockStack gap="100">
-                        <Text as="h3" variant="headingMd">
+                        <Text as="h2" variant="headingMd">
                           <a href={`/applications/${a.id}`} className="ow-plainlink" onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/applications/${a.id}`); }}>
                             {job.title}
                           </a>
@@ -119,18 +133,35 @@ export function Applications() {
                             {APPLICATION_STATUS_LABEL[a.status]}
                           </Badge>
                         </InlineStack>
-                        {a.status === 'prepared' && (
-                          <span onClick={(e) => e.stopPropagation()}>
-                            <InlineStack gap="200">
-                              <Button variant="primary" size="medium" onClick={() => dispatch({ type: 'approvePrepared', applicationId: a.id })}>
-                                Approve and send
-                              </Button>
-                              <Button size="medium" onClick={() => dispatch({ type: 'discardPrepared', applicationId: a.id })}>
-                                Not for me
-                              </Button>
-                            </InlineStack>
-                          </span>
+                        {a.interview && (a.status === 'interview' || a.status === 'assessment') && (
+                          <Text as="p" variant="bodySm">
+                            <strong>{a.interview.kind === 'assessment' ? 'Work sample' : 'Interview'}:</strong> {a.interview.when}
+                          </Text>
                         )}
+                        {(() => {
+                          const n = nextAction(a);
+                          if (!n) return null;
+                          return (
+                            <span onClick={(e) => e.stopPropagation()}>
+                              <InlineStack gap="200">
+                                {n.to ? (
+                                  <Button variant="primary" size="medium" url={n.to}>
+                                    {n.label}
+                                  </Button>
+                                ) : (
+                                  <Button variant="primary" size="medium" onClick={n.act}>
+                                    {n.label}
+                                  </Button>
+                                )}
+                                {a.status === 'prepared' && (
+                                  <Button size="medium" onClick={() => dispatch({ type: 'discardPrepared', applicationId: a.id })}>
+                                    Not for me
+                                  </Button>
+                                )}
+                              </InlineStack>
+                            </span>
+                          );
+                        })()}
                       </BlockStack>
                     </InlineStack>
                   </article>
@@ -189,6 +220,11 @@ export function Applications() {
                             <Text as="p" variant="bodySm">
                               <strong>Next:</strong> {NEXT[selected.status]}
                             </Text>
+                            {(selected.status === 'interview' || selected.status === 'assessment') && (
+                              <Button url={`/applications/${selected.id}/prepare`} variant="plain">
+                                {selected.status === 'assessment' ? 'Prepare for the work sample' : 'Prepare for the interview'}
+                              </Button>
+                            )}
                           </div>
                         )}
                       </BlockStack>
@@ -230,7 +266,7 @@ export function Applications() {
                       {selected.status === 'prepared' ? (
                         <>
                           <Button variant="primary" onClick={() => dispatch({ type: 'approvePrepared', applicationId: selected.id })}>
-                            Approve and send
+                            Review and send
                           </Button>
                           <Button onClick={() => dispatch({ type: 'discardPrepared', applicationId: selected.id })}>Not for me</Button>
                         </>

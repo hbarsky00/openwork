@@ -1,12 +1,13 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { Config } from '@netlify/functions';
 
-const KINDS = new Set(['summary', 'experience']);
+const KINDS = new Set(['summary', 'experience', 'answer']);
 
 const SYSTEM = `You rewrite one piece of a job seeker's résumé. Reply with ONLY a JSON array of exactly 3 strings, no prose.
 Each string is a rewrite of the input text: active voice, concrete, plain US English, no buzzwords, same facts.
 Never invent employers, dates, numbers, tools, results or achievements that are not in the input or the candidate's listed skills and strengths. Keep every number that is in the input.
 A summary is at most 3 sentences. An experience line is at most 2 sentences.
+For kind "answer": the text is an interview or application question; draft 3 different answers of 3–5 sentences each, first person, using ONLY the facts in context.facts (experience, skills, strengths). If the facts do not cover the question, say so briefly inside the answer rather than inventing.
 If a target job is given, prefer its words for skills the candidate already has. Do not claim skills they do not list.
 Never mention disability, health, or a diagnosis.`;
 

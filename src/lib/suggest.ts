@@ -1,4 +1,4 @@
-export type SuggestKind = 'summary' | 'experience';
+export type SuggestKind = 'summary' | 'experience' | 'answer';
 
 export interface SuggestContext {
   headline?: string;
@@ -6,6 +6,8 @@ export interface SuggestContext {
   strengths?: string[];
   jobTitle?: string;
   jobSkills?: string[];
+  /** For kind 'answer': everything the model may use. */
+  facts?: string[];
 }
 
 export const SUGGEST_OFFLINE = 'Suggestions need the Openwork server. They are off in this preview.';

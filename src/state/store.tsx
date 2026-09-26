@@ -244,7 +244,12 @@ function load(): AppState {
     const userEmployers = (parsed.employers ?? []).filter((e) => !seedEmpIds.has(e.id) && goodEmp(e));
     const editedEmp = (parsed.employers ?? []).filter((e) => seedEmpIds.has(e.id) && goodEmp(e));
     const employers = [...EMPLOYERS.map((seed) => editedEmp.find((e) => e.id === seed.id) ?? seed), ...userEmployers];
-    return { ...initialState, ...parsed, schema: SCHEMA, jobs, employers };
+    // Seed applications gain fields over time (e.g. interview details); merge them into persisted copies.
+    const applications = (parsed.applications ?? initialState.applications).map((a) => {
+      const seed = SAMPLE_APPLICATIONS.find((s) => s.id === a.id);
+      return seed?.interview && !a.interview ? { ...a, interview: seed.interview } : a;
+    });
+    return { ...initialState, ...parsed, schema: SCHEMA, jobs, employers, applications, feedback: parsed.feedback ?? [] };
   } catch {
     return initialState;
   }

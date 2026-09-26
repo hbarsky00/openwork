@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { suggestRewrites, type SuggestContext, type SuggestKind } from '../lib/suggest';
 
 /** "Suggest rewrites" for one résumé field. Shows up to three options; the person picks one or keeps their own words. */
-export function SuggestRewrite({ kind, text, context, onUse }: { kind: SuggestKind; text: string; context: SuggestContext; onUse: (text: string) => void }) {
+export function SuggestRewrite({ kind, text, context, onUse, label = 'Suggest rewrites' }: { kind: SuggestKind; text: string; context: SuggestContext; onUse: (text: string) => void; label?: string }) {
   const [busy, setBusy] = useState(false);
   const [options, setOptions] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +26,7 @@ export function SuggestRewrite({ kind, text, context, onUse }: { kind: SuggestKi
   return (
     <div className="ow-suggest">
       <Button size="slim" icon={MagicIcon} loading={busy} disabled={!text.trim()} onClick={run}>
-        {options.length ? 'Suggest again' : 'Suggest rewrites'}
+        {options.length ? 'Suggest again' : label}
       </Button>
       {error && (
         <Text as="p" variant="bodySm" tone="subdued">

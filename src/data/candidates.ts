@@ -267,6 +267,14 @@ export const SAMPLE_APPLICATIONS: Application[] = [
     answers: {},
     shared: { profile: true, resume: true, workExamples: true, sharedPreferences: ['instructions', 'schedulePredictability'], sharedAccessNeeds: [], hiringPreferences: ['questionsInAdvance', 'workSample'], accommodationRequest: null },
     sentBy: 'candidate',
+    interview: {
+      kind: 'assessment',
+      when: 'Any time before Monday 29 September',
+      format: 'Take-home work sample: verify 40 sample records in an accessible spreadsheet against source documents.',
+      length: 'About 40 minutes. Extra time on request.',
+      arrangements: ['Written instructions only', 'No timer; complete it in one sitting or several'],
+      whatToExpect: 'You get a spreadsheet and a folder of scanned records. Mark each row as matched, mismatched or unreadable and note why. Accuracy matters more than speed.',
+    },
   },
   {
     id: 'app-tyler-inventory',
@@ -297,6 +305,16 @@ export const SAMPLE_APPLICATIONS: Application[] = [
     answers: {},
     shared: { profile: true, resume: true, workExamples: false, sharedPreferences: ['instructions'], sharedAccessNeeds: ['captions', 'textBasedCommunication', 'interpreter'], hiringPreferences: ['interpreterAtInterview', 'workSample'], accommodationRequest: { options: ['interpreterAtInterview', 'questionsInAdvance'], custom: '' } },
     sentBy: 'candidate',
+    interview: {
+      kind: 'interview',
+      when: 'Tuesday 30 September, 10:00 AM',
+      format: 'Structured interview, in person at the Grand Rapids plant. Same five questions for every candidate.',
+      length: '45 minutes',
+      interviewers: 'Marta Dalgren (quality lead) and one shift supervisor',
+      arrangements: ['ASL interpreter booked for the full 45 minutes', 'Questions shared in advance', 'Written follow-up instead of a phone call'],
+      questions: ['Walk us through how you check a part against its drawing.', 'Tell us about a time you found a defect others missed.', 'How do you keep measurements consistent across a long shift?', 'What do you do when a drawing and a part disagree?', 'What would you need from us in your first month?'],
+      whatToExpect: 'You will be shown the inspection bench first, then sit down for the five questions. You can answer in ASL through the interpreter or in writing.',
+    },
   },
   {
     id: 'app-rosa-ap',
