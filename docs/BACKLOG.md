@@ -27,18 +27,18 @@ Theme is settled (UX Pilot). Items are ranked by how much they hurt, not by effo
 
 ## D. Empty pages and 40% width
 
-14. **Saved (empty), Interviews (one row), Applications (one card), Settings, Employer sign-up**: a narrow column on an empty page. Give empty states a purpose block: for Saved, show 3 recommended jobs to save; for Interviews, show "what happens when you move someone to interview" with the next step. Settings and Employer sign-up should use the sheet (`.ow-sheet`) on the 880 narrow container so the page has a shape.
-15. **Support** is a 2-column grid of eight identical cards with eight different button labels. Make it one FAQ list with anchor links and a single "Email support" block.
+14. ✅ **Saved (empty), Interviews (one row), Applications (one card), Settings, Employer sign-up**: a narrow column on an empty page. Give empty states a purpose block: for Saved, show 3 recommended jobs to save; for Interviews, show "what happens when you move someone to interview" with the next step. Settings and Employer sign-up should use the sheet (`.ow-sheet`) on the 880 narrow container so the page has a shape.
+15. ✅ **Support** is a 2-column grid of eight identical cards with eight different button labels. Make it one FAQ list with anchor links and a single "Email support" block.
 
 ## E. Type scale drift
 
 16. Off-scale sizes found live: 11px (Profile), 17px (Jobs cards ×15), 21px (Landing, Apply), 24px (Jobs, Matches, Employer overview stats), 56px hero. Scale is 28/20/18/16/14/13. Hero may keep one display size (48 or 56, define it once as `--ow-display`); everything else snaps.
-17. **Line length**: How-it-works, job page footnote, and company About run past 100 characters. Cap prose at 72ch.
+17. ✅ **Line length**: How-it-works, job page footnote, and company About run past 100 characters. Cap prose at 72ch.
 
 ## F. Touch targets and nav
 
 18. Header nav links are 20px tall text; footer links 20px; job titles in feeds 22px. WCAG 2.5.8 minimum is 24px; house rule is 44px for controls. Add padding to nav/footer links and make the card title a block-level link with padding.
-19. **Tablet (768) hides the primary nav** for both candidate and employer and shows only the hamburger. There is room for the 5 candidate items at 768; the 7 employer items fit at 900+. Show nav from 768 for candidates, from 900 for employers.
+19. ✅ **Tablet (768) hides the primary nav** for both candidate and employer and shows only the hamburger. There is room for the 5 candidate items at 768; the 7 employer items fit at 900+. Show nav from 768 for candidates, from 900 for employers.
 20. Phone: Matches shows "How Openwork helps" button and a Sort select stacked above the digest banner. Move Sort into the feed header ("More recommended roles · Sort") and drop the button; the avatar menu already has it.
 
 ## G. Small polish
@@ -67,6 +67,12 @@ Still to build, in the order other boards do it:
 
 - **Database: Netlify DB (Neon Postgres)** via `@netlify/neon` in Netlify Functions. Not Supabase. Until it exists, the app stays on localStorage (`openwork.v9`).
 - Order of arrival: 1) link repo to a Netlify site (needs Hiram's OK: push = deploy there), 2) `netlify db init`, 3) tables `candidates`, `employers`, `jobs`, `applications`, `alerts` mirroring `src/lib/types.ts`, 4) functions replace the store's persistence one slice at a time, jobs first (public read), then applications (auth via Clerk user id).
+
+## I. Density (added 2026-09-26, from Hiram's review of /post)
+
+26. ✅ **First field above the fold on every form.** Wizard header compacted: 13px step line, 4px bar, left-aligned 28px title, one help line. Guest hint moved to the footer. `/post` first input now at 314px (was ~560px).
+27. ✅ **Design system is a reference, not a log.** `docs/DESIGN_SYSTEM.md` rewritten: rules that override everything, tokens, layout, components, patterns, responsive, accessibility, decisions log. Old accretion moved to `docs/archive/`.
+28. Still to sweep with the same rule: candidate onboarding (`/onboarding`, centered by reference but check the fold), Apply page header, employer sign-up, résumé builder editor.
 
 ## Not in scope this round
 - Theme, font, palette (settled).

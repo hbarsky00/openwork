@@ -97,10 +97,10 @@ export function Onboarding() {
   return (
     <div className="ow-container ow-container--narrow">
       <div className="ow-sheet ow-onboard" ref={top} tabIndex={-1}>
-        <BlockStack gap="600">
+        <BlockStack gap="500">
           <BlockStack gap="200">
             <InlineStack align="space-between" blockAlign="center">
-              <Text as="p" variant="bodyXs" fontWeight="bold" tone="magic">
+              <Text as="p" variant="bodySm" fontWeight="semibold" tone="subdued">
                 STEP {i + 1} OF {TOTAL}
               </Text>
               <Text as="p" variant="bodyXs" tone="subdued">

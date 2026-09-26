@@ -102,7 +102,7 @@ export function JobBuilder() {
     set({ technology: job.technology.map((t, idx) => { if (idx !== i) return t; const acc = { ...t.accessibility }; if (!status) delete acc[attr]; else acc[attr] = { status, source: 'employer', confirmedOn: today() }; return { ...t, accessibility: acc }; }) });
 
   return (
-    <div className="ow-container">
+    <div className="ow-container ow-container--tight">
       <div className="ow-pagehead">
         <Button variant="plain" url={guest ? '/for-employers' : '/employer/jobs'}>
           {guest ? '← For employers' : '← Jobs'}
@@ -111,35 +111,25 @@ export function JobBuilder() {
           <Button onClick={saveDraft}>{guest ? 'Save and continue' : 'Save and exit'}</Button>
         </InlineStack>
       </div>
-      <div className="ow-sheet ow-onboard">
-      <BlockStack gap="600">
-        <BlockStack gap="200">
-          <InlineStack align="space-between" blockAlign="center">
-            <Text as="p" variant="bodyXs" fontWeight="bold" tone="magic">
-              STEP {step + 1} OF {STEPS.length}
-            </Text>
-            <Text as="p" variant="bodyXs" tone="subdued">
-              {STEPS[step]}
-            </Text>
-          </InlineStack>
-          <div className="ow-progress" role="progressbar" aria-valuemin={1} aria-valuemax={STEPS.length} aria-valuenow={step + 1} aria-label="Job progress">
+      <div className="ow-sheet ow-onboard ow-onboard--form">
+      <BlockStack gap="500">
+        <div className="ow-onboard__head">
+          <p className="ow-onboard__step">
+            <span>Step {step + 1} of {STEPS.length}</span>
+            <span>{STEPS[step]}</span>
+          </p>
+          <div className="ow-progress ow-progress--thin" role="progressbar" aria-valuemin={1} aria-valuemax={STEPS.length} aria-valuenow={step + 1} aria-label="Job progress">
             <div style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
           </div>
-        </BlockStack>
-        <BlockStack gap="200" inlineAlign="center">
-          <Text as="h1" variant="heading2xl" alignment="center">
-            {existing && step === 0 ? `Edit ${existing.title}` : STEP_TITLE[step][0]}
-          </Text>
-          <Text as="p" tone="subdued" alignment="center">
-            {STEP_TITLE[step][1]}
-          </Text>
-        </BlockStack>
-
-        {guest && step === 0 && (
-          <Banner tone="info" title="No account yet? Good.">
-            <p>Write the job first. You create your account at the end, and this draft stays in your browser until then.</p>
-          </Banner>
-        )}
+          <BlockStack gap="100">
+            <Text as="h1" variant="heading2xl">
+              {STEP_TITLE[step][0]}
+            </Text>
+            <Text as="p" variant="bodySm" tone="subdued">
+              {STEP_TITLE[step][1]}
+            </Text>
+          </BlockStack>
+        </div>
 
         {step === 0 && (
           <div>
@@ -380,9 +370,16 @@ export function JobBuilder() {
         )}
 
         <div className="ow-onboard__foot">
-          <Button onClick={() => { setStep((s) => Math.max(0, s - 1)); window.scrollTo({ top: 0 }); }} disabled={step === 0}>
-            Back
-          </Button>
+          <InlineStack gap="300" blockAlign="center">
+            <Button onClick={() => { setStep((s) => Math.max(0, s - 1)); window.scrollTo({ top: 0 }); }} disabled={step === 0}>
+              Back
+            </Button>
+            {guest && (
+              <Text as="span" variant="bodySm" tone="subdued">
+                No account yet. You create it at the end; this draft stays in your browser.
+              </Text>
+            )}
+          </InlineStack>
           <InlineStack gap="200">
             <Button variant="plain" onClick={saveDraft}>
               Save draft

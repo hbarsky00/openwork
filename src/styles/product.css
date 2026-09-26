@@ -32,7 +32,7 @@
   --p-text-heading-md-font-line-height: var(--p-font-line-height-700);
   --p-text-heading-lg-font-size: var(--p-font-size-500);     /* 20 */
   --p-text-heading-lg-font-line-height: var(--p-font-line-height-700);
-  --p-text-heading-xl-font-size: var(--p-font-size-600);     /* 24 */
+  --p-text-heading-xl-font-size: var(--p-font-size-500);     /* 20 — the scale is 28/20/18/16/14/13 */
   --p-text-heading-xl-font-line-height: var(--p-font-line-height-800);
   --p-text-heading-2xl-font-size: 1.75rem;                    /* 28 */
   --p-text-heading-2xl-font-line-height: var(--p-font-line-height-1000);
@@ -394,7 +394,7 @@ body {
 .ow-nav__link {
   display: inline-flex;
   align-items: center;
-  min-height: var(--ow-control-height-slim);
+  min-height: 44px;
   padding: 0 var(--p-space-300);
   border-radius: var(--p-border-radius-200);
   color: var(--p-color-text-secondary);
@@ -431,12 +431,22 @@ body {
 
 /* The inline nav collapses to a menu BEFORE it can collide with the actions:
    at 1151px in standard, and at 1599px when text is one size up. */
-@media (max-width: 1151px) {
+@media (max-width: 767px) {
   .ow-nav,
   .ow-header__actions .ow-desktop-only {
     display: none;
   }
   .ow-header__menu {
+    display: block;
+  }
+}
+/* Seven employer items need more room. */
+@media (max-width: 1151px) {
+  .ow-header--wide .ow-nav,
+  .ow-header--wide .ow-header__actions .ow-desktop-only {
+    display: none;
+  }
+  .ow-header--wide .ow-header__menu {
     display: block;
   }
 }
@@ -1899,3 +1909,33 @@ ol.Polaris-BlockStack {
 .ow-areanav__link:hover { border-color: var(--ow-line-2); }
 .ow-areacard { scroll-margin-top: calc(var(--ow-header-height) + 16px); }
 .ow-areacard__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+
+/* Targets: footer links and feed titles reach 44px without changing the layout */
+.ow-footer a { display: inline-flex; align-items: center; min-height: 44px; }
+.ow-plainlink { display: inline-block; padding-block: 10px; margin-block: -10px; }
+/* Prose measure */
+.ow-prose, .ow-article .Polaris-Text--root:not(.Polaris-Text--center), .ow-howto p { max-width: 72ch; }
+/* Support: one FAQ list, anchors on top */
+.ow-faq { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--p-space-500); }
+.ow-faq__item { scroll-margin-top: calc(var(--ow-header-height) + 16px); padding-block-end: var(--p-space-500); border-block-end: 1px solid var(--ow-line); }
+.ow-faq__item:last-child { border-block-end: 0; padding-block-end: 0; }
+
+/* Company page: three plain fact lists */
+.ow-factlist { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.ow-factlist li { position: relative; padding-inline-start: 22px; }
+.ow-factlist li::before { content: ''; position: absolute; left: 0; top: 7px; width: 10px; height: 10px; border-radius: 50%; }
+.ow-factlist--ok li::before { background: var(--ow-success, #10b981); }
+.ow-factlist--warn li::before { background: var(--ow-warning, #f59e0b); }
+.ow-factlist--no li::before { background: #cbd5e1; }
+
+/* Form wizard (job builder): the first field is on screen without scrolling.
+   Header = one 13px step line, a 4px bar, a left-aligned title and one line of help. */
+.ow-onboard--form { padding: 24px; }
+@media (min-width: 768px) { .ow-onboard--form { padding: 28px 40px 32px; } }
+.ow-onboard__head { display: grid; gap: 12px; }
+.ow-onboard__step { display: flex; justify-content: space-between; margin: 0; font-size: 13px; font-weight: 600; color: var(--ow-ink-2); letter-spacing: 0.01em; }
+.ow-progress--thin { height: 4px; }
+.ow-onboard--form .ow-pagehead { margin-block-end: 8px; }
+.ow-container--tight { padding-block-start: 16px; }
+.ow-container--tight .ow-pagehead { margin-block-end: 0; }
+@media (min-width: 768px) { .ow-onboard--form { padding: 20px 40px 32px; } }

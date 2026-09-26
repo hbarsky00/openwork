@@ -1,4 +1,5 @@
-import { BlockStack, Button, Card, InlineGrid, InlineStack, Text } from '@shopify/polaris';
+import { BlockStack, Button, InlineStack, Text } from '@shopify/polaris';
+import { Link } from 'react-router-dom';
 import { useTitle } from '../../lib/useTitle';
 import { useStore } from '../../state/store';
 
@@ -28,26 +29,46 @@ export function Support() {
             Support
           </Text>
           <Text as="p" variant="bodyLg" tone="subdued">
-            Practical help, in writing. You never have to phone anyone to use Openwork. Email us any time: support@openwork.example.
+            Practical help, in writing. You never have to phone anyone to use Openwork.
           </Text>
         </BlockStack>
-        <InlineGrid columns={{ xs: 1, md: 2 }} gap="400">
-          {items.map((i) => (
-            <Card key={i.h}>
-              <BlockStack gap="300">
-                <Text as="h2" variant="headingMd">
-                  {i.h}
-                </Text>
-                <Text as="p">{i.p}</Text>
-                {i.cta && (
-                  <InlineStack>
-                    <Button url={i.cta.to}>{i.cta.label}</Button>
-                  </InlineStack>
-                )}
-              </BlockStack>
-            </Card>
+        <nav className="ow-areanav" aria-label="Questions">
+          {items.map((i, n) => (
+            <a key={i.h} href={`#q-${n}`} className="ow-areanav__link">
+              {i.h}
+            </a>
           ))}
-        </InlineGrid>
+        </nav>
+        <div className="ow-sheet">
+          <ol className="ow-faq">
+            {items.map((i, n) => (
+              <li key={i.h} id={`q-${n}`} className="ow-faq__item">
+                <BlockStack gap="200">
+                  <Text as="h2" variant="headingLg">
+                    {i.h}
+                  </Text>
+                  <Text as="p">
+                    <span className="ow-prose">{i.p}</span>
+                    {i.cta && (
+                      <>
+                        {' '}
+                        <Link to={i.cta.to}>{i.cta.label}</Link>.
+                      </>
+                    )}
+                  </Text>
+                </BlockStack>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <div className="ow-why">
+          <InlineStack align="space-between" blockAlign="center" wrap gap="300">
+            <Text as="p">
+              <strong>Still stuck?</strong> Email <a href="mailto:support@openwork.example">support@openwork.example</a>. A person replies within one business day, in writing.
+            </Text>
+            <Button url="mailto:support@openwork.example">Email support</Button>
+          </InlineStack>
+        </div>
       </BlockStack>
     </div>
   );

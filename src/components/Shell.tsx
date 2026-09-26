@@ -80,7 +80,7 @@ export function Shell({ children }: { children: ReactNode }) {
       <a href="#main" className="ow-skip">
         Skip to main content
       </a>
-      <header className="ow-header">
+      <header className={`ow-header${state.role === 'employer' ? ' ow-header--wide' : ''}`}>
         <div className="ow-header__inner">
           <Link to={home} className="ow-brand" aria-label="Openwork home">
             <span className="ow-brand__mark" />

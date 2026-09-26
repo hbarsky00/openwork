@@ -1,408 +1,90 @@
 # Openwork design system
 
-Polaris underneath. Openwork on top. This document is the contract between the
-two.
+Polaris 13 underneath, Openwork on top. The look is the **UX Pilot export** (settled 2026-09-25): Inter, slate ink, near-black primary buttons, blue only for links, focus and the active nav item. This file is the contract. If a screen breaks a rule here, the screen is wrong. Older reasoning lives in `docs/archive/`.
 
-## 0. Candidate flow (the shape of the product)
+## 1. Rules that override everything
 
-Jobs first. The front door (`/`) is the job list with What/Where search on first
-paint — no account, no questionnaire, no landing page. The marketing page lives
-at `/about`.
+1. **First field above the fold.** On any form or wizard step, the first input starts within 320px of the top of the viewport at 1440×900 (header included). Header of a step = one 13px step line, a 4px progress bar, a 28px left-aligned title, one line of 14px help. No banners above the first field.
+2. **Nothing hidden, nothing empty.** No collapsed content, no popovers or modals for filters, no section rendered when it has no items. Secondary *actions* may live in an overflow menu; *content* may not.
+3. **No chip walls.** Picked items render as rows with one remove control. Filters are Selects (desktop rail ≥1024, compact strip under 1024). Pills are for status only: verification, Applied, Quick apply, Draft/Published.
+4. **One primary per screen.** Everything else is secondary, plain, or in an overflow.
+5. **Six text sizes**: 28 / 20 / 18 / 16 / 14 / 13. One display size for the landing headline (`--ow-display-size`). Nothing else.
+6. **Controls are 44px** tall (inputs, selects, buttons, nav links, list rows). Slim buttons inside cards may be 40px. Nothing interactive under 24px.
+7. **Prose measure 72ch.** Paragraphs never run wider (`.ow-prose`, automatic inside `.ow-article`).
+8. **Plain US English, verbs with objects.** "Log in", "Sign up", "Edit résumé", "Review and send". Never "Sign in", "Create account", "Submit" alone, never a diagnosis word anywhere.
+9. **Employer questions are required when present**; jobs may have none. Never invent facts in generated text.
+10. **Mobile and tablet are audited every pass.** Candidate phone nav is the bottom bar. Nav collapses to a menu under 768px (candidates and visitors) and under 1152px for the seven-item employer nav.
 
-- **Filters** are one row of plain Selects (Anywhere / Job type / Pay / Date
-  posted) plus one typeahead for accessibility needs. No quick-pick chips, no
-  popovers, no filter modal.
-- **Job card** is the link. One icon action (save). Title · company · pay ·
-  arrangement · type · at most three ✓ facts · posted. Desktop ≥1024 opens
-  the job in the right pane; below that it navigates.
-- **Job page** reads top-down: title/pay → **Apply now** → what you'd do →
-  what you need → how the job works (dimensions + physical, as tiles) →
-  employer-confirmed accessibility with dates → how hiring works → employer.
-  No jump nav, no "why this could work" for visitors.
-- **Apply** is one page: name, email, phone (optional), résumé upload or the
-  saved one, the employer's ≤3 screening questions, optional interview-need
-  note, Submit. Visitors get an account created from the same fields.
-  Employers see exactly this page's content and nothing else.
-- **Sign up** creates the account and goes to jobs. The needs questionnaire
-  is optional, offered from Profile.
-- **Nav**: visitor Jobs · How it works · For employers · Sign in; candidate
-  Jobs · Saved · Applications · Profile. Display settings is icon-only.
-  About, Discover, Support live in the footer.
-
-## 1. Foundation: Shopify Polaris 13.9.5
-
-- Installed as `@shopify/polaris` + `@shopify/polaris-icons`. **Peer is React 18.**
-- Loaded once in `src/main.tsx`: `AppProvider` with `en.json` and a
-  `linkComponent` adapter (`PolarisLink`) so every Polaris `url` prop routes
-  through react-router.
-- Global stylesheet: `@shopify/polaris/build/esm/styles.css`, then
-  `src/styles/product.css`.
-- Component inventory was read from the package's `.d.ts` files. Legacy
-  components (`LegacyCard`, `LegacyStack`, `LegacyTabs`, `LegacyFilters`) are
-  not used anywhere.
-
-## 00. Reference (2026-09-25 reboot)
-
-The product now follows `OPENWORK_UXPILOT_MASTER_FULL_FLOW.md` and the twelve
-UX Pilot screens (kept locally in `public/_ref/`, not committed). Polaris stays
-as the component foundation; the reference supplies the look and the IA.
-
-- **Look:** Inter; page `#f8fafc`; surfaces white with `#e2e8f0` hairlines,
-  12–16px radius, faint shadow; ink `#0f172a`, meta `#475569`; primary buttons
-  ink, links/active nav/focus `#2563eb`; tint panels `#eff6ff`; success
-  `#10b981`, warning `#f59e0b`. Pills are 6px-radius slate-100 tags.
-- **IA:** Matches is home. Candidate nav Matches · Search jobs · Applications ·
-  Saved · Profile; bottom nav on phone. Employer nav Overview · Jobs ·
-  Candidates · Interviews · Workplace accessibility · Company · Settings.
-- **Cards:** logo · title · company • location · pills · match label
-  (Strong / Good / Worth reviewing) · Career / Work / Accessibility lines ·
-  Prepare application / View job / Save.
-- **Job detail:** header sheet → Accessibility verification (source + date on
-  every item) → For you → What you'll actually do → Skills (Required /
-  Preferred) → How this job works → Hiring process; sidebar Prepare
-  application, Your match bars, About the company.
-- **Prepare application:** readiness panel → About you → Résumé → employer
-  questions (required) → interview needs → What the employer will see → Submit.
-- **Onboarding:** six steps with STEP X OF 6 progress and option cards; ends
-  on "Your matches are ready."
-- **Applications:** tabs · list · sticky detail panel (Status timeline / What
-  they received / Job details).
-
-## 0e. Openwork applies for you (Review · Assist · Auto)
-
-Plans map to modes: Free = **Review** (you apply), Plus = **Assist**
-(Openwork prepares, you approve), Pro = **Auto** (Openwork sends within your
-rules). `lib/apply.ts` holds the engine: `autoApplyBlocker()` says why a job
-is ineligible, `planAutoApply()` produces one day's applications. Rules
-(`CandidateProfile.autoRules`): only Strong/Good matches, every required need
-confirmed, pay floor, arrangements, types, daily cap. Jobs with employer
-questions are always *prepared*, never sent. Prepared applications
-(`status: 'prepared'`) live on the candidate's Applications page under
-**Ready to send** and are invisible to employers (`employerVisible()`).
-Employers can opt a job out (`Job.acceptsAutoApply`); anything Openwork sends
-is marked "sent by Openwork" on both sides. The run happens once per day when
-Matches loads; the Matches page shows the digest.
-
-## 0f. Résumé builder (`/resume`)
-
-Two panes like Enhancv: editor left, the résumé live on the right. The
-editor edits the profile itself (one source of truth: name, headline,
-summary, experience, skills, strengths, education). Two templates, Modern
-(sans, accent bar, two columns) and Classic (serif, one column, safest for
-screening software). "Tailor to a job" reorders skills and strengths so the
-ones the job lists come first and never invents content. Download = print to
-PDF via `@media print` (only `#cv` prints, Letter, 0.5in margins) and saves
-the file name as the profile résumé. Sections can be shown or hidden.
-
-## 0a. Apply control (one button, learned once)
-
-`QuickApplyButton` is the only apply control. Signed in and the job has no
-employer questions → **Quick apply**, sends in one tap from the card, the
-pane or the sidebar. Otherwise **Apply now** → the apply page. Already
-applied → **Applied · view**. Cards for no-question jobs carry a "Quick
-apply" pill for everyone. `lib/apply.ts` builds the application in one place
-for both paths.
-
-## 0b. Fit panel
-
-Signed-in candidates with stated needs see a tinted `FitPanel` on every card:
-"Matches 6 of 9 things you need", then two matching lines and the one that
-differs (the cross is the useful line). Green tint for strong/good, yellow for
-mixed, grey otherwise. The job page shows the fuller "For you" block.
-
-## 0c. Trust signals and alerts
-
-Every card, pane and sidebar shows `posted · N applicants · replies within X`.
-Applicants = the job's seed baseline plus live applications; reply time is
-`Employer.typicalResponse`. The jobs page has one "Alert me about jobs like
-this" toggle for the current search (visitors are sent to sign in); alerts
-are listed and switched off on the Applications page.
-
-## 0d. Accessibility rules that came out of the audit
-
-- Pressed chips (`Button pressed`): tint fill, 2px accent ring, accent text
-  **and** a check icon. State is never colour alone. Contrast 8:1.
-- No text below 12px; sources and meta use `--ow-ink-2` (7:1), never
-  `--ow-ink-3`.
-- One heading tree per page: h1 = page or count, cards h2 in a list, h3
-  inside a pane or a hero card's siblings.
-- Tag remove buttons 32px; one 2px accent focus ring everywhere.
-- Match labels are sentence case at 13px.
-- **Six text sizes, nothing else:** 28 page title · 20 section · 18 card
-  title · 16 body · 14 meta and labels · 13 pills, sources, nav labels.
-- **Empty sections do not render.** A section with nothing in it (alerts,
-  drafts, questions) is omitted; only a page whose purpose is that list shows
-  an empty state.
-- **Typeaheads show eight rows** and then scroll. A dropdown never takes the
-  page.
-
-## 1c. Page system (three templates, nothing else)
-
-1. **Rail + list + pane** (`.ow-jobs` → `.ow-rail`, `.ow-split`): jobs.
-   From 1024px, filters live in a sticky 240px left rail with visible labels
-   (Where, Job type, Pay, Date posted, Accessibility needs, Sort). Below
-   1024px (phone and tablet) the rail is replaced by one **Filters (n)**
-   button that opens a full-screen sheet with the same controls stacked and a
-   "Show N jobs" action. Nothing scrolls sideways.
-2. **Article + sidebar** (`.ow-cols`): job, company, application. One white
-   `.ow-sheet` for the reading column and a sticky 360px `.ow-aside` holding
-   the action card (Apply / Save) and the employer card. On phone the action
-   card comes first, then the article, then the employer card.
-3. **Sheet** (`.ow-container--narrow` + `.ow-sheet`): every form and list.
-   One centered white sheet, title row above it.
-
-Text never sits on the paper except a page's title row and back link.
-Container is 1440px; narrow is 880px; the jobs page is fluid (`.ow-container--fluid`, gutters only).
-
-## 1b. Identity layer (the face on top of Polaris)
-
-Polaris supplies components, spacing, motion and semantics. It is Shopify's
-admin system, so used raw it looks like a back-office form. Openwork adds an
-identity layer in `product.css` `:root`, all through Polaris semantic tokens:
-
-- **Type:** Atkinson Hyperlegible Next (Braille Institute's low-vision face),
-  loaded from Google Fonts, system-ui fallback. Headings 700–800, tight
-  tracking.
-- **Ground:** white, like Indeed and LinkedIn. Grey `#f7f7f7` only as a
-  backdrop for subdued boxes. Hairlines `#e6e6e6` / `#d4d4d4`, ink `#1a1a1a`,
-  meta grey `#5e5e5e`. Benchmarked 2026-09-25 against Indeed, LinkedIn Jobs
-  and AIApply: white, dense, soft surfaces, metadata as small grey pills.
-- **Density:** body 16, meta 14, card title 18, pane title 24, page title 30.
-  Controls 44px. One step larger than the benchmarks, never two.
-- **Pills:** pay, arrangement, type and status are rounded `Badge`s on
-  `#f3f3f3`; success is a soft green tint, info is the accent tint.
-- **Search:** one joined radius-full bar with the button inside.
-- **One accent:** deep violet `#4c2e8a` (hover `#3c2370`, tint `#efeaf7`).
-  Mapped to every brand *and* emphasis token, so primary buttons, links,
-  focus rings, active nav and the selected job card are one colour. Not
-  stock SaaS blue.
-- **Forms:** no red asterisks (`RequiredIndicator` hidden). Required is the
-  default; optional fields say "(optional)" in the label. No helper captions
-  unless they change what you type.
-- **Sheets, not card stacks:** one white `.ow-sheet` holds a whole form.
-  Sections are plain headings with generous gaps, never numbered steps.
-- **Employer questions are casual** ("Why do you want to work at Corvid?").
-  Skills belong on the résumé.
-
-## 1a. Legibility layer (why the app does not look like Shopify admin)
-
-Polaris ships at admin density: 13px body, 12px small text, 32px buttons
-(28px above 768px), 18px checkboxes. That is wrong for a product whose users
-need clarity most. `product.css` overrides the **semantic** Polaris tokens at
-`:root` — not the components — so every `Text`, `Button`, `TextField`,
-`Select`, `Checkbox`, `Badge` and `Banner` scales together:
-
-| Token | Polaris default | Openwork |
-|---|---|---|
-| `--p-text-body-md` | 13 / 20 | **18 / 28** |
-| `--p-text-body-sm` | 12 / 16 | 16 / 24 |
-| `--p-text-body-lg` | 14 / 20 | 20 / 32 |
-| `--p-text-heading-md` | 14 | 20 |
-| `--p-text-heading-lg` | 20 | 24 |
-| `--p-text-heading-xl` | 24 | 30 |
-| `--p-text-heading-2xl` | 30 | 36 |
-| Buttons / inputs / selects | 28–32px | **48px** (`--ow-control-height`) |
-| Slim buttons | 28px | 40px |
-| Checkbox / radio | 18px | 24px (`--ow-choice-size`) |
-| Card padding | 16px | 20px, 24px ≥768 |
-| Button bevel shadows | on | off (flat) |
-
-Two selector-level overrides were unavoidable: `.Polaris-Button.Polaris-Button--size*`
-(Polaris re-shrinks buttons inside a ≥48em media query that outranks a
-single-class rule) and `.Polaris-Choice__Control` (no size token exists).
-Both are commented in `product.css`.
-
-## 2. Semantic product tokens
-
-Defined in `src/styles/product.css`. Every value is a Polaris token.
+## 2. Tokens (`src/styles/product.css` `:root`)
 
 | Token | Value | Use |
 |---|---|---|
-| `--ow-match-aligned-{fg,bg,border}` | `--p-color-*-success` | "Aligned" state |
-| `--ow-match-review-*` | `--p-color-*-caution` | "Worth reviewing" |
-| `--ow-match-different-*` | `--p-color-*-warning` | "Different from your preference" |
-| `--ow-match-unknown-*` | `--p-color-*-secondary` | "Not provided" / "Not important" |
-| `--ow-container` | 1280px | Marketplace width (Polaris `Page` caps at 998px; split view needs more) |
-| `--ow-container-narrow` | 960px | Single-column reading and sign-up pages. Body ground is `--p-color-bg-surface-secondary` so a narrow column never floats on white |
-| `--ow-results-width` | 420px | Left column of the split view |
-| `--ow-header-height` | 60px | Sticky header, used for sticky offsets |
+| `--ow-ink` | `#0f172a` | Text, primary buttons |
+| `--ow-ink-2` | `#475569` | Secondary text, labels, meta lines |
+| `--ow-ink-3` | `#94a3b8` | Placeholder, disabled |
+| `--ow-paper` | `#f8fafc` | Page background |
+| `--ow-paper-2` | `#f1f5f9` | Default pill, progress track |
+| `--ow-line` / `--ow-line-2` | `#e2e8f0` / `#cbd5e1` | Hairlines / hover borders |
+| `--ow-accent` / `--ow-accent-hover` | `#2563eb` / `#1d4ed8` | Links, active nav, focus ring, selected option border |
+| `--ow-accent-tint` | `#eff6ff` | Selected option fill, "why" panels, suggestion rows |
+| success / warning | `#10b981` / `#f59e0b` (+ `-tint`, `-ink`) | Match states, status pills |
+| `--ow-radius` / `--ow-radius-lg` | 6px / 10px | Controls, pills / sheets |
+| `--ow-control-height` | 44px | All controls |
+| `--ow-control-height-slim` | 40px | Slim buttons in cards |
+| `--ow-display-size(-lg)` | 44px / 56px | Landing headline only |
 
-Rule: no raw hex, px spacing, radius or shadow anywhere in a component. The one
-exception is `EmployerLogo`, whose color is employer **data**, not a token.
+Type: Inter, weights 450 / 500 / 600 / 700 / 800. Polaris variants map to the scale: `heading2xl` 28, `headingXl` and `headingLg` 20, `headingMd` and `bodyLg` 18, `headingSm` and `bodyMd` 16, `bodySm` 14, `bodyXs` 13. Headings track −0.02em.
 
-## 3. Typography
+Spacing uses Polaris steps only: 4 / 8 / 12 / 16 / 20 / 24 / 32 / 40. Sheet padding 20 (phone) / 24 (desktop). Wizard sheet 24 / 28–40. Gap between page sections 24; between fields 16; between a label and its control 6.
 
-`Text` only, with Polaris variants. Heading scale as used:
+## 3. Layout (`1c` in the archive for history)
 
-- Page title: `heading2xl` (public) · `Page title` (employer/admin)
-- Section: `headingLg`
-- Subsection / card title: `headingMd`
-- Row label: `headingSm`
-- Body: `bodyMd` default, `bodyLg` for lead paragraphs, `bodySm` for metadata
-- Landing `h1` is the one raw heading, styled with `--p-font-size-900/1000`
-  because Polaris has no marketing display size.
+- **Containers**: `.ow-container` 1440 max; `--narrow` 880 for forms, settings, sign-in, support; `--fluid` for the jobs board.
+- **Sheets**: `.ow-sheet` is the only card: white, 1px `--ow-line`, radius 10, shadow 0 1px 2px. Polaris `Card` is being retired in favour of it.
+- **Two columns**: `.ow-cols` = `minmax(0,1fr) 360px` at ≥1024 with a sticky `.ow-aside`. Under 1024 the aside cards follow the article; the apply card becomes a sticky bottom bar (`.ow-aside__card--apply`).
+- **Jobs board**: `.ow-jobs` = 280px filter rail + results at ≥1024; `.ow-filterstrip` (two rows of Selects + needs typeahead, ~150px) below.
+- **Page head**: `.ow-pagehead` = back link left, one action right, 16px under it.
+- **Wizard**: `.ow-onboard--form` (employer builder, left-aligned) and `.ow-onboard` (candidate setup, centered, six steps). Footer `.ow-onboard__foot`: Back left, "Save draft" plain + primary right.
 
-## 4. Spacing and layout
+## 4. Components
 
-- Vertical rhythm: `BlockStack gap="400"` inside cards, `"500"` between cards,
-  `"600"`/`"800"` between page sections.
-- Horizontal: `InlineStack` with `gap="200"`/`"300"`, `wrap` on anything that
-  holds badges or metadata.
-- Grids: `InlineGrid columns={{ xs: 1, lg: ['twoThirds','oneThird'] }}` for the
-  standard content + sidebar page.
-- Public pages use `.ow-container`; employer and admin pages use Polaris `Page`
-  + `Layout`, because back-office tooling is where the admin scaffold belongs.
-
-## 5. Navigation
-
-Horizontal header composed from primitives (`.ow-header`), not
-`Frame`/`Navigation`. A job marketplace reads as a website, not an admin; every
-benchmark uses a top bar. Below `md` the nav collapses into a `Popover` +
-`ActionList`. Active state is `aria-current="page"` from react-router
-`NavLink`, styled with `--p-color-bg-surface-selected`.
-
-Candidate nav: Home · Jobs · Saved · Applications · Profile.
-Employer nav: Overview · Jobs · Candidates · Company.
-
-## 5a. Header overflow rule
-
-The inline nav is never clipped. It collapses to the menu at ≤1151px
-(standard) and ≤1599px (Simplified / Large text); the account name shows only
-at ≥1600px; and if a longer nav still cannot fit, the header wraps to a second
-row. Measured at 1440px in both modes.
-
-## 6. Forms
-
-**Tap-to-select chips replace radio stacks and selects** wherever the options
-fit on one or two lines (`ChoiceChips`: Polaris `Button pressed` in a labelled
-`role="group"`, 40–48px targets, `aria-pressed`). Long option lists still use
-`ChoiceList`. Multi-question forms are either one question per screen
-(`Stepper`) or a two-column grid of compact question blocks — never a single
-column of full-width cards. Measured: How I work best 8,581→3,650px; access
-needs 5,245→2,741px; employer accessibility 5,914→2,830px.
-
-`Form`, `FormLayout`, `TextField`, `Select`, `ChoiceList`, `Checkbox`. Every
-field has a visible label; `labelHidden` is used only when an adjacent heading
-is the label. Errors are Polaris inline errors next to the field, in plain
-words that say what to do. Required fields use `requiredIndicator`. Long forms
-are split into steps with `.ow-steps` progress and autosave to the store.
-
-## 7. Product components
-
-| Component | Built from | Purpose |
+| Component | File | Rule |
 |---|---|---|
-| `JobCard` | `article` + `BlockStack`/`InlineStack`/`Badge`/`Button` | Scannable listing: title, employer, pay, arrangement, type, 2–4 signals, save |
-| `Signal` / `ReasonIcon` | Polaris icons + `--ow-match-*` | Icon + text state marker; never color alone |
-| `MatchSummaryBadge` / `MatchStateBadge` | `Badge` | "Strong alignment" etc. Tone maps to state |
-| `WhyThisMatches` | `Card` + `ul.ow-reason` | Grouped, sentence-level explanations |
-| `WorkEnvironmentProfile` | `Card` + `dl.ow-env` | All 11 dimensions, gaps shown as gaps |
-| `HiringProcess` | `Card` + `ol.ow-timeline` | Steps, durations, ways to demonstrate skills, adjustment route |
-| `PreferenceControl` | `Box` + `ChoiceList` + `Select` ×2 | Answer + importance + visibility |
-| `ApplicationStatusTimeline` | `ol.ow-timeline` | Real events only |
-| `CompletenessMeter` | `ProgressBar` + `Text` | "8 of 11" with a reason |
-| `VerificationBadge` | `Badge` + `Tooltip` | Three earned levels |
-| `CompanyCard`, `EmployerLogo` | primitives | Company listing |
-| `JobDetailContent` | composition of the above | One template for public page, split pane and employer preview |
-| `EvidenceLine` / `StateSymbol` | `li.ow-evidence__row` + `.ow-symbol` | One accessibility fact: ✓ △ ✗ ? symbol (role="img" with label), status text, source, date, employer note |
-| `JobAccessibilitySummary` | `Card` + `EvidenceLine` | Every known and not-known fact about a job's accessibility, grouped by need category; "Ask employer" on gaps |
-| `WhyThisCouldWork` | `Card` + `ul.ow-reason` | Need-by-need comparison with sources; unknowns carry an Ask button |
-| `AskEmployerButton` | `Button` + `Modal` | Turns a "?" into a question the employer answers on their dashboard |
-| `PhysicalRequirements` / `CommunicationRequirements` / `TechnologyAccessibility` | `Card` + `dl.ow-env` | Employer-stated requirements; gaps shown as gaps |
-| `AccessNeedsForm` | `Collapsible` + `Checkbox` + `Select` ×2 | Nine need categories, any combination, importance + visibility per need |
-| `StrengthsPicker` | `ChoiceList` + `Tag` | Plain strengths vocabulary with custom entries |
-| `AccommodationRequest` | `Card` + `ChoiceList` + `TextField` | Practical interview-accommodation selections from what the employer offers |
-| `DisplaySettings` | `Popover` + `ChoiceList` | Standard / Simplified / Large text — same features in every mode |
-| `ChoiceChips` | `Button pressed` in `role="group"` | Tap-to-select, single or multi; the default control for ≤8 options |
-| `EvidencePicker` | `ChoiceChips` + `TextField` | One employer accessibility question: Yes / No / Contact us / Not sure + optional note |
-| `Stepper` | `.ow-steps` + `Button` | One question per screen; focus moves to the heading; Back / Skip / Continue / Do this later |
+| Apply control | `QuickApplyButton` | One control everywhere. Quick apply (no questions) · Prepare application · Review and send (prepared) · View application (sent) · Closed. `applyHint()` is the one line under it. |
+| Match card | `MatchCard` | Hero: label, title, meta line, "Why this is a great fit" panel, primary apply, Save. Feed: same without primary; title is the link. |
+| Job card | `JobCard` | Logo, title (block link, 44px), company · location, one meta line (pay · arrangement · type), up to three ✓ facts, posted line. Star is the only icon action. |
+| Fit panel | `FitPanel` / `evidenceLines()` | Three lines: Career · Work · Accessibility. Zero is stated ("None of the 9 listed skills…"), never "not compared". |
+| Evidence | `EvidenceLine`, `.ow-evcard`, `.ow-factlist` | Fact + status + note. Source and date once per section, per card only when sources differ. Company page groups into Provided / On request / Not available. |
+| Option cards | `OptionCard`, `OptionGrid` | Radio or checkbox semantics, 2px border, tint when selected, left-aligned text. Used for every choice with ≤8 options. |
+| Picked list | `PickedList` | Rows with an × per item. Replaces every tag cloud. |
+| Strengths | `StrengthsPicker` | Typeahead over the shared list, 8 rows max, "Add … as your own", then `PickedList`. |
+| Area nav | `.ow-areanav` | Pill anchors with counts for long single-page forms (workplace accessibility, support). |
+| Stat tile | `.ow-stat` | The tile is the link. No "View" buttons. |
+| Overflow | `Popover` + `ActionList` | For secondary row actions only (employer job rows). |
+| Suggest rewrites | `SuggestRewrite` | Slim magic button; three options in tint rows; "Use this" / "Keep my words"; honest offline sentence. |
 
-## 8. States
+## 5. Patterns
 
-Implemented and visible in the prototype:
+- **Accounts**: `/signin` is one option card per account; `/signup` is two fields and one button into setup. Clerk when `VITE_CLERK_PUBLISHABLE_KEY` is set (`src/auth/clerk.tsx`); demo accounts always work.
+- **Employers get in three ways**: `/post` (write the job first, account at the end, draft in `openwork.postDraft`), `/claim` (work-email domain match on a listed company), `/employer/jobs/import` (careers-page import via `/api/import-jobs`). Pricing at `/pricing`: Free / Growth $149 / Enterprise, proposal until launch.
+- **Openwork applies for you**: Review / Assist / Auto ↔ Free / Plus / Pro. Rules on `/passport/assist`; Ready-to-send queue on Applications; employer opt-out per job.
+- **Empty states** say what to do next and show something useful (Saved shows three jobs worth saving; Interviews shows the three-step path). Never a lone illustration in a narrow column.
+- **Help**: Support is one FAQ list with anchor pills and one email block.
 
-- **Visitor** on any job: info banner inviting sign-in; card signals fall back
-  to the job's own facts.
-- **Candidate without preferences:** `WhyThisMatches` shows a single call to
-  action instead of an empty list.
-- **Employer gap:** `null` renders "Not provided by this employer" in a dashed
-  `--ow-match-unknown` tile, and in the explanation list under its own heading.
-- **Closed / draft job:** warning banner, Apply hidden, similar jobs shown.
-- **Already applied:** card badge + "View your application" replaces Apply.
-- **Empty search:** `EmptySearchResult` + "Clear all filters".
-- **Empty saved / applications:** `EmptyState` with a single next action.
-- **Selected** result in split view: `.ow-jobcard--selected`.
-- **Withdrawn / not selected:** neutral badge, no color of blame.
+## 6. Responsive
 
-## 9. Accessibility
+Breakpoints: 768 (tablet, nav), 1024 (rail and columns), 1152 (employer nav), 1440 (container). Phone: bottom nav 64px for candidates (`--ow-bottomnav-height`), sticky action bars sit above it. Tablet shows the full candidate nav.
 
-- Skip link, `main` landmark, `nav aria-label="Primary"`, `role="search"`.
-- Every icon carries `aria-hidden`; state is always also text
-  (`Signal` prepends a visually-hidden "Aligned:" etc.).
-- Step progress lists use `aria-current="step"`; timelines use `aria-current`.
-- `ProgressBar` gets `ariaLabelledBy`.
-- `prefers-reduced-motion` collapses all transitions globally.
-- Focus rings come from Polaris tokens; `.ow-jobcard:focus-visible` adds one for
-  the card link.
-- Document titles are set per page (`useTitle`).
-- Color pairs use Polaris text/surface tokens, which meet AA by construction.
+## 7. Accessibility
 
-## 9a. Display modes
+axe (wcag2a/aa, 2.1aa, 2.2aa, best-practice) must report zero violations on every page before a push. Landmarks: one `main`, `nav` labelled, `aside` only for true complementary content. Every custom control has a role, name and 44px target. Pressed chips carry tint + ring + check icon (3.45:1 was not enough). Focus ring is the accent, 2px, offset 2px. Display settings offer Large text and Simplified; both re-run the nav collapse at 1600px.
 
-`data-display` on `<html>` (set by the store): `simplified` collapses every
-grid to one column, hides the split-view pane, and raises controls to 56px;
-`largeText` moves every semantic type token one step up. Neither removes a
-feature. Browser zoom, contrast and reduced-motion settings apply on top.
+## 8. Decisions log
 
-## 9a′. Filters
-
-Facets are not a wall of chips and never open a popover over the results.
-`NeedsSearch` is one typeahead (Polaris `Autocomplete`, multi-select, grouped
-by need category and hiring group) over every need and hiring option, each
-with a live count of jobs where the employer has **confirmed** it. Eight
-quick picks appear until something is chosen; chosen items are removable
-`Tag`s. Where / job type / experience / pay / posted are inline `Select`s in
-one row (two per row on phone). The URL stays the single source of truth.
-
-## 9b. Action bars
-
-Every wizard (`Stepper`, job builder, apply, workplace accessibility) ends in
-`.ow-actionbar`. On desktop it is static with top padding. Below 1024px it is
-`position: sticky; bottom: 0` with a surface background, so Back / Continue /
-Submit are always one tap away and never sit on the footer. Layout on phone:
-Back + full-width primary on one row; Skip and "Do this later" as plain
-links on a second row. `.ow-main` carries bottom padding so no page's last
-element can touch the footer.
-
-## 10. Responsive
-
-- `/jobs` is a split view at ≥1024px; below that, selecting a result navigates
-  to the full job page instead of a hidden pane.
-- Phone (375) and tablet (768) are audited on every pass for: horizontal
-  overflow, pointer targets <40px (standalone links become slim `Button`s;
-  inline sentence links are exempt), sticky action bar in view, axe.
-- Header at phone: brand + icon-only Display + menu, one row.
-- Filters are pills + popovers on desktop and the same "All filters" `Modal`
-  everywhere.
-- Header nav collapses to a menu below 768px.
-- Grids collapse to one column at `xs`; two-column `dl.ow-env` collapses at
-  640px.
-
-## 0g Accounts and sign-in words
-
-- Verbs are **Log in** and **Sign up**, everywhere (header, pages, banners, links). Never "Sign in", "Create account" or "Register" for job seekers. Employers keep "Create an employer account" because it is a different thing.
-- `/signin` is one click per account: each account is an option card, no per-row buttons. A person who signed up appears under **Your account** above the demo accounts.
-- `/signup` asks two things and has one button. Setup (onboarding) starts on the next screen; there is no second "create and…" choice.
-- Real email accounts: Clerk, on only when `VITE_CLERK_PUBLISHABLE_KEY` is set (`src/auth/clerk.tsx`). The bridge mirrors the Clerk session into the local store by email; sign-out clears both. Demo accounts stay available either way.
-
-## 0h Suggest rewrites (résumé builder)
-
-- One slim **Suggest rewrites** button under Summary and under each experience line. Returns three rewrites in a tint list; **Use this** replaces the text, **Keep my words** dismisses.
-- Backend: Netlify Function `/api/suggest` (`netlify/functions/suggest.mts`) calling Claude with `ANTHROPIC_API_KEY`. The prompt forbids inventing facts and never mentions disability.
-- When the function is absent (Vite dev, no key) the button says so in one sentence. Never fake a suggestion.
-
-## 0i Employers get in three ways
-
-- **Post a job first** (`/post`): the job builder runs for visitors; the draft is stored in the browser (`openwork.postDraft`) and the account is created on the last screen. "Post a job" is the visitor header CTA everywhere.
-- **Claim a listed company** (`/claim`): a work email at the company's domain takes over a seeded page. Prototype rule: contact-address domain or company name in the domain.
-- **Import from a careers page** (`/employer/jobs/import`): Netlify Function `/api/import-jobs` reads the page and returns postings; each lands as a draft so only the accessibility questions remain.
-- **Pricing** (`/pricing`): Free / Growth $149 / Enterprise. Verification is free on every plan. Prices are a proposal until launch.
+- 2026-09-25 — Theme settled on UX Pilot export after a live three-way switch. Do not revisit.
+- 2026-09-25 — Type scale fixed at six sizes; `headingXl` remapped to 20 on 2026-09-26.
+- 2026-09-26 — Auth words Log in / Sign up; one-click account cards.
+- 2026-09-26 — Chip walls removed (Discover, Profile, employer Candidates); badges reduced to status only.
+- 2026-09-26 — Employer rows: Edit + overflow. Workplace accessibility folds answered areas to a summary with area nav.
+- 2026-09-26 — Wizard header compacted so the first field is above the fold. Purple "magic" tone removed from step labels.
+- 2026-09-26 — Database will be Netlify DB (Neon) via Netlify Functions, not Supabase.

@@ -62,6 +62,8 @@ export function JobDetailContent({ job, pane = false }: Props) {
   const answered = state.questions.filter((q) => q.jobId === job.id && q.answer);
 
   const verified = provided.slice(0, 6);
+  const sources = Array.from(new Set(verified.map((x) => x.ev!.source)));
+  const latest = verified.map((x) => x.ev!.confirmedOn).sort().at(-1);
   return (
     <div className={pane ? 'ow-jobdetail ow-jobdetail--pane' : 'ow-jobdetail'}>
       <BlockStack gap="500">
@@ -133,19 +135,24 @@ export function JobDetailContent({ job, pane = false }: Props) {
                           {ev!.note}
                         </Text>
                       )}
-                      <span className="ow-evcard__source">
-                        Source: {EVIDENCE_SOURCE_LABEL[ev!.source]} ({longDate(ev!.confirmedOn)})
-                      </span>
+                      {sources.length > 1 && (
+                        <span className="ow-evcard__source">
+                          {EVIDENCE_SOURCE_LABEL[ev!.source]} · {longDate(ev!.confirmedOn)}
+                        </span>
+                      )}
                     </div>
                   </div>
                 ))}
               </InlineGrid>
-              {(provided.length > verified.length || onRequest.length > 0) && (
-                <Text as="p" variant="bodySm" tone="subdued">
+              <Text as="p" variant="bodySm" tone="subdued">
+                {sources.length === 1 && latest ? `${EVIDENCE_SOURCE_LABEL[sources[0]]}, last confirmed ${longDate(latest)}. ` : ''}
+                {provided.length > verified.length || onRequest.length > 0 ? (
+                  <>
                   {provided.length > verified.length ? `Also confirmed: ${provided.slice(6).map((x) => x.f.label.toLowerCase()).join(', ')}. ` : ''}
                   {onRequest.length > 0 ? `Ask about: ${onRequest.map((x) => x.f.label.toLowerCase()).join(', ')}.` : ''}
-                </Text>
-              )}
+                  </>
+                ) : null}
+              </Text>
             </BlockStack>
           </section>
         )}

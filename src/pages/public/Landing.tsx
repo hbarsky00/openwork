@@ -91,21 +91,6 @@ export function Landing() {
                 </Text>
               </BlockStack>
             ))}
-            <div className="ow-sheet ow-aside__card">
-              <BlockStack gap="300">
-                <Text as="h2" variant="headingLg">
-                  Hiring?
-                </Text>
-                <Text as="p" tone="subdued">
-                  Describe how the job actually works and what your workplace provides. Candidates who fit find you.
-                </Text>
-                <InlineStack>
-                  <Button url="/for-employers" variant="primary">
-                    For employers
-                  </Button>
-                </InlineStack>
-              </BlockStack>
-            </div>
           </InlineGrid>
         </BlockStack>
       </section>

@@ -1,5 +1,6 @@
 import { Banner, BlockStack, Button, InlineGrid, InlineStack, Select, Text } from '@shopify/polaris';
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { MatchCard } from '../../components/MatchCard';
 import { matchJob, matchTier, rankScore } from '../../lib/match';
 import { useTitle } from '../../lib/useTitle';
@@ -54,13 +55,20 @@ export function Matches() {
               {hasInputs ? `${strong} strong match${strong === 1 ? '' : 'es'} for you` : `${ranked.length} jobs to start from`}
             </Text>
             <Text as="p" tone="subdued">
-              {hasInputs ? 'Based on your profile, preferences and how you work best.' : 'Tell us what you want and how you work, and these become real matches.'}
+              {hasInputs ? (
+                <>
+                  Based on your profile, preferences and how you work best. <Link to="/passport/assist">How Openwork helps</Link>
+                </>
+              ) : (
+                'Tell us what you want and how you work, and these become real matches.'
+              )}
             </Text>
           </BlockStack>
-          <InlineStack gap="200" blockAlign="center">
-            <Button url={hasInputs ? '/passport/assist' : '/onboarding'}>{hasInputs ? 'How Openwork helps' : 'Set up matching'}</Button>
-            <Select label="Sort" labelInline options={[{ label: 'Best match', value: 'best' }, { label: 'Newest', value: 'newest' }, { label: 'Highest pay', value: 'pay' }]} value={sort} onChange={(v) => setSort(v as typeof sort)} />
-          </InlineStack>
+          {!hasInputs && (
+            <Button url="/onboarding" variant="primary">
+              Set up matching
+            </Button>
+          )}
         </div>
 
         {(sentToday.length > 0 || prepared.length > 0) && (
@@ -96,9 +104,12 @@ export function Matches() {
 
         {rest.length > 0 && (
           <BlockStack gap="300">
-            <Text as="h2" variant="headingLg">
-              More recommended roles
-            </Text>
+            <InlineStack align="space-between" blockAlign="center" wrap gap="300">
+              <Text as="h2" variant="headingLg">
+                More recommended roles
+              </Text>
+              <Select label="Sort" labelInline options={[{ label: 'Best match', value: 'best' }, { label: 'Newest', value: 'newest' }, { label: 'Highest pay', value: 'pay' }]} value={sort} onChange={(v) => setSort(v as typeof sort)} />
+            </InlineStack>
             <InlineGrid columns={{ xs: 1, md: 2 }} gap="400">
               {rest.map((x) => (
                 <MatchCard key={x.j.id} job={x.j} />

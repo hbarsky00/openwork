@@ -1,10 +1,10 @@
 import { BlockStack, Card, DescriptionList, InlineGrid, InlineStack, List, Text } from '@shopify/polaris';
 import { Link, useParams } from 'react-router-dom';
 import { EmployerLogo } from '../../components/EmployerLogo';
-import { EvidenceLine } from '../../components/EvidenceLine';
 import { JobCard } from '../../components/JobCard';
 import { VerificationBadge } from '../../components/VerificationBadge';
-import { ACCESS_CATEGORIES, WORKPLACE_EVIDENCE_FEATURES } from '../../lib/access';
+import { WORKPLACE_EVIDENCE_FEATURES } from '../../lib/access';
+import { longDate } from '../../lib/format';
 import { useTitle } from '../../lib/useTitle';
 import { useEmployer, useStore } from '../../state/store';
 import { NotFound } from './NotFound';
@@ -53,22 +53,39 @@ export function Company() {
                     {provided.length} of {WORKPLACE_EVIDENCE_FEATURES.length} workplace questions answered. Each answer shows who confirmed it and when. Job-specific details (software, workstation, breaks) are on each job.
                   </Text>
                 </BlockStack>
-                {ACCESS_CATEGORIES.map((c) => {
-                  const items = provided.filter((f) => f.category === c.id);
-                  if (!items.length) return null;
-                  return (
-                    <BlockStack key={c.id} gap="200">
+                {(
+                  [
+                    ['Provided', provided.filter((f) => employer.accessibility[f.id].status === 'confirmed'), 'ok'],
+                    ['On request', provided.filter((f) => employer.accessibility[f.id].status === 'contact'), 'warn'],
+                    ['Not available', provided.filter((f) => employer.accessibility[f.id].status === 'notAvailable'), 'no'],
+                  ] as const
+                ).map(([title, items, tone]) =>
+                  items.length ? (
+                    <BlockStack key={title} gap="200">
                       <Text as="h3" variant="headingSm">
-                        {c.label}
+                        {title}
                       </Text>
-                      <ul className="ow-evidence">
-                        {items.map((f) => (
-                          <EvidenceLine key={f.id} label={f.label} evidence={employer.accessibility[f.id]} />
-                        ))}
+                      <ul className={`ow-factlist ow-factlist--${tone}`}>
+                        {items.map((f) => {
+                          const ev = employer.accessibility[f.id];
+                          return (
+                            <li key={f.id}>
+                              <Text as="span" fontWeight="medium">
+                                {f.label}
+                              </Text>
+                              {ev.note && (
+                                <Text as="span" variant="bodySm" tone="subdued">
+                                  {' '}
+                                  — {ev.note}
+                                </Text>
+                              )}
+                            </li>
+                          );
+                        })}
                       </ul>
                     </BlockStack>
-                  );
-                })}
+                  ) : null,
+                )}
                 {missing.length > 0 && (
                   <BlockStack gap="200">
                     <Text as="h3" variant="headingSm">
@@ -79,6 +96,9 @@ export function Company() {
                     </Text>
                   </BlockStack>
                 )}
+                <Text as="p" variant="bodySm" tone="subdued">
+                  Reported by the employer{employer.verifiedOn ? `, checked by Openwork ${longDate(employer.verifiedOn)}` : ''}. Latest answer {longDate(provided.map((f) => employer.accessibility[f.id].confirmedOn).sort().at(-1) ?? employer.verifiedOn ?? new Date().toISOString().slice(0, 10))}.
+                </Text>
                 <Text as="p">
                   <strong>Accessibility contact:</strong> {employer.accessibilityContact}
                 </Text>
@@ -107,7 +127,7 @@ export function Company() {
                   About
                 </Text>
                 <Text as="p" variant="bodyLg">
-                  {employer.about}
+                  <span className="ow-prose">{employer.about}</span>
                 </Text>
                 <Text as="p" tone="subdued">
                   {employer.mission}

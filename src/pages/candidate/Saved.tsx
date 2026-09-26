@@ -1,5 +1,6 @@
-import { Banner, BlockStack, Button, EmptyState, Text } from '@shopify/polaris';
+import { Banner, BlockStack, Button, Text } from '@shopify/polaris';
 import { JobCard } from '../../components/JobCard';
+import { matchJob, rankScore } from '../../lib/match';
 import { useTitle } from '../../lib/useTitle';
 import { useStore } from '../../state/store';
 
@@ -8,6 +9,16 @@ export function Saved() {
   const { state } = useStore();
   const saved = state.saved.map((s) => state.jobs.find((j) => j.id === s.jobId)).filter(Boolean);
   const closed = saved.filter((j) => j!.status !== 'published');
+  const p = state.candidate;
+  const savedIds = new Set(state.saved.map((x) => x.jobId));
+  const suggested = p
+    ? state.jobs
+        .filter((j) => j.status === 'published' && !savedIds.has(j.id))
+        .map((j) => ({ j, score: rankScore(matchJob(p, j, state.employers.find((e) => e.id === j.employerId)!)) }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)
+        .map((x) => x.j)
+    : [];
 
   return (
     <div className="ow-container ow-container--narrow">
@@ -28,9 +39,23 @@ export function Saved() {
         )}
 
         {saved.length === 0 ? (
-          <EmptyState heading="Nothing saved yet" image="" action={{ content: 'Find jobs', url: '/jobs' }}>
-            <p>Use “Save” on any job to keep it here. Saving is private.</p>
-          </EmptyState>
+          <BlockStack gap="400">
+            <div className="ow-why">
+              <Text as="p">
+                <strong>Nothing saved yet.</strong> Press the star on any job to keep it here. Saving is private; employers never see it.
+              </Text>
+            </div>
+            {suggested.length > 0 && (
+              <BlockStack gap="300">
+                <Text as="h2" variant="headingLg">
+                  Worth saving
+                </Text>
+                {suggested.map((j) => (
+                  <JobCard key={j.id} job={j} />
+                ))}
+              </BlockStack>
+            )}
+          </BlockStack>
         ) : (
           <BlockStack gap="300">
             {saved.map((j) => (

@@ -1,4 +1,4 @@
-import { Badge, BlockStack, Button, EmptyState, InlineStack, Text } from '@shopify/polaris';
+import { Badge, BlockStack, Button, InlineStack, Text } from '@shopify/polaris';
 import { HIRING_OPTION_BY_ID } from '../../lib/access';
 import { APPLICATION_STATUS_LABEL, longDate } from '../../lib/format';
 import { useTitle } from '../../lib/useTitle';
@@ -32,9 +32,33 @@ export function EmployerInterviews() {
         </div>
         {rows.length === 0 ? (
           <div className="ow-sheet">
-            <EmptyState heading="No interviews scheduled" image="" action={{ content: 'Review candidates', url: '/employer/candidates' }}>
-              <p>Move a candidate to Interview or Work sample from their application and they appear here.</p>
-            </EmptyState>
+            <BlockStack gap="400">
+              <Text as="h2" variant="headingLg">
+                No one is at the interview stage yet
+              </Text>
+              <ol className="ow-stages">
+                {[
+                  ['Open a candidate', 'From Candidates, open an application and move it to Work sample or Interview.'],
+                  ['Their requests appear here', 'Anything they asked for — captions, questions in advance, a support person — is listed next to their name so nothing is missed on the day.'],
+                  ['You confirm, they see it', 'The candidate sees the stage change and the confirmed arrangements on their Applications page.'],
+                ].map(([t, d], i) => (
+                  <li key={t}>
+                    <span className="ow-stages__n" aria-hidden="true">{i + 1}</span>
+                    <div>
+                      <Text as="p" fontWeight="semibold">
+                        {t}
+                      </Text>
+                      <Text as="p" variant="bodySm" tone="subdued">
+                        {d}
+                      </Text>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <InlineStack>
+                <Button url="/employer/candidates">Review candidates</Button>
+              </InlineStack>
+            </BlockStack>
           </div>
         ) : (
           <BlockStack gap="300">
