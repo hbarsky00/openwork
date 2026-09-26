@@ -1588,7 +1588,7 @@ ol.Polaris-BlockStack {
 .ow-hero-match { padding: var(--p-space-600); }
 @media (min-width: 768px) { .ow-hero-match { padding: var(--p-space-800); } }
 /* Option cards (onboarding) */
-.ow-optcard { display: grid; grid-template-columns: 20px 1fr; gap: 14px; align-items: start; padding: 18px 20px; border: 2px solid var(--ow-line); border-radius: var(--ow-radius); background: #fff; cursor: pointer; }
+.ow-optcard { display: grid; grid-template-columns: 20px 1fr; gap: 14px; align-items: start; padding: 18px 20px; border: 2px solid var(--ow-line); border-radius: var(--ow-radius); background: #fff; cursor: pointer; text-align: left; }
 .ow-optcard:hover { border-color: var(--ow-line-2); }
 .ow-optcard[aria-pressed='true'], .ow-optcard[aria-checked='true'] { border-color: var(--ow-accent); background: var(--ow-accent-tint); }
 .ow-optcard__dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--ow-line-2); margin-top: 2px; display: grid; place-items: center; }
@@ -1851,3 +1851,13 @@ ol.Polaris-BlockStack {
 .ow-resume__tools .Polaris-Select__Content, .ow-resume__tools .Polaris-Select__SelectedOption { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ow-resume__head, .ow-resume__cols, .ow-resume__editor, .ow-resume__preview { min-width: 0; }
 @media (max-width: 767px) { .ow-resume__tools .Polaris-Select { max-width: 100%; width: 100%; } }
+
+/* Suggest rewrites (résumé builder) and hosted Clerk forms */
+.ow-suggest { display: grid; gap: var(--p-space-200); justify-items: start; }
+.ow-suggest__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--p-space-200); width: 100%; }
+.ow-suggest__item { display: grid; grid-template-columns: 1fr auto; gap: var(--p-space-300); align-items: start; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 6px; background: #eff6ff; }
+.ow-suggest__keep { padding-top: 2px; }
+@media (max-width: 767px) { .ow-suggest__item { grid-template-columns: 1fr; } }
+.ow-clerk { display: flex; justify-content: center; }
+.ow-clerk .cl-rootBox { width: 100%; max-width: 480px; }
+.ow-clerk .cl-cardBox { width: 100%; }

@@ -42,10 +42,13 @@ import { EmployerInterviews } from './pages/employer/EmployerInterviews';
 import { EmployerSettings } from './pages/employer/EmployerSettings';
 
 import { Admin } from './pages/admin/Admin';
+import { ClerkBridge, useAuthPending } from './auth/clerk';
 
 function RequireRole({ role, children }: { role: Role; children: ReactNode }) {
   const { state } = useStore();
   const location = useLocation();
+  const pending = useAuthPending();
+  if (pending) return null;
   if (state.role !== role) return <Navigate to={`/signin?next=${encodeURIComponent(location.pathname)}&role=${role}`} replace />;
   return <>{children}</>;
 }
@@ -77,6 +80,7 @@ export function App() {
   return (
     <Shell>
       <ScrollToTop />
+      <ClerkBridge />
       <Routes>
         <Route path="/" element={<Front />} />
         <Route path="/about" element={<Landing />} />
@@ -87,8 +91,8 @@ export function App() {
         <Route path="/for-employers" element={<ForEmployers />} />
         <Route path="/support" element={<Support />} />
         <Route path="/discover" element={<Discover />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin/*" element={<SignIn />} />
+        <Route path="/signup/*" element={<SignUp />} />
         <Route path="/employers/signup" element={<EmployerSignUp />} />
 
         <Route path="/onboarding" element={<C><Onboarding /></C>} />

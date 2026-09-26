@@ -19,7 +19,7 @@ export function ForEmployers() {
               Create an employer account
             </Button>
             <Button url="/signin?role=employer" size="large">
-              Sign in
+              Log in
             </Button>
           </InlineStack>
         </BlockStack>

@@ -190,7 +190,7 @@ export function Apply() {
           </InlineStack>
           {!p && (
             <Text as="p" variant="bodyMd">
-              Applied before? <Link to={`/signin?next=${encodeURIComponent(`/jobs/${job.id}/apply`)}`}>Sign in</Link> and this fills itself in.
+              Applied before? <Link to={`/signin?next=${encodeURIComponent(`/jobs/${job.id}/apply`)}`}>Log in</Link> and this fills itself in.
             </Text>
           )}
         </div>

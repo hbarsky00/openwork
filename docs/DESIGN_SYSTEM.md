@@ -386,3 +386,16 @@ element can touch the footer.
 - Header nav collapses to a menu below 768px.
 - Grids collapse to one column at `xs`; two-column `dl.ow-env` collapses at
   640px.
+
+## 0g Accounts and sign-in words
+
+- Verbs are **Log in** and **Sign up**, everywhere (header, pages, banners, links). Never "Sign in", "Create account" or "Register" for job seekers. Employers keep "Create an employer account" because it is a different thing.
+- `/signin` is one click per account: each account is an option card, no per-row buttons. A person who signed up appears under **Your account** above the demo accounts.
+- `/signup` asks two things and has one button. Setup (onboarding) starts on the next screen; there is no second "create and…" choice.
+- Real email accounts: Clerk, on only when `VITE_CLERK_PUBLISHABLE_KEY` is set (`src/auth/clerk.tsx`). The bridge mirrors the Clerk session into the local store by email; sign-out clears both. Demo accounts stay available either way.
+
+## 0h Suggest rewrites (résumé builder)
+
+- One slim **Suggest rewrites** button under Summary and under each experience line. Returns three rewrites in a tint list; **Use this** replaces the text, **Keep my words** dismisses.
+- Backend: Netlify Function `/api/suggest` (`netlify/functions/suggest.mts`) calling Claude with `ANTHROPIC_API_KEY`. The prompt forbids inventing facts and never mentions disability.
+- When the function is absent (Vite dev, no key) the button says so in one sentence. Never fake a suggestion.

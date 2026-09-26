@@ -3,6 +3,7 @@ import { MenuIcon, PersonIcon, SearchIcon, SendIcon, StarIcon, MagicIcon } from 
 import { useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { initials } from '../lib/format';
+import { useSignOut } from '../auth/clerk';
 import { useStore } from '../state/store';
 import { DisplaySettings } from './DisplaySettings';
 
@@ -40,7 +41,7 @@ const EMPLOYER_NAV: NavItem[] = [
 const ADMIN_NAV: NavItem[] = [{ label: 'Moderation', to: '/admin', end: true }];
 
 export function Shell({ children }: { children: ReactNode }) {
-  const { state, dispatch } = useStore();
+  const { state } = useStore();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -49,8 +50,9 @@ export function Shell({ children }: { children: ReactNode }) {
   const nav = state.role === 'candidate' ? CANDIDATE_NAV : state.role === 'employer' ? EMPLOYER_NAV : state.role === 'admin' ? ADMIN_NAV : PUBLIC_NAV;
   const home = state.role === 'candidate' ? '/matches' : state.role === 'employer' ? '/employer' : state.role === 'admin' ? '/admin' : '/';
 
+  const signOutAll = useSignOut();
   const signOut = () => {
-    dispatch({ type: 'signOut' });
+    signOutAll();
     navigate('/');
   };
 

@@ -2,6 +2,7 @@ import { BlockStack, Button, Checkbox, FormLayout, InlineStack, Select, Text, Te
 import { useMemo, useState } from 'react';
 import { OptionCard, OptionCards } from '../../components/OptionCard';
 import type { CandidateProfile, Experience } from '../../lib/types';
+import { SuggestRewrite } from '../../components/SuggestRewrite';
 import { useTitle } from '../../lib/useTitle';
 import { useStore } from '../../state/store';
 
@@ -35,6 +36,7 @@ export function ResumeBuilder() {
     return { skills: rank(p.skills), strengths: rank(p.strengths), matched: [...p.skills, ...p.strengths].filter((s) => wants.has(lower(s))).length };
   }, [p.skills, p.strengths, job]);
 
+  const ctx = { headline: p.headline, skills: p.skills, strengths: p.strengths, jobTitle: job?.title, jobSkills: job ? [...job.skills, ...job.strengthsUsed] : undefined };
   const fileName = `${p.name.replace(/\s+/g, '_')}_Resume${job ? `_${job.title.replace(/[^A-Za-z0-9]+/g, '_')}` : ''}.pdf`;
   const download = () => {
     patch({ resumeFileName: fileName });
@@ -106,6 +108,7 @@ export function ResumeBuilder() {
                   <Checkbox label="Show" checked={show.summary} onChange={(v) => setShow({ ...show, summary: v })} />
                 </InlineStack>
                 <TextField label="Summary" labelHidden value={p.about} onChange={(v) => patch({ about: v })} multiline={4} autoComplete="off" placeholder="Two or three sentences: what you do well and what you are looking for." />
+                <SuggestRewrite kind="summary" text={p.about} context={ctx} onUse={(v) => patch({ about: v })} />
               </BlockStack>
 
               <BlockStack gap="200">
@@ -147,6 +150,7 @@ export function ResumeBuilder() {
                         <TextField label="Years" value={`${e.startYear}–${e.endYear ?? 'present'}`} disabled autoComplete="off" />
                       </FormLayout.Group>
                       <TextField label="What you did" value={e.summary} onChange={(v) => patch({ experience: p.experience.map((x) => (x.id === e.id ? { ...x, summary: v } : x)) })} multiline={2} autoComplete="off" />
+                      <SuggestRewrite kind="experience" text={e.summary} context={{ ...ctx, jobTitle: ctx.jobTitle ?? e.title }} onUse={(v) => patch({ experience: p.experience.map((x) => (x.id === e.id ? { ...x, summary: v } : x)) })} />
                       <InlineStack gap="200">
                         {i > 0 && (
                           <Button size="slim" onClick={() => { const arr = [...p.experience]; [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; patch({ experience: arr }); }}>
