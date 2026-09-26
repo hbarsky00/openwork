@@ -399,3 +399,10 @@ element can touch the footer.
 - One slim **Suggest rewrites** button under Summary and under each experience line. Returns three rewrites in a tint list; **Use this** replaces the text, **Keep my words** dismisses.
 - Backend: Netlify Function `/api/suggest` (`netlify/functions/suggest.mts`) calling Claude with `ANTHROPIC_API_KEY`. The prompt forbids inventing facts and never mentions disability.
 - When the function is absent (Vite dev, no key) the button says so in one sentence. Never fake a suggestion.
+
+## 0i Employers get in three ways
+
+- **Post a job first** (`/post`): the job builder runs for visitors; the draft is stored in the browser (`openwork.postDraft`) and the account is created on the last screen. "Post a job" is the visitor header CTA everywhere.
+- **Claim a listed company** (`/claim`): a work email at the company's domain takes over a seeded page. Prototype rule: contact-address domain or company name in the domain.
+- **Import from a careers page** (`/employer/jobs/import`): Netlify Function `/api/import-jobs` reads the page and returns postings; each lands as a draft so only the accessibility questions remain.
+- **Pricing** (`/pricing`): Free / Growth $149 / Enterprise. Verification is free on every plan. Prices are a proposal until launch.

@@ -40,6 +40,9 @@ import { EmployerAccessibility } from './pages/employer/EmployerAccessibility';
 import { EmployerSignUp } from './pages/employer/EmployerSignUp';
 import { EmployerInterviews } from './pages/employer/EmployerInterviews';
 import { EmployerSettings } from './pages/employer/EmployerSettings';
+import { ImportJobs } from './pages/employer/ImportJobs';
+import { Pricing } from './pages/public/Pricing';
+import { ClaimCompany } from './pages/public/ClaimCompany';
 
 import { Admin } from './pages/admin/Admin';
 import { ClerkBridge, useAuthPending } from './auth/clerk';
@@ -94,6 +97,9 @@ export function App() {
         <Route path="/signin/*" element={<SignIn />} />
         <Route path="/signup/*" element={<SignUp />} />
         <Route path="/employers/signup" element={<EmployerSignUp />} />
+        <Route path="/post" element={<JobBuilder />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/claim" element={<ClaimCompany />} />
 
         <Route path="/onboarding" element={<C><Onboarding /></C>} />
         <Route path="/matches" element={<C><Matches /></C>} />
@@ -115,6 +121,7 @@ export function App() {
         <Route path="/employer" element={<E><EmployerDashboard /></E>} />
         <Route path="/employer/jobs" element={<E><EmployerJobs /></E>} />
         <Route path="/employer/jobs/new" element={<E><JobBuilder /></E>} />
+        <Route path="/employer/jobs/import" element={<E><ImportJobs /></E>} />
         <Route path="/employer/jobs/:id/edit" element={<E><JobBuilder /></E>} />
         <Route path="/employer/jobs/:id/preview" element={<E><JobPreview /></E>} />
         <Route path="/employer/candidates" element={<E><EmployerCandidates /></E>} />

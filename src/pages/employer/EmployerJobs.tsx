@@ -10,7 +10,7 @@ export function EmployerJobs() {
   const jobs = state.jobs.filter((j) => j.employerId === state.employerId).sort((a, b) => b.postedOn.localeCompare(a.postedOn));
 
   return (
-    <Page fullWidth title="Jobs" primaryAction={{ content: 'Create job', url: '/employer/jobs/new' }}>
+    <Page fullWidth title="Jobs" primaryAction={{ content: 'Create job', url: '/employer/jobs/new' }} secondaryActions={[{ content: 'Import from careers page', url: '/employer/jobs/import' }]}>
       {jobs.length === 0 ? (
         <Card>
           <EmptyState heading="No jobs yet" image="" action={{ content: 'Create your first job', url: '/employer/jobs/new' }}>

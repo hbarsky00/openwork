@@ -1883,3 +1883,8 @@ ol.Polaris-BlockStack {
 /* Picked items (strengths, skills): rows, not a tag cloud */
 .ow-picked { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--p-space-200); }
 .ow-picked__row { display: flex; align-items: center; justify-content: space-between; gap: var(--p-space-200); min-height: 44px; padding: 0 var(--p-space-200) 0 var(--p-space-300); border: 1px solid var(--ow-line); border-radius: 6px; background: #fff; }
+.ow-picked--stack { grid-template-columns: 1fr; }
+.ow-picked__row--tall { min-height: 56px; padding: 10px 14px; justify-content: flex-start; }
+/* Pricing */
+.ow-pricecard { height: 100%; }
+.ow-pricecard--featured { border-color: var(--ow-accent); box-shadow: 0 0 0 1px var(--ow-accent) inset; }

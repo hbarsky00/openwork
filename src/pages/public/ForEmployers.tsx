@@ -1,4 +1,5 @@
 import { BlockStack, Button, Card, InlineGrid, InlineStack, Text } from '@shopify/polaris';
+import { Link } from 'react-router-dom';
 import { ACCESS_CATEGORIES } from '../../lib/access';
 import { useTitle } from '../../lib/useTitle';
 
@@ -14,14 +15,20 @@ export function ForEmployers() {
           <Text as="p" variant="bodyLg" tone="subdued">
             Most hiring mismatches are about the environment, the technology or the process — not the work. Openwork asks you to state each one plainly, shows candidates the evidence, and lets them tell you what they need without telling you why.
           </Text>
-          <InlineStack gap="300">
-            <Button url="/employers/signup" variant="primary" size="large">
+          <InlineStack gap="300" blockAlign="center" wrap>
+            <Button url="/post" variant="primary" size="large">
               Post a job
             </Button>
-            <Button url="/signin?role=employer" size="large">
+            <Button url="/pricing" size="large">
+              See pricing
+            </Button>
+            <Button url="/signin?role=employer" variant="plain">
               Log in
             </Button>
           </InlineStack>
+          <Text as="p" variant="bodySm" tone="subdued">
+            Free to post. No account needed to start: write the job, then create your account at the end. Already listed here? <Link to="/claim">Claim your company page</Link>.
+          </Text>
         </BlockStack>
 
         <InlineGrid columns={{ xs: 1, md: 3 }} gap="400">

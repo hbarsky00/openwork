@@ -142,6 +142,9 @@ export interface Employer {
   accessibilityContact: string;
   /** How fast this employer usually gets back to applicants. */
   typicalResponse: string;
+  /** Work email that claimed this page. Absent = listed from public data, unclaimed. */
+  claimedBy?: string | null;
+  plan?: 'free' | 'growth' | 'enterprise';
   logoColor: string;
 }
 

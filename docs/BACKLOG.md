@@ -53,11 +53,13 @@ Theme is settled (UX Pilot). Items are ranked by how much they hurt, not by effo
 
 Done: "Post a job" in the visitor header and menu, For employers primary is "Post a job", employer sign-up lands in the job builder (step 1 of 7).
 
+Built 2026-09-26: 1–4 below (`/post`, `/pricing`, `/claim`, `/employer/jobs/import` + `netlify/functions/import-jobs.mts`). Import needs the server; the page says so when it is absent.
+
 Still to build, in the order other boards do it:
-1. **Job-first sign-up**: write the job before the account. Account is created at the end from the contact email (Indeed, ZipRecruiter pattern). Draft lives in localStorage until then.
-2. **Pricing page** for employers: Free listing / Featured / Unlimited, plus what "verified practices" costs (nothing, but takes a call). Every board has one; we have none.
-3. **Claim your company page**: seed company profiles from public data, let the employer claim by work-email domain. This is how niche boards get their first 100 employers.
-4. **ATS feed / import**: paste a Greenhouse, Lever or Workday careers URL and we import open roles, then ask only the accessibility questions. Removes the "retype my job" objection.
+1. ✅ **Job-first sign-up**: write the job before the account. Account is created at the end from the contact email (Indeed, ZipRecruiter pattern). Draft lives in localStorage until then.
+2. ✅ **Pricing page** for employers: Free listing / Featured / Unlimited, plus what "verified practices" costs (nothing, but takes a call). Every board has one; we have none.
+3. ✅ **Claim your company page**: seed company profiles from public data, let the employer claim by work-email domain. This is how niche boards get their first 100 employers.
+4. ✅ **ATS feed / import**: paste a Greenhouse, Lever or Workday careers URL and we import open roles, then ask only the accessibility questions. Removes the "retype my job" objection.
 5. **Compliance angle**: US federal contractors must document outreach to people with disabilities (Section 503, OFCCP). Inclusive boards sell posting as documented outreach. One paragraph and a downloadable outreach record per job.
 6. **Employer proof**: response-rate and candidate-quality stats on For employers, and a "posted here" logo row once real employers exist.
 

@@ -12,6 +12,7 @@ import { findVaguePhrases } from '../../lib/search';
 import type { EmploymentType, ExperienceLevel, HiringStage, Job } from '../../lib/types';
 import { useTitle } from '../../lib/useTitle';
 import { useStore } from '../../state/store';
+import { readPostDraft, writePostDraft } from '../../lib/postDraft';
 
 const STEPS = ['Basics', 'What they’ll do', 'Skills and tools', 'How the job works', 'Accessibility and support', 'Hiring process', 'Preview and publish'] as const;
 const STEP_TITLE: Record<number, [string, string]> = {
@@ -30,7 +31,7 @@ const TECH_STATUS = [
   { value: '', label: 'Not sure' },
 ];
 
-function blankJob(employerId: string): Job {
+export function blankJob(employerId: string): Job {
   return { id: `j-${Date.now().toString(36)}`, employerId, title: '', department: '', family: 'records', location: '', employmentType: 'fullTime', experienceLevel: 'entry', salaryMin: 0, salaryMax: 0, salaryUnit: 'hour', postedOn: new Date().toISOString().slice(0, 10), status: 'draft', summary: '', tasks: [], essentialRequirements: [], preferredRequirements: [], skills: [], strengthsUsed: [], physical: {}, communication: {}, technology: [], environment: {}, environmentNotes: {}, accessibility: {}, hiringOptions: [], screeningQuestions: [], baseApplicants: 0, acceptsAutoApply: true, hiringStages: [{ id: 's1', name: 'Application review', description: 'We read every application.', duration: 'within 1 week' }, { id: 's2', name: 'Interview', description: '', duration: '' }, { id: 's3', name: 'Decision', description: 'Written decision.', duration: 'within 1 week' }], decisionTimeframe: '', accommodationRoute: '', supportAvailable: [] };
 }
 const lines = (s: string) => s.split('\n').map((l) => l.trim()).filter(Boolean);
@@ -40,11 +41,20 @@ export function JobBuilder() {
   const { id } = useParams();
   const { state, dispatch } = useStore();
   const navigate = useNavigate();
-  const employer = state.employers.find((e) => e.id === state.employerId)!;
-  const existing = id ? state.jobs.find((j) => j.id === id && j.employerId === employer.id) : null;
-  useTitle(existing ? `Edit · ${existing.title}` : 'Create job');
+  const employer = state.employers.find((e) => e.id === state.employerId) ?? null;
+  // Guest: writing the job before having an account. The draft lives in this browser until sign-up.
+  const guest = !employer;
+  const existing = id && employer ? state.jobs.find((j) => j.id === id && j.employerId === employer.id) : null;
+  useTitle(existing ? `Edit · ${existing.title}` : guest ? 'Post a job' : 'Create job');
 
-  const [job, setJob] = useState<Job>(() => existing ?? { ...blankJob(employer.id), accommodationRoute: employer.workplace.accommodationRoute });
+  const [job, setJob] = useState<Job>(() => {
+    if (existing) return existing;
+    if (guest) {
+      const stashed = readPostDraft();
+      if (stashed) return stashed.job;
+    }
+    return { ...blankJob(employer?.id ?? 'pending'), accommodationRoute: employer?.workplace.accommodationRoute ?? '' };
+  });
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [newTool, setNewTool] = useState('');
@@ -77,8 +87,9 @@ export function JobBuilder() {
     if (Object.keys(e).length) window.scrollTo({ top: 0 });
     return Object.keys(e).length === 0;
   };
-  const saveDraft = () => { dispatch({ type: 'upsertJob', job: { ...job, status: job.status === 'published' ? 'published' : 'draft' } }); navigate('/employer/jobs'); };
-  const publish = () => { dispatch({ type: 'upsertJob', job: { ...job, status: 'published', postedOn: job.status === 'published' ? job.postedOn : today() } }); navigate(`/employer/jobs/${job.id}/preview?published=1`); };
+  const toSignUp = (intent: 'draft' | 'publish') => { writePostDraft({ job, intent }); navigate('/employers/signup?from=post'); };
+  const saveDraft = () => { if (guest) return toSignUp('draft'); dispatch({ type: 'upsertJob', job: { ...job, status: job.status === 'published' ? 'published' : 'draft' } }); navigate('/employer/jobs'); };
+  const publish = () => { if (guest) return toSignUp('publish'); dispatch({ type: 'upsertJob', job: { ...job, status: 'published', postedOn: job.status === 'published' ? job.postedOn : today() } }); navigate(`/employer/jobs/${job.id}/preview?published=1`); };
   const next = () => { if (validate()) { setStep((s) => s + 1); window.scrollTo({ top: 0 }); } };
   const updateStage = (i: number, patch: Partial<HiringStage>) => set({ hiringStages: job.hiringStages.map((s, idx) => (idx === i ? { ...s, ...patch } : s)) });
   const setEvidence = (key: string, status: EvidenceStatus | '', note?: string) => {
@@ -93,11 +104,11 @@ export function JobBuilder() {
   return (
     <div className="ow-container">
       <div className="ow-pagehead">
-        <Button variant="plain" url="/employer/jobs">
-          ← Jobs
+        <Button variant="plain" url={guest ? '/for-employers' : '/employer/jobs'}>
+          {guest ? '← For employers' : '← Jobs'}
         </Button>
         <InlineStack gap="200">
-          <Button onClick={saveDraft}>Save and exit</Button>
+          <Button onClick={saveDraft}>{guest ? 'Save and continue' : 'Save and exit'}</Button>
         </InlineStack>
       </div>
       <div className="ow-sheet ow-onboard">
@@ -123,6 +134,12 @@ export function JobBuilder() {
             {STEP_TITLE[step][1]}
           </Text>
         </BlockStack>
+
+        {guest && step === 0 && (
+          <Banner tone="info" title="No account yet? Good.">
+            <p>Write the job first. You create your account at the end, and this draft stays in your browser until then.</p>
+          </Banner>
+        )}
 
         {step === 0 && (
           <div>
@@ -355,8 +372,8 @@ export function JobBuilder() {
             </Banner>
             <div className="ow-why">
               <InlineStack align="space-between" blockAlign="center" wrap gap="300">
-                <Text as="p">See exactly what candidates will see before you publish.</Text>
-                <Button onClick={() => { dispatch({ type: 'upsertJob', job }); navigate(`/employer/jobs/${job.id}/preview`); }}>Save and preview</Button>
+                <Text as="p">{guest ? 'Next: your organization name and work email. Then the job goes live.' : 'See exactly what candidates will see before you publish.'}</Text>
+                {!guest && <Button onClick={() => { dispatch({ type: 'upsertJob', job }); navigate(`/employer/jobs/${job.id}/preview`); }}>Save and preview</Button>}
               </InlineStack>
             </div>
           </BlockStack>
@@ -376,7 +393,7 @@ export function JobBuilder() {
               </Button>
             ) : (
               <Button variant="primary" size="large" onClick={publish}>
-                {job.status === 'published' ? 'Save changes' : 'Publish job'}
+                {guest ? 'Create account and publish' : job.status === 'published' ? 'Save changes' : 'Publish job'}
               </Button>
             )}
           </InlineStack>

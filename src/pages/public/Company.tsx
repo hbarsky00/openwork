@@ -1,5 +1,5 @@
 import { BlockStack, Card, DescriptionList, InlineGrid, InlineStack, List, Text } from '@shopify/polaris';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { EmployerLogo } from '../../components/EmployerLogo';
 import { EvidenceLine } from '../../components/EvidenceLine';
 import { JobCard } from '../../components/JobCard';
@@ -34,6 +34,9 @@ export function Company() {
                 {employer.industry} · {employer.size} · {employer.headquarters}
               </Text>
               <VerificationBadge level={employer.verification} />
+              {state.role !== 'employer' && !employer.claimedBy && (
+                <Link to={`/claim?company=${employer.id}`}>Work here? Claim this page</Link>
+              )}
             </InlineStack>
           </BlockStack>
         </InlineStack>

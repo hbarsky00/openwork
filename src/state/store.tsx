@@ -93,6 +93,7 @@ type Action =
   | { type: 'upsertJob'; job: Job }
   | { type: 'updateEmployer'; employerId: string; patch: Partial<Employer> }
   | { type: 'createEmployer'; employer: Employer }
+  | { type: 'claimEmployer'; employerId: string; email: string }
   | { type: 'askQuestion'; question: Question }
   | { type: 'answerQuestion'; questionId: string; answer: string }
   | { type: 'reportJob'; report: Report }
@@ -172,6 +173,8 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, employers: state.employers.map((e) => (e.id === action.employerId ? { ...e, ...action.patch } : e)) };
     case 'createEmployer':
       return { ...state, role: 'employer', employerId: action.employer.id, candidate: null, employers: [...state.employers, action.employer] };
+    case 'claimEmployer':
+      return { ...state, role: 'employer', employerId: action.employerId, candidate: null, employers: state.employers.map((e) => (e.id === action.employerId ? { ...e, claimedBy: action.email, plan: e.plan ?? 'free' } : e)) };
     case 'askQuestion':
       return { ...state, questions: [action.question, ...state.questions] };
     case 'answerQuestion':
