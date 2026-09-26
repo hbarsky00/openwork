@@ -162,12 +162,19 @@ Until that answer arrives, everything below is foundation-independent and procee
 
 ## 4. Implementation order for this session
 
-1. Why this matches page with Worth knowing, Application, Not for me feedback (stored as `CandidateFeedback`).
-2. Matches filter row and card summary line.
-3. Applications tabs per directive; interview object and preparation page.
-4. Job type: `source`, `importedFrom`, `needsInfo`; employer verification split.
-5. Employer landing per directive with Founding Employer; Connect ATS designed state.
-6. Import review states and Enrich job flow.
-7. Employer jobs tabs; overview as work queue; AI job analysis panel.
-8. Remove dead code; restyle employer pages off Polaris `Page`.
-9. Re-run axe, phone, tablet, keyboard on every touched screen; push after each numbered step.
+1. ✅ Why this matches page (`/jobs/:id/match`) with Career / Work / Accessibility / Worth knowing / Application and Not for me feedback (`CandidateFeedback`, hides the job, undo).
+2. ✅ Matches filter row (sort, remote or hybrid, needs confirmed, all filters); why-panel links to the full match; job page carries a concise summary with "See full match".
+3. ✅ Applications tabs All / Needs action / Applied / Interview / Offer / Closed with a next action per item; `Interview` on applications; `/applications/:id/prepare` with format, arrangements, requirements, talking points from the profile, employer questions with local drafts and AI answer drafts (server-dependent, honest offline).
+4. ✅ `Job.source` / `importedFrom`, `jobNeedsInfo()`, `Employer.companyVerified` separate from accessibility claims, `Employer.ats`, `plan: 'founding'`.
+5. ✅ Employer landing rewritten (Import my jobs · Connect my ATS · Post a job, five-step strip, Founding Employer block). `/connect` and `/employer/connect` designed integration state (request recorded, nothing pretends to sync).
+6. ✅ `/import` works before an account (chosen jobs wait in the browser, land at sign-up as imported drafts); review counts ready vs needs information; `/employer/jobs/:id/enrich` three-minute page with a live Accessibility and clarity review column and "Make it concrete" rewrites for ambiguous phrases.
+7. ✅ Employer jobs tabs Active / Imported / Needs information / Draft / Closed with Add information as the row action; overview is a work queue (applicants to review, potential matches as a count only, interviews, active, needing information, accessibility unanswered, questions, requests) plus verification and ATS state; Polaris `Page`/`Layout` removed from Overview and Jobs.
+8. ✅ Dead components and `CandidateHome` removed. Remaining Polaris `Page`: Candidates, Accessibility, Preview (restyle later).
+9. ✅ axe zero violations, 1440 and 375 checked on every touched screen; pushed after each step.
+
+### Still open after this session
+- Foundation decision (section 3).
+- Employer Candidates / Accessibility / Preview pages still on Polaris `Page`.
+- Notifications surface and Help entry in the header.
+- Candidate matching list for employers (count exists; no list by design until consent model is defined).
+- Real backend: Netlify DB, Clerk key, `ANTHROPIC_API_KEY` for suggest, answers, requirement rewrites and import.

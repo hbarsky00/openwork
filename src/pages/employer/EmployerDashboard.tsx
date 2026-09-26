@@ -1,9 +1,9 @@
-import { Badge, BlockStack, Button, Card, InlineGrid, InlineStack, Layout, Page, Text, TextField } from '@shopify/polaris';
+import { Badge, BlockStack, Button, InlineGrid, InlineStack, Text, TextField } from '@shopify/polaris';
 import { useState } from 'react';
-import { CompletenessMeter } from '../../components/CompletenessMeter';
 import { VerificationBadge } from '../../components/VerificationBadge';
-import { ACCESS_FEATURE_BY_ID, COMMUNICATION_REQUIREMENTS, JOB_EVIDENCE_FEATURES, PHYSICAL_REQUIREMENTS, WORKPLACE_EVIDENCE_FEATURES } from '../../lib/access';
-import { DIMENSIONS } from '../../lib/dimensions';
+import { ACCESS_FEATURE_BY_ID, WORKPLACE_EVIDENCE_FEATURES } from '../../lib/access';
+import { jobNeedsInfo } from '../../lib/jobs';
+import { matchJob, matchTier } from '../../lib/match';
 import { APPLICATION_STATUS_LABEL, longDate } from '../../lib/format';
 import { Link } from 'react-router-dom';
 import { useTitle } from '../../lib/useTitle';
@@ -26,12 +26,11 @@ export function EmployerDashboard() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
   const workplaceDone = WORKPLACE_EVIDENCE_FEATURES.filter((f) => employer.accessibility[f.id]).length;
-  const jobCompleteness = (j: (typeof jobs)[number]) => {
-    const total = DIMENSIONS.length + PHYSICAL_REQUIREMENTS.length + COMMUNICATION_REQUIREMENTS.length + JOB_EVIDENCE_FEATURES.length;
-    const done = DIMENSIONS.filter((d) => j.environment[d.id]).length + PHYSICAL_REQUIREMENTS.filter((p) => j.physical[p.id]).length + COMMUNICATION_REQUIREMENTS.filter((c) => j.communication[c.id]).length + JOB_EVIDENCE_FEATURES.filter((f) => j.accessibility[f.id]).length;
-    return { done, total };
-  };
-
+  const interviews = apps.filter((a) => a.status === 'interview' || a.status === 'assessment');
+  const needsInfo = jobs.filter((j) => j.status !== 'closed' && jobNeedsInfo(j));
+  const appliedIds = new Set(apps.map((a) => `${a.candidateId}|${a.jobId}`));
+  // Count only; never a list of people who have not applied.
+  const potential = state.candidates.filter((c) => active.some((j) => !appliedIds.has(`${c.id}|${j.id}`) && ['strong', 'good'].includes(matchTier(matchJob(c, j, employer))))).length;
   const setup = [
     { done: workplaceDone >= 5, label: 'Answer your workplace accessibility questions', to: '/employer/accessibility', why: 'Shown on every job. Four taps per question.' },
     { done: active.length + drafts.length > 0, label: 'Create your first job', to: '/employer/jobs/new', why: 'Seven short steps. Save a draft any time.' },
@@ -40,51 +39,77 @@ export function EmployerDashboard() {
   const setupLeft = setup.filter((s) => !s.done);
 
   return (
-    <Page fullWidth title={employer.name} subtitle="Overview" titleMetadata={<VerificationBadge level={employer.verification} />} primaryAction={{ content: 'Create job', url: '/employer/jobs/new' }}>
-      <Layout>
-        <Layout.Section>
-          <BlockStack gap="500">
-            {setupLeft.length > 0 && (
-              <Card>
-                <BlockStack gap="300">
-                  <Text as="h2" variant="headingLg">
-                    {setupLeft.length === setup.length ? 'Three things to do' : `${setupLeft.length} thing${setupLeft.length === 1 ? '' : 's'} left to set up`}
-                  </Text>
-                  {setup.map((s) => (
-                    <InlineStack key={s.label} align="space-between" blockAlign="center" wrap gap="300">
-                      <BlockStack gap="050">
-                        <Text as="p" fontWeight="semibold" textDecorationLine={s.done ? 'line-through' : undefined}>
-                          {s.done ? '✓ ' : ''}{s.label}
-                        </Text>
-                        <Text as="p" variant="bodySm" tone="subdued">
-                          {s.why}
-                        </Text>
-                      </BlockStack>
-                      {!s.done && <Button url={s.to} variant={s === setupLeft[0] ? 'primary' : 'secondary'}>Start</Button>}
-                    </InlineStack>
-                  ))}
-                </BlockStack>
-              </Card>
-            )}
-            <InlineGrid columns={{ xs: 2, md: 4 }} gap="300">
-              {[
-                { label: 'Active jobs', value: active.length, to: '/employer/jobs' },
-                { label: 'New applicants', value: newApps.length, to: '/employer/candidates?status=applied' },
-                { label: 'Accommodation requests', value: withRequest.length, to: '/employer/candidates' },
-                { label: 'Candidate questions', value: openQuestions.length, to: '#questions' },
-              ].map((m) => (
-                <Link key={m.label} to={m.to} className="ow-stat" aria-label={`${m.label}: ${m.value}. Open.`}>
-                  <Text as="span" variant="bodySm" tone="subdued">
-                    {m.label}
-                  </Text>
-                  <Text as="span" variant="headingXl">
-                    {m.value}
-                  </Text>
-                </Link>
-              ))}
-            </InlineGrid>
+    <div className="ow-container">
+      <BlockStack gap="500">
+        <div className="ow-pagehead">
+          <BlockStack gap="100">
+            <InlineStack gap="200" blockAlign="center" wrap>
+              <Text as="h1" variant="heading2xl">
+                {employer.name}
+              </Text>
+              <VerificationBadge level={employer.verification} />
+              {employer.plan === 'founding' && <Badge tone="info">Founding Employer</Badge>}
+            </InlineStack>
+            <Text as="p" tone="subdued">
+              {employer.companyVerified ? 'Verified company' : 'Company not yet verified'} · {employer.ats ? `ATS: ${employer.ats.provider} ${employer.ats.status}` : 'ATS not connected'}
+            </Text>
+          </BlockStack>
+          <InlineStack gap="200">
+            <Button url="/employer/jobs/import">Import jobs</Button>
+            <Button url="/employer/jobs/new" variant="primary">
+              Create job
+            </Button>
+          </InlineStack>
+        </div>
 
-            <Card>
+        {setupLeft.length > 0 && (
+          <div className="ow-sheet">
+            <BlockStack gap="300">
+              <Text as="h2" variant="headingLg">
+                {setupLeft.length === setup.length ? 'Three things to do' : `${setupLeft.length} thing${setupLeft.length === 1 ? '' : 's'} left to set up`}
+              </Text>
+              {setup.map((s) => (
+                <InlineStack key={s.label} align="space-between" blockAlign="center" wrap gap="300">
+                  <BlockStack gap="050">
+                    <Text as="p" fontWeight="semibold" textDecorationLine={s.done ? 'line-through' : undefined}>
+                      {s.done ? '✓ ' : ''}{s.label}
+                    </Text>
+                    <Text as="p" variant="bodySm" tone="subdued">
+                      {s.why}
+                    </Text>
+                  </BlockStack>
+                  {!s.done && <Button url={s.to} variant={s === setupLeft[0] ? 'primary' : 'secondary'}>Start</Button>}
+                </InlineStack>
+              ))}
+            </BlockStack>
+          </div>
+        )}
+
+        <InlineGrid columns={{ xs: 2, md: 4 }} gap="300">
+          {[
+            { label: 'Applicants to review', value: newApps.length, to: '/employer/candidates?status=applied' },
+            { label: 'Potential candidate matches', value: potential, to: '/employer/jobs' },
+            { label: 'Interviews and work samples', value: interviews.length, to: '/employer/interviews' },
+            { label: 'Active jobs', value: active.length, to: '/employer/jobs' },
+            { label: 'Jobs needing information', value: needsInfo.length, to: '/employer/jobs?tab=needs' },
+            { label: 'Accessibility questions unanswered', value: WORKPLACE_EVIDENCE_FEATURES.length - workplaceDone, to: '/employer/accessibility' },
+            { label: 'Candidate questions', value: openQuestions.length, to: '#questions' },
+            { label: 'Accommodation requests', value: withRequest.length, to: '/employer/candidates' },
+          ].map((m) => (
+            <Link key={m.label} to={m.to} className="ow-stat" aria-label={`${m.label}: ${m.value}. Open.`}>
+              <Text as="span" variant="bodySm" tone="subdued">
+                {m.label}
+              </Text>
+              <Text as="span" variant="headingXl">
+                {m.value}
+              </Text>
+            </Link>
+          ))}
+        </InlineGrid>
+
+        <div className="ow-cols">
+          <BlockStack gap="500">
+            <div className="ow-sheet">
               <BlockStack gap="400">
                 <BlockStack gap="100">
                   <Text as="h2" variant="headingLg" id="questions">
@@ -102,7 +127,7 @@ export function EmployerDashboard() {
                   questions.map((q) => {
                     const job = state.jobs.find((j) => j.id === q.jobId)!;
                     return (
-                      <Card key={q.id} background="bg-surface-secondary">
+                      <div key={q.id} className="ow-why">
                         <BlockStack gap="200">
                           <InlineStack gap="200" blockAlign="center" wrap>
                             <Text as="h3" variant="headingSm">
@@ -129,14 +154,14 @@ export function EmployerDashboard() {
                             </InlineStack>
                           )}
                         </BlockStack>
-                      </Card>
+                      </div>
                     );
                   })
                 )}
               </BlockStack>
-            </Card>
+            </div>
 
-            <Card>
+            <div className="ow-sheet">
               <BlockStack gap="400">
                 <InlineStack align="space-between" blockAlign="baseline">
                   <Text as="h2" variant="headingLg">
@@ -174,52 +199,54 @@ export function EmployerDashboard() {
                   })
                 )}
               </BlockStack>
-            </Card>
+            </div>
+          </BlockStack>
 
+          <aside className="ow-aside">
             {drafts.length > 0 && (
-              <Card>
+              <div className="ow-sheet ow-aside__card">
                 <BlockStack gap="300">
-                  <Text as="h2" variant="headingLg">
+                  <Text as="h2" variant="headingMd">
                     Drafts ({drafts.length})
                   </Text>
                   {drafts.map((j) => (
-                    <InlineStack key={j.id} align="space-between" blockAlign="center">
+                    <InlineStack key={j.id} align="space-between" blockAlign="center" gap="200" wrap>
                       <Text as="p">{j.title}</Text>
-                      <Button url={`/employer/jobs/${j.id}/edit`}>Continue editing</Button>
+                      <Button url={`/employer/jobs/${j.id}/${jobNeedsInfo(j) ? 'enrich' : 'edit'}`} size="slim">
+                        {jobNeedsInfo(j) ? 'Add information' : 'Continue'}
+                      </Button>
                     </InlineStack>
                   ))}
                 </BlockStack>
-              </Card>
+              </div>
             )}
-          </BlockStack>
-        </Layout.Section>
-
-        <Layout.Section variant="oneThird">
-          <BlockStack gap="500">
-            <Card>
-              <BlockStack gap="400">
-                <Text as="h2" variant="headingMd">
-                  Information completeness
-                </Text>
-                <CompletenessMeter id="cm-wp" done={workplaceDone} total={WORKPLACE_EVIDENCE_FEATURES.length} label="Workplace accessibility" why="Shown on every job. Each unanswered question is a “?” a candidate has to ask about." />
-                <InlineStack><Button url="/employer/accessibility" size="slim">Edit workplace accessibility</Button></InlineStack>
-                {active.map((j) => {
-                  const { done, total } = jobCompleteness(j);
-                  return <CompletenessMeter key={j.id} id={`cm-${j.id}`} done={done} total={total} label={j.title} why="Environment, physical, communication and job accessibility answers." />;
-                })}
-              </BlockStack>
-            </Card>
-            <Card>
+            <div className="ow-sheet ow-aside__card">
               <BlockStack gap="200">
                 <Text as="h2" variant="headingMd">
                   Verification
                 </Text>
                 <VerificationBadge level={employer.verification} detailed />
+                <Text as="p" variant="bodySm" tone="subdued">
+                  {employer.companyVerified ? 'Company identity verified by work-email domain.' : 'Company identity not yet verified. Claiming with a work email at your domain verifies it.'} Accessibility claims are checked separately.
+                </Text>
               </BlockStack>
-            </Card>
-          </BlockStack>
-        </Layout.Section>
-      </Layout>
-    </Page>
+            </div>
+            <div className="ow-sheet ow-aside__card">
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingMd">
+                  ATS
+                </Text>
+                <Text as="p" variant="bodySm" tone="subdued">
+                  {employer.ats ? `${employer.ats.provider}: ${employer.ats.status === 'connected' ? 'connected, jobs sync automatically' : 'connection requested'}.` : 'Not connected. Jobs are imported or written here.'}
+                </Text>
+                <Button url="/employer/connect" size="slim">
+                  {employer.ats ? 'Connection details' : 'Connect ATS'}
+                </Button>
+              </BlockStack>
+            </div>
+          </aside>
+        </div>
+      </BlockStack>
+    </div>
   );
 }

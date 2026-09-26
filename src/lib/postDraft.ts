@@ -37,3 +37,24 @@ export function emailMatchesEmployer(email: string, employer: { name: string; ac
     .filter((w) => w.length >= 4 && !['health', 'partners', 'group', 'company', 'inc', 'llc'].includes(w))
     .some((w) => host.includes(w));
 }
+
+const IMPORT_KEY = 'openwork.importDraft';
+export interface ImportDraft {
+  url: string;
+  jobs: import('./importJobs').ImportedJob[];
+}
+export function readImportDraft(): ImportDraft | null {
+  try {
+    const raw = localStorage.getItem(IMPORT_KEY);
+    const d = raw ? (JSON.parse(raw) as ImportDraft) : null;
+    return d && Array.isArray(d.jobs) ? d : null;
+  } catch {
+    return null;
+  }
+}
+export function writeImportDraft(d: ImportDraft) {
+  localStorage.setItem(IMPORT_KEY, JSON.stringify(d));
+}
+export function clearImportDraft() {
+  localStorage.removeItem(IMPORT_KEY);
+}

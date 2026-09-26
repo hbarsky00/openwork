@@ -72,7 +72,10 @@ Spacing uses Polaris steps only: 4 / 8 / 12 / 16 / 20 / 24 / 32 / 40. Sheet padd
 ## 5. Patterns
 
 - **Accounts**: `/signin` is one option card per account; `/signup` is two fields and one button into setup. Clerk when `VITE_CLERK_PUBLISHABLE_KEY` is set (`src/auth/clerk.tsx`); demo accounts always work.
-- **Employers get in three ways**: `/post` (write the job first, account at the end, draft in `openwork.postDraft`), `/claim` (work-email domain match on a listed company), `/employer/jobs/import` (careers-page import via `/api/import-jobs`). Pricing at `/pricing`: Free / Growth $149 / Enterprise, proposal until launch.
+- **Why this matches** (`/jobs/:id/match`) is the flagship: five fact sections on `.ow-fact` rows, the shared apply control, Save, and Not for me with optional reasons. Cards and the job page link to it; they never repeat it.
+- **Applications** are a pipeline: All / Needs action / Applied / Interview / Offer / Closed, one next action per item, interview details inline, preparation at `/applications/:id/prepare`.
+- **Employers get in four ways**: `/import` (careers page, before an account), `/connect` (ATS, designed state), `/post`, `/claim`. Imported jobs show Needs information until `/employer/jobs/:id/enrich` is done; the review column there is deterministic (`reviewJob`).
+- **Employers get in three ways** (older note): `/post` (write the job first, account at the end, draft in `openwork.postDraft`), `/claim` (work-email domain match on a listed company), `/employer/jobs/import` (careers-page import via `/api/import-jobs`). Pricing at `/pricing`: Free / Growth $149 / Enterprise, proposal until launch.
 - **Openwork applies for you**: Review / Assist / Auto ↔ Free / Plus / Pro. Rules on `/passport/assist`; Ready-to-send queue on Applications; employer opt-out per job.
 - **Empty states** say what to do next and show something useful (Saved shows three jobs worth saving; Interviews shows the three-step path). Never a lone illustration in a narrow column.
 - **Help**: Support is one FAQ list with anchor pills and one email block.
@@ -97,4 +100,5 @@ axe (wcag2a/aa, 2.1aa, 2.2aa, best-practice) must report zero violations on ever
 - 2026-09-26 — Jobs page on tablet stacked filters in four rows under 60px of air. Rule 12 added; strip is one row from 768px, container top padding 24px.
 - 2026-09-26 — Display popover rebuilt on option cards; needs typeahead widened to 400px with label/count rows; wizard action row now shares the sheet's 960px and sits 12px above it. Overlay spec added to §4.
 - 2026-09-26 — Density sweep of every form. Apply: readiness panel became a one-line strip and the logo left the header. Résumé: template is a Select in the toolbar. Import intro cut to one sentence. All forms now put the first field under 320px at 1440.
+- 2026-09-26 — Redesign directive received; audit at OPENWORK_REDESIGN_AUDIT.md. Steps 1–8 shipped same day on the existing Polaris foundation. Carbon decision pending.
 - 2026-09-26 — Database will be Netlify DB (Neon) via Netlify Functions, not Supabase.

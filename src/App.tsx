@@ -43,6 +43,8 @@ import { EmployerSettings } from './pages/employer/EmployerSettings';
 import { ImportJobs } from './pages/employer/ImportJobs';
 import { WhyThisMatches } from './pages/candidate/WhyThisMatches';
 import { InterviewPrep } from './pages/candidate/InterviewPrep';
+import { EnrichJob } from './pages/employer/EnrichJob';
+import { ConnectAts } from './pages/employer/ConnectAts';
 import { Pricing } from './pages/public/Pricing';
 import { ClaimCompany } from './pages/public/ClaimCompany';
 
@@ -100,6 +102,8 @@ export function App() {
         <Route path="/signup/*" element={<SignUp />} />
         <Route path="/employers/signup" element={<EmployerSignUp />} />
         <Route path="/post" element={<JobBuilder />} />
+        <Route path="/import" element={<ImportJobs />} />
+        <Route path="/connect" element={<ConnectAts />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/claim" element={<ClaimCompany />} />
 
@@ -126,6 +130,8 @@ export function App() {
         <Route path="/employer/jobs" element={<E><EmployerJobs /></E>} />
         <Route path="/employer/jobs/new" element={<E><JobBuilder /></E>} />
         <Route path="/employer/jobs/import" element={<E><ImportJobs /></E>} />
+        <Route path="/employer/jobs/:id/enrich" element={<E><EnrichJob /></E>} />
+        <Route path="/employer/connect" element={<E><ConnectAts /></E>} />
         <Route path="/employer/jobs/:id/edit" element={<E><JobBuilder /></E>} />
         <Route path="/employer/jobs/:id/preview" element={<E><JobPreview /></E>} />
         <Route path="/employer/candidates" element={<E><EmployerCandidates /></E>} />

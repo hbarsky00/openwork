@@ -1940,6 +1940,7 @@ ol.Polaris-BlockStack {
 .ow-onboard--form .ow-pagehead { margin-block-end: 8px; }
 .ow-container--tight { padding-block-start: 16px; }
 .ow-wizard { max-width: 960px; margin: 0 auto; }
+.ow-wizard--wide { max-width: 1240px; }
 .ow-wizard .ow-pagehead { margin-block-end: 12px; }
 @media (min-width: 768px) { .ow-onboard--form { padding: 20px 40px 32px; } }
 
@@ -1999,3 +2000,10 @@ ol.Polaris-BlockStack {
 .ow-why--summary a:last-child { display: inline-block; margin-top: 4px; font-weight: 500; }
 /* Matches filter row */
 .ow-filterrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+/* Employer landing: five steps in a row */
+.ow-stages--row { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.ow-stages--row li { grid-template-columns: 28px 1fr; }
+.ow-readiness__item--info svg { fill: var(--ow-ink-3); }
+.ow-onboard .ow-readiness { padding: 10px 12px; background: var(--ow-paper); border-radius: 6px; }
+@media (max-width: 767px) { .ow-onboard .ow-readiness .ow-readiness__item--ok { display: inline-flex; } }
+.ow-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; }

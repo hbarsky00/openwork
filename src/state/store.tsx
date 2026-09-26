@@ -99,6 +99,7 @@ type Action =
   | { type: 'createEmployer'; employer: Employer }
   | { type: 'claimEmployer'; employerId: string; email: string }
   | { type: 'dismissJob'; jobId: string; reasons: string[] }
+  | { type: 'requestAts'; provider: string }
   | { type: 'undoDismiss'; jobId: string }
   | { type: 'askQuestion'; question: Question }
   | { type: 'answerQuestion'; questionId: string; answer: string }
@@ -188,7 +189,9 @@ function reducer(state: AppState, action: Action): AppState {
     case 'undoDismiss':
       return { ...state, feedback: state.feedback.filter((f) => !(state.candidate && f.candidateId === state.candidate.id && f.jobId === action.jobId)) };
     case 'claimEmployer':
-      return { ...state, role: 'employer', employerId: action.employerId, candidate: null, employers: state.employers.map((e) => (e.id === action.employerId ? { ...e, claimedBy: action.email, plan: e.plan ?? 'free' } : e)) };
+      return { ...state, role: 'employer', employerId: action.employerId, candidate: null, employers: state.employers.map((e) => (e.id === action.employerId ? { ...e, claimedBy: action.email, companyVerified: true, plan: e.plan ?? 'founding' } : e)) };
+    case 'requestAts':
+      return { ...state, employers: state.employers.map((e) => (e.id === state.employerId ? { ...e, ats: { provider: action.provider, status: 'requested', requestedOn: today() } } : e)) };
     case 'askQuestion':
       return { ...state, questions: [action.question, ...state.questions] };
     case 'answerQuestion':

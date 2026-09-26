@@ -144,7 +144,11 @@ export interface Employer {
   typicalResponse: string;
   /** Work email that claimed this page. Absent = listed from public data, unclaimed. */
   claimedBy?: string | null;
-  plan?: 'free' | 'growth' | 'enterprise';
+  plan?: 'free' | 'growth' | 'enterprise' | 'founding';
+  /** Company identity confirmed (work-email domain or trust team). Separate from accessibility claims. */
+  companyVerified?: boolean;
+  /** Applicant-tracking-system connection. Integrations are designed, not live. */
+  ats?: { provider: string; status: 'requested' | 'connected'; requestedOn: string };
   logoColor: string;
 }
 
@@ -195,6 +199,9 @@ export interface Job {
   decisionTimeframe: string;
   accommodationRoute: string;
   supportAvailable: string[];
+  /** Where the job came from. Absent = written in Openwork. */
+  source?: 'manual' | 'imported' | 'ats';
+  importedFrom?: string;
 }
 
 export interface SavedJob {
