@@ -2,7 +2,6 @@ import { Badge, Banner, BlockStack, Button, DropZone, Form, FormLayout, Icon, In
 import { CheckCircleIcon, InfoIcon } from '@shopify/polaris-icons';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { EmployerLogo } from '../../components/EmployerLogo';
 import { JobCard } from '../../components/JobCard';
 import { ACCESS_FEATURE_BY_ID } from '../../lib/access';
 import { buildApplication } from '../../lib/apply';
@@ -177,39 +176,19 @@ export function Apply() {
           <Link to={`/jobs/${job.id}`} className="ow-applyhead__back">
             ← Back to the job
           </Link>
-          <InlineStack gap="300" blockAlign="center" wrap={false}>
-            <EmployerLogo employer={employer} size={56} />
-            <BlockStack gap="050">
-              <Text as="h1" variant="heading2xl">
-                Prepare your application
-              </Text>
-              <Text as="p" variant="bodyMd" tone="subdued">
-                {job.title} · {employer.name} · {salary(job)} · {job.location}
-              </Text>
-            </BlockStack>
-          </InlineStack>
+          <BlockStack gap="050">
+            <Text as="h1" variant="heading2xl">
+              Prepare your application
+            </Text>
+            <Text as="p" variant="bodyMd" tone="subdued">
+              {job.title} · {employer.name} · {salary(job)} · {job.location}
+            </Text>
+          </BlockStack>
           {!p && (
             <Text as="p" variant="bodyMd">
               Applied before? <Link to={`/signin?next=${encodeURIComponent(`/jobs/${job.id}/apply`)}`}>Log in</Link> and this fills itself in.
             </Text>
           )}
-        </div>
-
-        <div className="ow-why" role="status" aria-label="Application readiness">
-          <Text as="p" variant="bodySm" fontWeight="semibold">
-            Application readiness
-          </Text>
-          {[
-            { ok: !!name.trim() && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email), t: name.trim() ? `Contact details: ${name.trim()}` : 'Contact details needed' },
-            { ok: !!resume, t: resume ? `Résumé: ${resume}` : 'No résumé — optional, your profile goes instead' },
-            { ok: missing === 0, t: job.screeningQuestions.length ? (missing ? `${missing} of ${job.screeningQuestions.length} employer question${job.screeningQuestions.length === 1 ? '' : 's'} left` : `${job.screeningQuestions.length} employer question${job.screeningQuestions.length === 1 ? '' : 's'} answered`) : 'No employer questions for this job' },
-            { ok: true, t: sharedNeeds.length ? `Sharing ${sharedNeeds.length} access need${sharedNeeds.length === 1 ? '' : 's'} you marked okay to share` : 'No access needs shared (your choice)' },
-          ].map((r) => (
-            <div key={r.t} className={`ow-why__row ow-why__row--${r.ok ? 'ok' : 'info'}`}>
-              {r.ok ? <CheckCircleIcon /> : <InfoIcon />}
-              <span>{r.t}</span>
-            </div>
-          ))}
         </div>
 
         {Object.keys(errors).length > 0 && (
@@ -320,18 +299,27 @@ export function Apply() {
           </div>
 
           <div className="ow-actionbar">
-            <InlineStack align="space-between" blockAlign="center" wrap gap="300">
-              <Text as="p" variant="bodySm" tone={missing > 0 ? 'critical' : 'subdued'}>
-                {missing > 0
-                  ? `Answer ${missing} question${missing === 1 ? '' : 's'} from ${employer.name} to send.`
-                  : p
-                    ? `${employer.name} sees only what is on this page.`
-                    : 'Sending creates your free account so you can track the reply.'}
-              </Text>
-              <Button submit variant="primary" size="large">
-                Submit application
-              </Button>
-            </InlineStack>
+            <div className="ow-actionbar__row">
+              <div className="ow-readiness" role="status" aria-label="Application readiness">
+                {[
+                  { ok: !!name.trim() && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email), t: name.trim() ? 'Contact details' : 'Contact details needed' },
+                  { ok: !!resume, t: resume ? 'Résumé attached' : 'No résumé, profile goes instead' },
+                  { ok: missing === 0, t: job.screeningQuestions.length ? (missing ? `${missing} of ${job.screeningQuestions.length} question${job.screeningQuestions.length === 1 ? '' : 's'} left` : `${job.screeningQuestions.length} question${job.screeningQuestions.length === 1 ? '' : 's'} answered`) : 'No employer questions' },
+                  { ok: true, t: sharedNeeds.length ? `Sharing ${sharedNeeds.length} access need${sharedNeeds.length === 1 ? '' : 's'}` : 'No access needs shared' },
+                  ...(p ? [] : [{ ok: true, t: 'Sending creates your free account' }]),
+                ].map((r) => (
+                  <span key={r.t} className={`ow-readiness__item ow-readiness__item--${r.ok ? 'ok' : 'todo'}`}>
+                    {r.ok ? <CheckCircleIcon /> : <InfoIcon />}
+                    <span>{r.t}</span>
+                  </span>
+                ))}
+              </div>
+              <div className="ow-actionbar__primary">
+                <Button submit variant="primary" size="large" fullWidth>
+                  Submit application
+                </Button>
+              </div>
+            </div>
           </div>
         </Form>
       </BlockStack>

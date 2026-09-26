@@ -1,6 +1,5 @@
 import { BlockStack, Button, Checkbox, FormLayout, InlineStack, Select, Text, TextField } from '@shopify/polaris';
 import { useMemo, useState } from 'react';
-import { OptionCard, OptionCards } from '../../components/OptionCard';
 import type { CandidateProfile, Experience } from '../../lib/types';
 import { SuggestRewrite } from '../../components/SuggestRewrite';
 import { useTitle } from '../../lib/useTitle';
@@ -51,10 +50,11 @@ export function ResumeBuilder() {
             Résumé
           </Text>
           <Text as="p" tone="subdued">
-            Edits here update your profile too. Download saves it as the résumé that goes with your applications.
+            Edits here update your profile. Download saves it as your résumé.
           </Text>
         </BlockStack>
         <div className="ow-resume__tools">
+          <Select label="Template" labelInline options={[{ label: 'Modern', value: 'modern' }, { label: 'Classic', value: 'classic' }]} value={template} onChange={(v) => setTemplate(v as Template)} />
           <Select label="Tailor to a job" labelInline options={[{ label: 'No job — general', value: '' }, ...state.jobs.filter((j) => j.status === 'published').map((j) => ({ label: `${j.title} · ${state.employers.find((e) => e.id === j.employerId)?.name ?? ''}`, value: j.id }))]} value={jobId} onChange={setJobId} />
           <Button variant="primary" onClick={download}>
             Download PDF
@@ -66,16 +66,6 @@ export function ResumeBuilder() {
         <aside className="ow-resume__editor" aria-label="Résumé content">
           <div className="ow-sheet ow-aside__card">
             <BlockStack gap="500">
-              <BlockStack gap="200">
-                <Text as="h2" variant="headingSm">
-                  Template
-                </Text>
-                <OptionCards>
-                  <OptionCard title="Modern" help="Name block, two columns, strengths up front." selected={template === 'modern'} onClick={() => setTemplate('modern')} />
-                  <OptionCard title="Classic" help="One column, plain headings. Safest for automated screening." selected={template === 'classic'} onClick={() => setTemplate('classic')} />
-                </OptionCards>
-              </BlockStack>
-
               {job && (
                 <div className="ow-why" role="status">
                   <Text as="p" variant="bodySm">

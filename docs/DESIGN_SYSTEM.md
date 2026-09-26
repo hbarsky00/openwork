@@ -96,4 +96,5 @@ axe (wcag2a/aa, 2.1aa, 2.2aa, best-practice) must report zero violations on ever
 - 2026-09-26 — Popovers were 13px and slid under the header (Polaris portal theme reset). Rule 11 added; portal theme container now receives every token block.
 - 2026-09-26 — Jobs page on tablet stacked filters in four rows under 60px of air. Rule 12 added; strip is one row from 768px, container top padding 24px.
 - 2026-09-26 — Display popover rebuilt on option cards; needs typeahead widened to 400px with label/count rows; wizard action row now shares the sheet's 960px and sits 12px above it. Overlay spec added to §4.
+- 2026-09-26 — Density sweep of every form. Apply: readiness panel became a one-line strip and the logo left the header. Résumé: template is a Select in the toolbar. Import intro cut to one sentence. All forms now put the first field under 320px at 1440.
 - 2026-09-26 — Database will be Netlify DB (Neon) via Netlify Functions, not Supabase.

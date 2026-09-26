@@ -58,7 +58,7 @@ export function ImportJobs() {
             Import from your careers page
           </Text>
           <Text as="p" tone="subdued">
-            Paste the address of your careers page or a single posting. Openwork reads the title, location, pay, tasks and requirements. Each job lands as a draft, and you finish the accessibility questions before it goes live.
+            Paste your careers page or a single posting. Each job lands as a draft; you finish the accessibility questions before it goes live.
           </Text>
         </BlockStack>
         <div className="ow-sheet">

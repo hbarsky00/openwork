@@ -1971,3 +1971,17 @@ ol.Polaris-BlockStack {
 .ow-opt__n { color: var(--ow-ink-2); font-size: 14px; font-variant-numeric: tabular-nums; }
 .Polaris-Listbox-Section .Polaris-Listbox-Section__SectionGroup > [role='presentation'] .Polaris-Text--root,
 .Polaris-Listbox-Section > li:first-child .Polaris-Text--root { font-size: 13px; font-weight: 600; color: var(--ow-ink-2); text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* Apply readiness: one strip, not a panel */
+.ow-readiness { margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; flex: 1 1 auto; min-width: 0; }
+.ow-readiness__item--todo { color: #b42318; font-weight: 600; }
+.ow-readiness__item--todo svg { fill: #b42318; }
+@media (max-width: 767px) { .ow-readiness__item--ok { display: none; } .ow-actionbar__row { flex-wrap: wrap; } }
+.ow-readiness__item { display: inline-flex; align-items: center; gap: 6px; }
+.ow-readiness__item svg { width: 18px; height: 18px; flex: none; }
+.ow-readiness__item--ok svg { fill: var(--ow-success, #10b981); }
+.ow-applyhead { gap: 8px; }
+
+/* Résumé toolbar on phone: two selects side by side, button under them */
+@media (max-width: 767px) { .ow-resume__tools { display: grid; grid-template-columns: 1fr 1fr; } .ow-resume__tools .Polaris-Select { max-width: 100%; } .ow-resume__tools > :last-child { grid-column: 1 / -1; } }
+@media (max-width: 767px) { .ow-readiness .ow-readiness__item--ok { display: none; } }
