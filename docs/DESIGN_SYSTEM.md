@@ -71,7 +71,7 @@ Spacing uses Polaris steps only: 4 / 8 / 12 / 16 / 20 / 24 / 32 / 40. Sheet padd
 
 ## 5. Patterns
 
-- **Accounts**: `/signin` is one option card per account; `/signup` is two fields and one button into setup. Clerk when `VITE_CLERK_PUBLISHABLE_KEY` is set (`src/auth/clerk.tsx`); demo accounts always work.
+- **Accounts**: `/signin` is a real email + password form for everyone (candidates, employers, trust team told apart by the email). Passwords are SHA-256 hashed in the browser at sign-up (`src/lib/auth.ts`); demo accounts have no hash and accept any password, and are one line of links under the form. `/signup` is name, email, password and one button into setup. Clerk when `VITE_CLERK_PUBLISHABLE_KEY` is set (`src/auth/clerk.tsx`); demo accounts always work.
 - **Why this matches** (`/jobs/:id/match`) is the flagship: five fact sections on `.ow-fact` rows, the shared apply control, Save, and Not for me with optional reasons. Cards and the job page link to it; they never repeat it.
 - **Applications** are a pipeline: All / Needs action / Applied / Interview / Offer / Closed, one next action per item, interview details inline, preparation at `/applications/:id/prepare`.
 - **Employers get in four ways**: `/import` (careers page, before an account), `/connect` (ATS, designed state), `/post`, `/claim`. Imported jobs show Needs information until `/employer/jobs/:id/enrich` is done; the review column there is deterministic (`reviewJob`).
@@ -100,5 +100,6 @@ axe (wcag2a/aa, 2.1aa, 2.2aa, best-practice) must report zero violations on ever
 - 2026-09-26 — Jobs page on tablet stacked filters in four rows under 60px of air. Rule 12 added; strip is one row from 768px, container top padding 24px.
 - 2026-09-26 — Display popover rebuilt on option cards; needs typeahead widened to 400px with label/count rows; wizard action row now shares the sheet's 960px and sits 12px above it. Overlay spec added to §4.
 - 2026-09-26 — Density sweep of every form. Apply: readiness panel became a one-line strip and the logo left the header. Résumé: template is a Select in the toolbar. Import intro cut to one sentence. All forms now put the first field under 320px at 1440.
+- 2026-09-26 — Log in became a real email + password form; demo accounts demoted to links under it.
 - 2026-09-26 — Redesign directive received; audit at OPENWORK_REDESIGN_AUDIT.md. Steps 1–8 shipped same day on the existing Polaris foundation. Carbon decision pending.
 - 2026-09-26 — Database will be Netlify DB (Neon) via Netlify Functions, not Supabase.

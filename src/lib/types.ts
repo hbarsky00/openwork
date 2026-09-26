@@ -63,6 +63,8 @@ export interface CandidateProfile {
   id: string;
   name: string;
   email: string;
+  /** SHA-256 of the password, set at sign-up. Absent on demo accounts, which accept any password. */
+  passwordHash?: string;
   headline: string;
   location: string;
   about: string;
@@ -145,6 +147,7 @@ export interface Employer {
   /** Work email that claimed this page. Absent = listed from public data, unclaimed. */
   claimedBy?: string | null;
   plan?: 'free' | 'growth' | 'enterprise' | 'founding';
+  passwordHash?: string;
   /** Company identity confirmed (work-email domain or trust team). Separate from accessibility claims. */
   companyVerified?: boolean;
   /** Applicant-tracking-system connection. Integrations are designed, not live. */

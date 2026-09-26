@@ -1,21 +1,14 @@
 import { SignIn as ClerkSignIn } from '@clerk/clerk-react';
-import { Banner, BlockStack, Text } from '@shopify/polaris';
+import { Banner, BlockStack, Button, Form, FormLayout, InlineStack, Text, TextField } from '@shopify/polaris';
+import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { clerkEnabled } from '../../auth/clerk';
-import { OptionCard, OptionCards } from '../../components/OptionCard';
 import { SAMPLE_CANDIDATES } from '../../data/candidates';
+import { employerEmail, findAccount, passwordOk, validEmail } from '../../lib/auth';
 import { useTitle } from '../../lib/useTitle';
 import { useStore } from '../../state/store';
 
-const SCENARIO: Record<string, string> = {
-  'c-priya': 'Prefers written instructions, a fixed schedule and few interruptions.',
-  'c-devon': 'Needs screen-reader compatible software, keyboard access and accessible documents. Remote.',
-  'c-rosa': 'Needs step-free access, an accessible restroom and workstation, and the option to sit.',
-  'c-sam': 'Needs captions, text-based communication and an interpreter at interview.',
-  'c-tyler': 'First regular job. No résumé. Strong practical skills, works with a job coach.',
-};
-const DEMO_EMPLOYERS = ['meridian', 'northline', 'dalgren', 'kesslervance', 'corvid'];
-
+const DEMO_EMPLOYERS = ['meridian', 'northline', 'dalgren'];
 const REASON: Record<string, [string, string]> = {
   save: ['Log in to save jobs', 'Saved jobs need an account so we can keep them for you. Browsing does not.'],
   apply: ['Log in to apply', 'Your profile fills the application in, and you control what the employer sees.'],
@@ -23,7 +16,11 @@ const REASON: Record<string, [string, string]> = {
   alert: ['Log in to get alerts', 'We need somewhere to send new matches for this search.'],
 };
 
-/** One click per account. Real email accounts go through Clerk when it is configured; demo accounts always work. */
+/**
+ * One form for everyone: email and password. Candidates, employers and the
+ * trust team are told apart by the email. Demo accounts accept any password
+ * and are one click away under the form.
+ */
 export function SignIn() {
   useTitle('Log in');
   const { state, dispatch } = useStore();
@@ -32,21 +29,39 @@ export function SignIn() {
   const next = sp.get('next');
   const reason = sp.get('reason');
   const wantedRole = sp.get('role');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<{ email?: string; password?: string }>({});
+  const [busy, setBusy] = useState(false);
   const go = (fallback: string) => navigate(next && !next.startsWith('/signin') ? next : fallback);
-  const sampleIds = new Set(SAMPLE_CANDIDATES.map((c) => c.id));
-  const mine = state.candidates.filter((c) => !sampleIds.has(c.id));
-  const showCandidates = !wantedRole || wantedRole === 'candidate';
-  const showEmployers = !wantedRole || wantedRole === 'employer';
-  const showAdmin = !wantedRole || wantedRole === 'admin';
-  const signInAs = (id: string) => {
-    const saved = state.candidates.find((x) => x.id === id) ?? SAMPLE_CANDIDATES.find((x) => x.id === id)!;
-    dispatch({ type: 'signInCandidate', profile: saved });
-    go('/matches');
+
+  const enter = (acct: NonNullable<ReturnType<typeof findAccount>>) => {
+    if (acct.kind === 'candidate') { dispatch({ type: 'signInCandidate', profile: acct.candidate }); go('/matches'); }
+    else if (acct.kind === 'employer') { dispatch({ type: 'signInEmployer', employerId: acct.employer.id }); go('/employer'); }
+    else { dispatch({ type: 'signInAdmin' }); go('/admin'); }
   };
+
+  const submit = async () => {
+    const e: typeof error = {};
+    if (!validEmail(email)) e.email = 'Enter the email address you signed up with.';
+    if (!password) e.password = 'Enter your password.';
+    setError(e);
+    if (Object.keys(e).length) return;
+    setBusy(true);
+    const acct = findAccount(email, state.candidates, state.employers);
+    if (!acct) { setBusy(false); setError({ email: 'We could not find an account with that email. Check the spelling, or sign up.' }); return; }
+    const hash = acct.kind === 'candidate' ? acct.candidate.passwordHash : acct.kind === 'employer' ? acct.employer.passwordHash : undefined;
+    if (!(await passwordOk(hash, password))) { setBusy(false); setError({ password: 'That password does not match. Try again.' }); return; }
+    setBusy(false);
+    enter(acct);
+  };
+
+  const demoClick = (acct: NonNullable<ReturnType<typeof findAccount>>) => () => enter(acct);
+  const demoEmployers = state.employers.filter((x) => DEMO_EMPLOYERS.includes(x.id));
 
   return (
     <div className="ow-container ow-container--narrow">
-      <BlockStack gap="600">
+      <BlockStack gap="500">
         <BlockStack gap="200">
           <Text as="h1" variant="heading2xl">
             Log in
@@ -57,82 +72,75 @@ export function SignIn() {
             </Banner>
           ) : (
             <Text as="p" tone="subdued">
-              {clerkEnabled ? 'Use your email, or pick a demo account to look around.' : 'Pick an account. Each one shows a different way Openwork works.'}
+              {wantedRole === 'employer' ? 'Employers log in with the work email on the account.' : 'Job seekers and employers use the same form.'}
             </Text>
           )}
         </BlockStack>
 
-        {clerkEnabled && showCandidates && (
+        {clerkEnabled ? (
           <div className="ow-clerk">
             <ClerkSignIn routing="path" path="/signin" signUpUrl="/signup" fallbackRedirectUrl={next ?? '/matches'} />
           </div>
-        )}
-
-        {showCandidates && mine.length > 0 && !clerkEnabled && (
+        ) : (
           <div className="ow-sheet">
-            <BlockStack gap="300">
-              <Text as="h2" variant="headingLg">
-                Your account
-              </Text>
-              <OptionCards>
-                {mine.map((c) => (
-                  <OptionCard key={c.id} title={c.name} help={c.email} selected={false} onClick={() => signInAs(c.id)} />
-                ))}
-              </OptionCards>
-            </BlockStack>
+            <Form onSubmit={submit}>
+              <FormLayout>
+                <TextField label="Email" type="email" value={email} onChange={(v) => { setEmail(v); setError({}); }} autoComplete="username" error={error.email} requiredIndicator />
+                <TextField label="Password" type="password" value={password} onChange={(v) => { setPassword(v); setError({}); }} autoComplete="current-password" error={error.password} requiredIndicator />
+                <InlineStack gap="300" blockAlign="center" wrap>
+                  <Button submit variant="primary" size="large" loading={busy}>
+                    Log in
+                  </Button>
+                  <Link to="/support#q-6">Forgot your password?</Link>
+                </InlineStack>
+              </FormLayout>
+            </Form>
           </div>
         )}
 
-        {showCandidates && (
-          <div className="ow-sheet">
-            <BlockStack gap="300">
-              <Text as="h2" variant="headingLg">
-                {clerkEnabled ? 'Demo job seekers' : 'Job seekers'}
-              </Text>
-              <OptionCards>
-                {SAMPLE_CANDIDATES.map((c) => (
-                  <OptionCard key={c.id} title={c.name} help={SCENARIO[c.id] ?? c.headline} selected={false} onClick={() => signInAs(c.id)} />
-                ))}
-              </OptionCards>
-              {!clerkEnabled && (
-                <Text as="p" variant="bodySm" tone="subdued">
-                  New to Openwork? <Link to={`/signup${next ? `?next=${encodeURIComponent(next)}` : ''}`}>Sign up</Link>.
-                </Text>
-              )}
-            </BlockStack>
-          </div>
-        )}
+        <Text as="p" variant="bodySm" tone="subdued">
+          New to Openwork? <Link to={`/signup${next ? `?next=${encodeURIComponent(next)}` : ''}`}>Sign up</Link>. Hiring? <Link to="/import">Import your jobs</Link> or <Link to="/claim">claim your company page</Link>.
+        </Text>
 
-        {showEmployers && (
-          <div className="ow-sheet">
-            <BlockStack gap="300">
-              <Text as="h2" variant="headingLg">
-                Employers
-              </Text>
-              <OptionCards>
-                {state.employers.filter((e) => DEMO_EMPLOYERS.includes(e.id)).map((e) => (
-                  <OptionCard key={e.id} title={e.name} help={`${e.industry} · ${e.headquarters}`} selected={false} onClick={() => { dispatch({ type: 'signInEmployer', employerId: e.id }); go('/employer'); }} />
-                ))}
-              </OptionCards>
-              <Text as="p" variant="bodySm" tone="subdued">
-                Hiring? <Link to="/employers/signup">Create an employer account</Link>.
-              </Text>
-            </BlockStack>
-          </div>
-        )}
-
-        {showAdmin && (
-          <div className="ow-sheet">
-            <BlockStack gap="300">
-              <Text as="h2" variant="headingLg">
+        <div className="ow-why">
+          <BlockStack gap="200">
+            <Text as="p" variant="bodySm" fontWeight="semibold">
+              Demo accounts (any password works)
+            </Text>
+            <Text as="p" variant="bodySm">
+              Job seekers:{' '}
+              {SAMPLE_CANDIDATES.map((c, i) => {
+                const saved = state.candidates.find((x) => x.id === c.id) ?? c;
+                return (
+                  <span key={c.id}>
+                    {i > 0 ? ' · ' : ''}
+                    <Button variant="plain" onClick={demoClick({ kind: 'candidate', candidate: saved })}>
+                      {c.name.split(' ')[0]}
+                    </Button>
+                  </span>
+                );
+              })}
+            </Text>
+            <Text as="p" variant="bodySm">
+              Employers:{' '}
+              {demoEmployers.map((e, i) => (
+                <span key={e.id}>
+                  {i > 0 ? ' · ' : ''}
+                  <Button variant="plain" onClick={demoClick({ kind: 'employer', employer: e })}>
+                    {e.name}
+                  </Button>
+                </span>
+              ))}
+              {' · '}
+              <Button variant="plain" onClick={demoClick({ kind: 'admin' })}>
                 Trust team
-              </Text>
-              <OptionCards>
-                <OptionCard title="Openwork trust team" help="Employer verification and reported information." selected={false} onClick={() => { dispatch({ type: 'signInAdmin' }); go('/admin'); }} />
-              </OptionCards>
-            </BlockStack>
-          </div>
-        )}
+              </Button>
+            </Text>
+            <Text as="p" variant="bodyXs" tone="subdued">
+              Or type one of their emails above, for example {SAMPLE_CANDIDATES[2].email} or {employerEmail(demoEmployers[0]) ?? 'an employer contact address'}.
+            </Text>
+          </BlockStack>
+        </div>
       </BlockStack>
     </div>
   );

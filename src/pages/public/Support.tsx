@@ -19,6 +19,7 @@ export function Support() {
     { h: 'Control what employers see', p: 'Every answer on your passport is private or used for matching until you choose to share it. Before any application is sent you see the exact list.', cta: signedIn ? { label: 'Sharing controls', to: '/passport/sharing' } : { label: 'How privacy works', to: '/how-it-works' } },
     { h: 'Bring a job coach or support person', p: 'Many employers here welcome a job coach at interviews and during onboarding — it is listed on each job. You can name your coach in your support notes and share it when you apply. Coach accounts with their own permissions are coming next.', cta: { label: 'Jobs that welcome a job coach', to: '/jobs?need=jobCoach' } },
     { h: 'Report something that was not accessible', p: 'If an entrance had steps, software did not work with your screen reader, or an interpreter was promised and not provided, use “Report incorrect information” on the job. The trust team reviews every report; the employer is not told who reported.', cta: { label: 'Find work', to: '/jobs' } },
+    { h: 'Reset your password', p: 'Email support with the address on your account and we reset it the same business day. Demo accounts accept any password.', cta: null },
     { h: 'Change how this site looks', p: 'Use the Display button at the top of every page for Simplified or Large text. Your browser’s zoom, contrast and reduced-motion settings are always respected too.', cta: null },
   ];
   return (

@@ -84,7 +84,7 @@ const initialState: AppState = {
 
 type Action =
   | { type: 'signInCandidate'; profile: CandidateProfile }
-  | { type: 'signUpCandidate'; name: string; email: string }
+  | { type: 'signUpCandidate'; name: string; email: string; passwordHash?: string }
   | { type: 'signInEmployer'; employerId: string }
   | { type: 'signInAdmin' }
   | { type: 'signOut' }
@@ -123,7 +123,7 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, role: 'candidate', candidate: action.profile, employerId: null };
     case 'signUpCandidate': {
       const id = `c-${Date.now().toString(36)}`;
-      const candidate = emptyProfile(id, action.name, action.email);
+      const candidate = { ...emptyProfile(id, action.name, action.email), ...(action.passwordHash ? { passwordHash: action.passwordHash } : {}) };
       return { ...state, role: 'candidate', candidate, candidates: [...state.candidates, candidate], employerId: null };
     }
     case 'signInEmployer':
