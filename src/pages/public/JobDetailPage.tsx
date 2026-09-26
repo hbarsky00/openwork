@@ -26,7 +26,7 @@ function Bar({ label, value, total }: { label: string; value: number; total: num
   );
 }
 
-function YourMatch({ r }: { r: MatchResult }) {
+function YourMatch({ r, jobId }: { r: MatchResult; jobId: string }) {
   const needsOk = r.confirmed.filter((x) => x.kind === 'need').length;
   const needsAll = r.confirmed.concat(r.review, r.different, r.needsConfirmation).filter((x) => x.kind === 'need').length;
   const prefsOk = r.confirmed.filter((x) => x.kind === 'preference').length;
@@ -43,7 +43,7 @@ function YourMatch({ r }: { r: MatchResult }) {
       <Bar label="Skills" value={r.skillsMatched.length + r.strengthsMatched.length} total={r.skillsMatched.length + r.strengthsMatched.length > 0 ? r.skillsMatched.length + r.strengthsMatched.length + 1 : 0} />
       <Bar label="How you work" value={prefsOk} total={prefsAll} />
       <Bar label="Accessibility" value={needsOk} total={needsAll} />
-      <Button url="#why" variant="plain">
+      <Button url={`/jobs/${jobId}/match`} variant="plain">
         See full match
       </Button>
     </BlockStack>
@@ -95,7 +95,7 @@ export function JobDetailPage() {
           </div>
           {result && result.comparable + result.skillsMatched.length + result.strengthsMatched.length > 0 && (
             <div className="ow-sheet ow-aside__card">
-              <YourMatch r={result} />
+              <YourMatch r={result} jobId={job.id} />
             </div>
           )}
           <div className="ow-sheet ow-aside__card">

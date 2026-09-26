@@ -270,6 +270,15 @@ export interface Report {
 
 export type DisplayMode = 'standard' | 'simplified' | 'largeText';
 
+/** "Not for me" on a match: hides the job and feeds ranking. Reasons are labels, never free text about the person. */
+export interface CandidateFeedback {
+  id: string;
+  candidateId: string;
+  jobId: string;
+  reasons: string[];
+  on: string;
+}
+
 /** Modeled for phase 2. Deliberately not built in MVP. */
 export interface JobCoachRelationship {
   id: string;

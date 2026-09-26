@@ -21,24 +21,30 @@ export function Matches() {
   const sentToday = state.applications.filter((a) => a.candidateId === p.id && a.sentBy === 'openwork' && a.status !== 'prepared' && a.submittedOn === todayStr);
   const prepared = state.applications.filter((a) => a.candidateId === p.id && a.status === 'prepared');
   const [sort, setSort] = useState<'best' | 'newest' | 'pay'>('best');
+  const [remoteOnly, setRemoteOnly] = useState(false);
+  const [needsOnly, setNeedsOnly] = useState(false);
+  const hasNeeds = Object.keys(p.accessNeeds).length > 0;
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   const hasInputs = Object.keys(p.accessNeeds).length > 0 || Object.keys(p.workPreferences).length > 0 || p.strengths.length > 0 || p.skills.length > 0;
 
   const ranked = useMemo(() => {
     const applied = new Set(state.applications.filter((a) => a.candidateId === p.id && a.status !== 'prepared').map((a) => a.jobId));
+    const hidden = new Set(state.feedback.filter((f) => f.candidateId === p.id).map((f) => f.jobId));
     const rows = state.jobs
-      .filter((j) => j.status === 'published' && !applied.has(j.id))
+      .filter((j) => j.status === 'published' && !applied.has(j.id) && !hidden.has(j.id))
+      .filter((j) => !remoteOnly || j.environment.workLocation === 'remote' || j.environment.workLocation === 'hybrid')
       .map((j) => {
         const e = state.employers.find((x) => x.id === j.employerId)!;
         const r = matchJob(p, j, e);
         return { j, r, score: rankScore(r), tier: matchTier(r), hourly: j.salaryUnit === 'hour' ? j.salaryMax : j.salaryMax / 2080 };
-      });
+      })
+      .filter((x) => !needsOnly || [...x.r.review, ...x.r.different, ...x.r.needsConfirmation].every((r) => r.kind !== 'need'));
     if (sort === 'newest') rows.sort((a, b) => b.j.postedOn.localeCompare(a.j.postedOn));
     else if (sort === 'pay') rows.sort((a, b) => b.hourly - a.hourly);
     else rows.sort((a, b) => b.score - a.score || b.j.postedOn.localeCompare(a.j.postedOn));
     return rows;
-  }, [state.jobs, state.employers, state.applications, p, sort]);
+  }, [state.jobs, state.employers, state.applications, state.feedback, p, sort, remoteOnly, needsOnly]);
 
   const strong = ranked.filter((x) => x.tier === 'strong' || x.tier === 'good').length;
   const [top, ...rest] = ranked;
@@ -69,6 +75,21 @@ export function Matches() {
               Set up matching
             </Button>
           )}
+        </div>
+
+        <div className="ow-filterrow" role="group" aria-label="Filter matches">
+          <Select label="Sort" labelInline options={[{ label: 'Best match', value: 'best' }, { label: 'Newest', value: 'newest' }, { label: 'Highest pay', value: 'pay' }]} value={sort} onChange={(v) => setSort(v as typeof sort)} />
+          <Button pressed={remoteOnly} onClick={() => setRemoteOnly((v) => !v)}>
+            Remote or hybrid
+          </Button>
+          {hasNeeds && (
+            <Button pressed={needsOnly} onClick={() => setNeedsOnly((v) => !v)}>
+              Needs confirmed
+            </Button>
+          )}
+          <Button url="/jobs" variant="plain">
+            All filters
+          </Button>
         </div>
 
         {(sentToday.length > 0 || prepared.length > 0) && (
@@ -104,12 +125,9 @@ export function Matches() {
 
         {rest.length > 0 && (
           <BlockStack gap="300">
-            <InlineStack align="space-between" blockAlign="center" wrap gap="300">
-              <Text as="h2" variant="headingLg">
-                More recommended roles
-              </Text>
-              <Select label="Sort" labelInline options={[{ label: 'Best match', value: 'best' }, { label: 'Newest', value: 'newest' }, { label: 'Highest pay', value: 'pay' }]} value={sort} onChange={(v) => setSort(v as typeof sort)} />
-            </InlineStack>
+            <Text as="h2" variant="headingLg">
+              More recommended roles
+            </Text>
             <InlineGrid columns={{ xs: 1, md: 2 }} gap="400">
               {rest.map((x) => (
                 <MatchCard key={x.j.id} job={x.j} />

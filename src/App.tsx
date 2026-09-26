@@ -41,6 +41,7 @@ import { EmployerSignUp } from './pages/employer/EmployerSignUp';
 import { EmployerInterviews } from './pages/employer/EmployerInterviews';
 import { EmployerSettings } from './pages/employer/EmployerSettings';
 import { ImportJobs } from './pages/employer/ImportJobs';
+import { WhyThisMatches } from './pages/candidate/WhyThisMatches';
 import { Pricing } from './pages/public/Pricing';
 import { ClaimCompany } from './pages/public/ClaimCompany';
 
@@ -103,6 +104,7 @@ export function App() {
 
         <Route path="/onboarding" element={<C><Onboarding /></C>} />
         <Route path="/matches" element={<C><Matches /></C>} />
+        <Route path="/jobs/:id/match" element={<C><WhyThisMatches /></C>} />
         <Route path="/home" element={<Navigate to="/matches" replace />} />
         <Route path="/saved" element={<C><Saved /></C>} />
         <Route path="/applications" element={<C><Applications /></C>} />

@@ -1,11 +1,11 @@
 import { Banner, BlockStack, InlineGrid, InlineStack, List, Text } from '@shopify/polaris';
-import { CheckCircleIcon } from '@shopify/polaris-icons';
+import { AlertCircleIcon, CheckCircleIcon, InfoIcon } from '@shopify/polaris-icons';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ACCESS_FEATURES, EVIDENCE_SOURCE_LABEL, HIRING_OPTION_BY_ID, PHYSICAL_REQUIREMENTS } from '../lib/access';
 import { DIMENSIONS, optionOf } from '../lib/dimensions';
 import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL, longDate, postedAgo, salary } from '../lib/format';
-import { matchJob } from '../lib/match';
+import { MATCH_TIER_LABEL, evidenceLines, matchJob, matchTier } from '../lib/match';
 import type { Job } from '../lib/types';
 import { useApplicantCount, useMyApplication, useStore } from '../state/store';
 import { AskEmployerButton } from './AskEmployerModal';
@@ -13,7 +13,6 @@ import { EmployerLogo } from './EmployerLogo';
 import { QuickApplyButton, applyHint } from './QuickApplyButton';
 import { SaveButton } from './SaveButton';
 import { VerificationBadge } from './VerificationBadge';
-import { WhyThisCouldWork } from './WhyThisCouldWork';
 
 interface Props {
   job: Job;
@@ -157,7 +156,28 @@ export function JobDetailContent({ job, pane = false }: Props) {
           </section>
         )}
 
-        {result && <div id="why"><WhyThisCouldWork result={result} job={job} /></div>}
+        {result && (
+          <section className="ow-why ow-why--summary" id="why" aria-labelledby="why-h">
+            <InlineStack align="space-between" blockAlign="center" wrap gap="200">
+              <Text as="h2" variant="headingSm" id="why-h">
+                Why this matches
+              </Text>
+              <span className={`ow-matchlabel ow-matchlabel--${matchTier(result)}`}>{MATCH_TIER_LABEL[matchTier(result)]}</span>
+            </InlineStack>
+            {evidenceLines(result, job).map((l) => {
+              const I = l.tone === 'ok' ? CheckCircleIcon : l.tone === 'warn' ? AlertCircleIcon : InfoIcon;
+              return (
+                <div key={l.heading} className={`ow-why__row ow-why__row--${l.tone}`}>
+                  <I />
+                  <span>
+                    <strong>{l.heading}:</strong> {l.text}
+                  </span>
+                </div>
+              );
+            })}
+            <Link to={`/jobs/${job.id}/match`}>See full match</Link>
+          </section>
+        )}
 
         <div className={pane ? '' : 'ow-sheet'}>
           <BlockStack gap="600">

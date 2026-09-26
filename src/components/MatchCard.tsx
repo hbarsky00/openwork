@@ -1,6 +1,6 @@
 import { BlockStack, Button, InlineStack, Text } from '@shopify/polaris';
 import { AlertCircleIcon, CheckCircleIcon, InfoIcon, StarFilledIcon, StarIcon } from '@shopify/polaris-icons';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL, postedAgo, salary } from '../lib/format';
 import { MATCH_TIER_LABEL, evidenceLines, matchJob, matchTier } from '../lib/match';
 import type { Job } from '../lib/types';
@@ -62,11 +62,11 @@ export function MatchCard({ job, hero = false }: { job: Job; hero?: boolean }) {
 
             {lines.length > 0 && (
               <div className="ow-why">
-                {hero && (
-                  <Text as="p" variant="bodySm" fontWeight="semibold">
-                    Why this is a great fit for you
-                  </Text>
-                )}
+                <Text as="p" variant="bodySm" fontWeight="semibold">
+                  <Link to={`/jobs/${job.id}/match`} className="ow-why__link">
+                    {hero ? 'Why this is a great fit for you' : 'Why this matches'}
+                  </Link>
+                </Text>
                 {lines.map((l) => {
                   const I = ICON[l.tone];
                   return (

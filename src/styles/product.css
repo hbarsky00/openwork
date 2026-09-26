@@ -1985,3 +1985,17 @@ ol.Polaris-BlockStack {
 /* Résumé toolbar on phone: two selects side by side, button under them */
 @media (max-width: 767px) { .ow-resume__tools { display: grid; grid-template-columns: 1fr 1fr; } .ow-resume__tools .Polaris-Select { max-width: 100%; } .ow-resume__tools > :last-child { grid-column: 1 / -1; } }
 @media (max-width: 767px) { .ow-readiness .ow-readiness__item--ok { display: none; } }
+
+/* Why this matches: five short sections of facts */
+.ow-matchsec { display: grid; gap: 10px; }
+.ow-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ow-fact { display: grid; grid-template-columns: 20px 1fr; gap: 10px; align-items: start; }
+.ow-fact svg { width: 20px; height: 20px; margin-top: 2px; }
+.ow-fact--ok svg { fill: var(--ow-success, #10b981); }
+.ow-fact--warn svg { fill: var(--ow-warning, #f59e0b); }
+.ow-fact--info svg { fill: var(--ow-ink-3); }
+.ow-why__link { color: inherit; text-decoration: none; }
+.ow-why__link:hover { text-decoration: underline; }
+.ow-why--summary a:last-child { display: inline-block; margin-top: 4px; font-weight: 500; }
+/* Matches filter row */
+.ow-filterrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }

@@ -19,6 +19,7 @@ import type {
   Report,
   Role,
   SavedJob,
+  CandidateFeedback,
 } from '../lib/types';
 
 export interface AppState {
@@ -41,6 +42,8 @@ export interface AppState {
   /** Last day Openwork ran auto-apply for each candidate (YYYY-MM-DD). */
   autoRuns: Record<string, string>;
   displayMode: DisplayMode;
+  /** "Not for me" decisions per candidate. */
+  feedback: CandidateFeedback[];
 }
 
 // v2: access-needs data model. Older v1 state is intentionally dropped.
@@ -76,6 +79,7 @@ const initialState: AppState = {
   alerts: [],
   autoRuns: {},
   displayMode: 'standard',
+  feedback: [],
 };
 
 type Action =
@@ -94,6 +98,8 @@ type Action =
   | { type: 'updateEmployer'; employerId: string; patch: Partial<Employer> }
   | { type: 'createEmployer'; employer: Employer }
   | { type: 'claimEmployer'; employerId: string; email: string }
+  | { type: 'dismissJob'; jobId: string; reasons: string[] }
+  | { type: 'undoDismiss'; jobId: string }
   | { type: 'askQuestion'; question: Question }
   | { type: 'answerQuestion'; questionId: string; answer: string }
   | { type: 'reportJob'; report: Report }
@@ -173,6 +179,14 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, employers: state.employers.map((e) => (e.id === action.employerId ? { ...e, ...action.patch } : e)) };
     case 'createEmployer':
       return { ...state, role: 'employer', employerId: action.employer.id, candidate: null, employers: [...state.employers, action.employer] };
+    case 'dismissJob': {
+      if (!state.candidate) return state;
+      const cid = state.candidate.id;
+      const rest = state.feedback.filter((f) => !(f.candidateId === cid && f.jobId === action.jobId));
+      return { ...state, feedback: [...rest, { id: `fb-${Date.now().toString(36)}`, candidateId: cid, jobId: action.jobId, reasons: action.reasons, on: today() }] };
+    }
+    case 'undoDismiss':
+      return { ...state, feedback: state.feedback.filter((f) => !(state.candidate && f.candidateId === state.candidate.id && f.jobId === action.jobId)) };
     case 'claimEmployer':
       return { ...state, role: 'employer', employerId: action.employerId, candidate: null, employers: state.employers.map((e) => (e.id === action.employerId ? { ...e, claimedBy: action.email, plan: e.plan ?? 'free' } : e)) };
     case 'askQuestion':
