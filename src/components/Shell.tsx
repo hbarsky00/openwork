@@ -100,9 +100,11 @@ export function Shell({ children }: { children: ReactNode }) {
             {state.role === 'visitor' ? (
               <span className="ow-desktop-only">
                 <InlineStack gap="200">
-                  <Button url="/post" variant="tertiary">
-                    Post a job
-                  </Button>
+                  <span className="ow-postjob">
+                    <Button url="/post" variant="tertiary">
+                      Post a job
+                    </Button>
+                  </span>
                   <Button url={`/signin?next=${encodeURIComponent(location.pathname)}`} variant="tertiary">
                     Log in
                   </Button>

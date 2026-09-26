@@ -15,6 +15,10 @@ Polaris 13 underneath, Openwork on top. The look is the **UX Pilot export** (set
 9. **Employer questions are required when present**; jobs may have none. Never invent facts in generated text.
 10. **Mobile and tablet are audited every pass.** Candidate phone nav is the bottom bar. Nav collapses to a menu under 768px (candidates and visitors) and under 1152px for the seven-item employer nav.
 
+11. **Overlays are part of the page.** Menus, typeaheads and tooltips use the page type (16px rows, 44px tall, 14px meta) and paint above the sticky header. Polaris wraps portals in its own theme container, so every token block in `product.css` targets `#PolarisPortalsContainer .Polaris-ThemeProvider--themeContainer` as well as `:root`. A popover that is clipped, covered, or smaller than the page is a bug.
+12. **Vertical rhythm is fixed.** 24px from the header to the first block, 16px between stacked blocks, 24px between page sections. Controls that fit side by side never stack: filters are one row from 768px up and 2×2 only on phones. No block of air taller than 32px anywhere.
+13. **Tone is slate and blue only.** No purple, no "magic" tone, no gradients. Status colours are success green and warning amber.
+
 ## 2. Tokens (`src/styles/product.css` `:root`)
 
 | Token | Value | Use |
@@ -87,4 +91,6 @@ axe (wcag2a/aa, 2.1aa, 2.2aa, best-practice) must report zero violations on ever
 - 2026-09-26 — Chip walls removed (Discover, Profile, employer Candidates); badges reduced to status only.
 - 2026-09-26 — Employer rows: Edit + overflow. Workplace accessibility folds answered areas to a summary with area nav.
 - 2026-09-26 — Wizard header compacted so the first field is above the fold. Purple "magic" tone removed from step labels.
+- 2026-09-26 — Popovers were 13px and slid under the header (Polaris portal theme reset). Rule 11 added; portal theme container now receives every token block.
+- 2026-09-26 — Jobs page on tablet stacked filters in four rows under 60px of air. Rule 12 added; strip is one row from 768px, container top padding 24px.
 - 2026-09-26 — Database will be Netlify DB (Neon) via Netlify Functions, not Supabase.

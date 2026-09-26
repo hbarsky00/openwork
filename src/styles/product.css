@@ -14,7 +14,8 @@
  * accessibility-first scale (18px body, 48px controls). Everything below still
  * references Polaris tokens; only the values change.
  */
-:root {
+:root,
+#PolarisPortalsContainer .Polaris-ThemeProvider--themeContainer {
   /* Type — 18px base, generous line-height */
   --p-text-body-xs-font-size: 0.8125rem;                      /* 13 */
   --p-text-body-xs-font-line-height: var(--p-font-line-height-500);
@@ -280,7 +281,8 @@
 }
 
 
-:root {
+:root,
+#PolarisPortalsContainer .Polaris-ThemeProvider--themeContainer {
   /* Semantic match tokens — the only product-specific color vocabulary. */
   --ow-match-confirmed-fg: var(--p-color-text-success);
   --ow-match-confirmed-bg: var(--p-color-bg-surface-success);
@@ -1939,3 +1941,20 @@ ol.Polaris-BlockStack {
 .ow-container--tight { padding-block-start: 16px; }
 .ow-container--tight .ow-pagehead { margin-block-end: 0; }
 @media (min-width: 768px) { .ow-onboard--form { padding: 20px 40px 32px; } }
+
+/* Overlays (menus, typeaheads, tooltips) paint above the sticky header and use the page type, never admin 13px. */
+.Polaris-PositionedOverlay { z-index: var(--p-z-index-12); }
+#PolarisPortalsContainer .Polaris-ActionList__Item { min-height: 44px; font-size: 16px; }
+#PolarisPortalsContainer .Polaris-Popover__Pane .Polaris-Text--bodySm { font-size: 14px; }
+/* Vertical rhythm: 24px from the header to the first block, 16px between stacked blocks. */
+.ow-container { padding-block-start: 24px; }
+/* Filters from tablet up are one row of controls; only phones stack them 2×2. */
+@media (min-width: 768px) and (max-width: 899px) {
+  .ow-filterstrip { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--p-space-200); }
+  /* The visitor header has three action buttons; the nav's For employers link covers Post a job here. */
+  .ow-header__actions .ow-postjob { display: none; }
+}
+@media (min-width: 900px) and (max-width: 1023px) {
+  .ow-filterstrip { grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(240px, 1.6fr); gap: var(--p-space-200); }
+  .ow-filterstrip__needs { grid-column: auto; }
+}
