@@ -65,7 +65,7 @@ export function Passport() {
             </Text>
           </BlockStack>
           <Text as="p" variant="bodySm" tone="subdued">
-            {applied} application{applied === 1 ? '' : 's'} · {shared} thing{shared === 1 ? '' : 's'} marked OK to share · <Link to="/passport/sharing">Sharing</Link>
+            {applied} application{applied === 1 ? '' : 's'} · {shared} thing{shared === 1 ? '' : 's'} marked OK to share · <Link to="/passport/sharing">Edit sharing</Link>
           </Text>
         </div>
 
@@ -98,7 +98,7 @@ export function Passport() {
               )}
             </Section>
 
-            <Section title="Résumé" action={<Button url="/resume">Build or edit</Button>}>
+            <Section title="Résumé" action={<Button url="/resume">Edit résumé</Button>}>
               {p.resumeFileName ? (
                 <InlineStack gap="300" blockAlign="center" wrap>
                   <Icon source={CheckCircleIcon} tone="success" />
@@ -109,13 +109,13 @@ export function Passport() {
                     Goes with every application. Quick apply uses it.
                   </Text>
                   <Button variant="plain" onClick={() => patch({ resumeFileName: null })}>
-                    Remove
+                    Remove résumé
                   </Button>
                 </InlineStack>
               ) : (
                 <div className="ow-drop">
                   <DropZone accept=".pdf,.doc,.docx,.txt" type="file" allowMultiple={false} onDrop={(_d, accepted) => accepted[0] && patch({ resumeFileName: accepted[0].name })}>
-                    <DropZone.FileUpload actionTitle="Upload your résumé" actionHint="PDF or Word. Or build one from your profile with Build or edit — it takes two minutes." />
+                    <DropZone.FileUpload actionTitle="Upload your résumé" actionHint="PDF or Word. Or build one from your profile with Edit résumé — it takes two minutes." />
                   </DropZone>
                 </div>
               )}

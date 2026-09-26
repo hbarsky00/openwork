@@ -79,7 +79,7 @@ export function JobDetailPage() {
           <JobDetailContent job={job} />
         </article>
         <aside className="ow-aside">
-          <div className="ow-sheet ow-aside__card">
+          <div className="ow-sheet ow-aside__card ow-aside__card--apply">
             <BlockStack gap="400">
               <QuickApplyButton job={job} fullWidth />
               <SaveButton jobId={job.id} size="large" fullWidth />

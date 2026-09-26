@@ -445,7 +445,7 @@ export function evidenceLines(result: MatchResult, job: Job): EvidenceLine[] {
   const out: EvidenceLine[] = [];
   const skills = result.skillsMatched.length + result.strengthsMatched.length;
   const skillsTotal = job.skills.length + job.strengthsUsed.length;
-  if (skillsTotal > 0) out.push({ heading: 'Career', text: skills > 0 ? `${skills} of ${skillsTotal} skills and strengths align` : 'Skills not yet compared — add skills to your profile', tone: skills > 0 ? 'ok' : 'info' });
+  if (skillsTotal > 0) out.push({ heading: 'Career', text: skills > 0 ? `${skills} of ${skillsTotal} skills and strengths align` : `None of the ${skillsTotal} listed skills and strengths are on your profile yet`, tone: skills > 0 ? 'ok' : 'info' });
   const prefsOk = result.confirmed.filter((r) => r.kind === 'preference');
   const prefsOff = [...result.different, ...result.review].filter((r) => r.kind === 'preference');
   if (prefsOk.length || prefsOff.length) {

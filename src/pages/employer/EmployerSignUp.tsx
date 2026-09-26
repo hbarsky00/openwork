@@ -22,7 +22,7 @@ export function EmployerSignUp() {
     if (Object.keys(e).length) return;
     const employer: Employer = { id: `emp-${Date.now().toString(36)}`, name: name.trim(), industry: '', size: '', headquarters: '', about: '', mission: '', benefits: [], verification: 'listed', verifiedOn: null, workplace: { communicationNorms: '', onboarding: '', accommodationRoute: `Email ${email.trim()}. No reason needed.`, managerCadence: '' }, accessibility: {}, accessibilityContact: email.trim(), typicalResponse: 'within two weeks', logoColor: '#4A5568' };
     dispatch({ type: 'createEmployer', employer });
-    navigate('/employer');
+    navigate('/employer/jobs/new');
   };
 
   return (

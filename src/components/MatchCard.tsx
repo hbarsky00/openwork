@@ -6,6 +6,7 @@ import { MATCH_TIER_LABEL, evidenceLines, matchJob, matchTier } from '../lib/mat
 import type { Job } from '../lib/types';
 import { useIsSaved, useMyApplication, useStore } from '../state/store';
 import { EmployerLogo } from './EmployerLogo';
+import { QuickApplyButton } from './QuickApplyButton';
 
 const ICON = { ok: CheckCircleIcon, info: InfoIcon, warn: AlertCircleIcon };
 
@@ -85,12 +86,14 @@ export function MatchCard({ job, hero = false }: { job: Job; hero?: boolean }) {
 
           <div className={hero ? 'ow-aside' : undefined}>
             <InlineStack gap="200" wrap>
-              {mine ? (
-                <Button url={`/applications/${mine.id}`} variant="primary" size={hero ? 'large' : 'medium'} fullWidth={hero}>
-                  Applied · view
+              {hero ? (
+                <QuickApplyButton job={job} fullWidth />
+              ) : mine ? (
+                <Button url={mine.status === 'prepared' ? '/applications' : `/applications/${mine.id}`} size="medium">
+                  {mine.status === 'prepared' ? 'Review and send' : 'View application'}
                 </Button>
               ) : (
-                <Button variant="primary" size={hero ? 'large' : 'medium'} fullWidth={hero} onClick={() => navigate(`/jobs/${job.id}/apply`)}>
+                <Button size="medium" onClick={() => navigate(`/jobs/${job.id}/apply`)}>
                   Prepare application
                 </Button>
               )}

@@ -18,13 +18,13 @@ export function QuickApplyButton({ job, size = 'large', fullWidth = false }: { j
   if (mine && mine.status === 'prepared')
     return (
       <Button url="/applications" variant="primary" size={size} fullWidth={fullWidth}>
-        Ready to send · review
+        Review and send
       </Button>
     );
   if (mine)
     return (
       <Button url={`/applications/${mine.id}`} size={size} fullWidth={fullWidth}>
-        Applied · view
+        View application
       </Button>
     );
   if (job.status !== 'published')

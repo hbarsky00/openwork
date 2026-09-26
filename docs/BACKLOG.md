@@ -5,12 +5,12 @@ Theme is settled (UX Pilot). Items are ranked by how much they hurt, not by effo
 
 ## A. Fix first — hierarchy and wrong messages
 
-1. **Matches hero shows a job you already applied to**, with a primary button reading "Applied · view". The hero should be the best *open* match; applied jobs move to Applications. Button copy "Applied · view" → "View application".
-2. **"Skills not yet compared — add skills to your profile"** appears for people who have skills. It fires when none overlap. Say "0 of 9 skills listed" or hide the line.
-3. **Job page on phone puts Apply above the title.** You see two buttons before you know the job. Title block first, apply bar sticky at the bottom (same pattern as Apply page).
-4. **Matches feed is a wall of black buttons**: 13 primary "Prepare application" on one screen. Cards should carry one primary at most in the hero; feed cards link through the title and show a quiet "Prepare" as secondary or on hover/focus.
-5. **Apply page header on phone** wraps logo + title + subtitle into a broken two-column block. Stack it.
-6. **"Sharing" / "Build or edit" / "Remove" on Profile** read as leftover labels. Use verbs with objects: "Edit sharing", "Edit résumé", "Remove résumé".
+1. ✅ **Matches hero shows a job you already applied to**, with a primary button reading "Applied · view". The hero should be the best *open* match; applied jobs move to Applications. Button copy "Applied · view" → "View application".
+2. ✅ **"Skills not yet compared — add skills to your profile"** appears for people who have skills. It fires when none overlap. Say "0 of 9 skills listed" or hide the line.
+3. ✅ **Job page on phone puts Apply above the title.** You see two buttons before you know the job. Title block first, apply bar sticky at the bottom (same pattern as Apply page).
+4. ✅ **Matches feed is a wall of black buttons**: 13 primary "Prepare application" on one screen. Cards should carry one primary at most in the hero; feed cards link through the title and show a quiet "Prepare" as secondary or on hover/focus.
+5. ✅ **Apply page header on phone** wraps logo + title + subtitle into a broken two-column block. Stack it.
+6. ✅ **"Sharing" / "Build or edit" / "Remove" on Profile** read as leftover labels. Use verbs with objects: "Edit sharing", "Edit résumé", "Remove résumé".
 
 ## B. Chip walls (standing rule violations)
 
@@ -48,6 +48,18 @@ Theme is settled (UX Pilot). Items are ranked by how much they hurt, not by effo
 23. Landing "Hiring?" block at the very end is an afterthought. Either a proper split section with the employer hero card, or drop it (header already has For employers).
 24. Log in page option cards: text is now left-aligned. Check onboarding option cards still look right after the alignment change.
 25. Employer sign-up inputs: verified fine at zoom; no change.
+
+## H. Getting employers to post (added 2026-09-26)
+
+Done: "Post a job" in the visitor header and menu, For employers primary is "Post a job", employer sign-up lands in the job builder (step 1 of 7).
+
+Still to build, in the order other boards do it:
+1. **Job-first sign-up**: write the job before the account. Account is created at the end from the contact email (Indeed, ZipRecruiter pattern). Draft lives in localStorage until then.
+2. **Pricing page** for employers: Free listing / Featured / Unlimited, plus what "verified practices" costs (nothing, but takes a call). Every board has one; we have none.
+3. **Claim your company page**: seed company profiles from public data, let the employer claim by work-email domain. This is how niche boards get their first 100 employers.
+4. **ATS feed / import**: paste a Greenhouse, Lever or Workday careers URL and we import open roles, then ask only the accessibility questions. Removes the "retype my job" objection.
+5. **Compliance angle**: US federal contractors must document outreach to people with disabilities (Section 503, OFCCP). Inclusive boards sell posting as documented outreach. One paragraph and a downloadable outreach record per job.
+6. **Employer proof**: response-rate and candidate-quality stats on For employers, and a "posted here" logo row once real employers exist.
 
 ## Not in scope this round
 - Theme, font, palette (settled).

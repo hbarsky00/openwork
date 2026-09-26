@@ -16,7 +16,7 @@ export function ForEmployers() {
           </Text>
           <InlineStack gap="300">
             <Button url="/employers/signup" variant="primary" size="large">
-              Create an employer account
+              Post a job
             </Button>
             <Button url="/signin?role=employer" size="large">
               Log in

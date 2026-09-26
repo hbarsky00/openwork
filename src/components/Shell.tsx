@@ -62,6 +62,7 @@ export function Shell({ children }: { children: ReactNode }) {
     ...nav.map((n) => ({ content: n.label, onAction: () => { setMenuOpen(false); navigate(n.to); } })),
     ...(state.role === 'visitor'
       ? [
+          { content: 'Post a job', onAction: () => { setMenuOpen(false); navigate('/for-employers'); } },
           { content: 'Log in', onAction: () => { setMenuOpen(false); navigate('/signin'); } },
           { content: 'Sign up', onAction: () => { setMenuOpen(false); navigate('/signup'); } },
         ]
@@ -99,6 +100,9 @@ export function Shell({ children }: { children: ReactNode }) {
             {state.role === 'visitor' ? (
               <span className="ow-desktop-only">
                 <InlineStack gap="200">
+                  <Button url="/for-employers" variant="tertiary">
+                    Post a job
+                  </Button>
                   <Button url={`/signin?next=${encodeURIComponent(location.pathname)}`} variant="tertiary">
                     Log in
                   </Button>

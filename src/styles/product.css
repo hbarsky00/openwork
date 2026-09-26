@@ -1143,6 +1143,9 @@ ol.Polaris-BlockStack {
   display: grid;
   gap: var(--p-space-300);
 }
+@media (max-width: 767px) {
+  .ow-applyhead .Polaris-InlineStack { flex-wrap: wrap !important; }
+}
 .ow-applyhead__back {
   justify-self: start;
   color: var(--p-color-text-link);
@@ -1317,14 +1320,28 @@ ol.Polaris-BlockStack {
 .ow-article .ow-jobdetail {
   max-width: none;
 }
-/* On phone and tablet: apply card first (it is what you came for), the job,
-   then the employer card. */
+/* On phone and tablet: the job first, then the aside cards. The apply card
+   becomes a sticky bar at the bottom so the action is always one thumb away. */
 @media (max-width: 1023px) {
   .ow-aside {
     display: contents;
   }
-  .ow-aside__card:first-child {
-    order: -1;
+  .ow-aside__card--apply {
+    position: sticky;
+    bottom: calc(var(--ow-bottomnav-height, 0px) + 8px);
+    z-index: 3;
+    order: 1;
+    box-shadow: 0 -6px 24px rgba(15, 23, 42, 0.08);
+  }
+  .ow-aside__card--apply .Polaris-BlockStack {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: var(--p-space-200) var(--p-space-300);
+  }
+  .ow-aside__card--apply .Polaris-BlockStack > p {
+    grid-column: 1 / -1;
+    text-align: left;
   }
 }
 
@@ -1498,6 +1515,7 @@ ol.Polaris-BlockStack {
   }
   .ow-main--bottomnav {
     padding-block-end: 88px;
+    --ow-bottomnav-height: 64px;
   }
   .ow-actionbar {
     bottom: 64px;
