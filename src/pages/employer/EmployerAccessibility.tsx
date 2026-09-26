@@ -36,6 +36,15 @@ export function EmployerAccessibility() {
     window.scrollTo({ top: 0 });
   };
   const done = WORKPLACE_EVIDENCE_FEATURES.filter((f) => draft[f.id]).length;
+  const areas = ACCESS_CATEGORIES.map((c) => ({ c, items: WORKPLACE_EVIDENCE_FEATURES.filter((f) => f.category === c.id) })).filter((a) => a.items.length);
+  // Areas with something unanswered start open; finished ones show a one-line summary until you press Edit.
+  const [editing, setEditing] = useState<Set<string>>(() => new Set(areas.filter((a) => a.items.some((f) => !employer.accessibility[f.id])).map((a) => a.c.id)));
+  const toggleEdit = (id: string) => setEditing((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+  const summary = (items: typeof WORKPLACE_EVIDENCE_FEATURES) => {
+    const by = (st: EvidenceStatus) => items.filter((f) => draft[f.id]?.status === st).map((f) => f.label.toLowerCase());
+    const parts = [['Yes', by('confirmed')], ['Contact us', by('contact')], ['No', by('notAvailable')]] as const;
+    return parts.filter(([, l]) => l.length).map(([k, l]) => `${k}: ${l.join(', ')}`).join(' · ');
+  };
 
   return (
     <Page fullWidth title="Workplace accessibility" subtitle={`${done} of ${WORKPLACE_EVIDENCE_FEATURES.length} answered · shown on every job with today’s date`} titleMetadata={<VerificationBadge level={employer.verification} />} primaryAction={{ content: 'Save', onAction: save }} secondaryActions={[{ content: 'View as candidates see it', url: `/companies/${employer.id}` }]}>
@@ -46,22 +55,48 @@ export function EmployerAccessibility() {
             <Card>
               <TextField label="Accessibility contact — who handles accommodation requests and candidate questions?" value={contact} onChange={(v) => { setContact(v); setSaved(false); }} autoComplete="off" helpText="A named person or address. Candidates are told requests go here and that no reason is needed." />
             </Card>
-            {ACCESS_CATEGORIES.map((c) => {
-              const items = WORKPLACE_EVIDENCE_FEATURES.filter((f) => f.category === c.id);
-              if (!items.length) return null;
+            <nav className="ow-areanav" aria-label="Areas">
+              {areas.map(({ c, items }) => {
+                const n = items.filter((f) => draft[f.id]).length;
+                return (
+                  <a key={c.id} href={`#area-${c.id}`} className={n === items.length ? 'ow-areanav__link ow-areanav__link--done' : 'ow-areanav__link'}>
+                    {c.label} <span aria-label={`${n} of ${items.length} answered`}>{n}/{items.length}</span>
+                  </a>
+                );
+              })}
+            </nav>
+            {areas.map(({ c, items }) => {
+              const n = items.filter((f) => draft[f.id]).length;
+              const isEditing = editing.has(c.id);
               return (
-                <Card key={c.id}>
+                <section key={c.id} id={`area-${c.id}`} className="ow-sheet ow-areacard" aria-labelledby={`area-${c.id}-h`}>
                   <BlockStack gap="400">
-                    <Text as="h2" variant="headingLg">
-                      {c.label}
-                    </Text>
-                    <InlineGrid columns={{ xs: 1, md: 2 }} gap="300">
-                      {items.map((f) => (
-                        <EvidencePicker key={f.id} question={f.employerQuestion ?? f.label} evidence={draft[f.id]} onChange={(s, n) => set(f.id, s, n)} />
-                      ))}
-                    </InlineGrid>
+                    <div className="ow-areacard__head">
+                      <BlockStack gap="050">
+                        <Text as="h2" variant="headingLg" id={`area-${c.id}-h`}>
+                          {c.label}
+                        </Text>
+                        <Text as="p" variant="bodySm" tone="subdued">
+                          {n} of {items.length} answered
+                        </Text>
+                      </BlockStack>
+                      <Button onClick={() => toggleEdit(c.id)} pressed={isEditing} accessibilityLabel={`${isEditing ? 'Finish editing' : 'Edit'} ${c.label}`}>
+                        {isEditing ? 'Done' : 'Edit'}
+                      </Button>
+                    </div>
+                    {isEditing ? (
+                      <InlineGrid columns={{ xs: 1, md: 2 }} gap="300">
+                        {items.map((f) => (
+                          <EvidencePicker key={f.id} question={f.employerQuestion ?? f.label} evidence={draft[f.id]} onChange={(s, nt) => set(f.id, s, nt)} />
+                        ))}
+                      </InlineGrid>
+                    ) : (
+                      <Text as="p" tone="subdued">
+                        {summary(items) || 'Nothing answered yet.'}
+                      </Text>
+                    )}
                   </BlockStack>
-                </Card>
+                </section>
               );
             })}
             <div className="ow-actionbar">

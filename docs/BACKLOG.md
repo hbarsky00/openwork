@@ -21,9 +21,9 @@ Theme is settled (UX Pilot). Items are ranked by how much they hurt, not by effo
 
 ## C. Button walls and control noise (employer)
 
-11. **Employer → Jobs**: every row has 5 buttons (Accepts auto-apply, Preview, Edit, Duplicate, Close). Row = title, meta, one status pill, one "Edit". Preview/Duplicate/Close go to a single overflow ActionList. Auto-apply becomes a toggle in the job builder step 6 and a small "Auto-apply on/off" text in the row.
-12. **Employer → Workplace accessibility**: 70 buttons on one page (Yes / No / Contact us per question). Works, but on phone it is a 5,700px scroll. Group by area with an in-page area nav (Vision · Hearing · Mobility …) and collapse answered areas into a one-line summary row (still visible, not hidden content: title + answer count, tap to expand the questions).
-13. **Overview stat tiles** each carry a "View" button. The tile itself should be the link.
+11. ✅ **Employer → Jobs**: every row has 5 buttons (Accepts auto-apply, Preview, Edit, Duplicate, Close). Row = title, meta, one status pill, one "Edit". Preview/Duplicate/Close go to a single overflow ActionList. Auto-apply becomes a toggle in the job builder step 6 and a small "Auto-apply on/off" text in the row.
+12. ✅ **Employer → Workplace accessibility**: 70 buttons on one page (Yes / No / Contact us per question). Works, but on phone it is a 5,700px scroll. Group by area with an in-page area nav (Vision · Hearing · Mobility …) and collapse answered areas into a one-line summary row (still visible, not hidden content: title + answer count, tap to expand the questions).
+13. ✅ **Overview stat tiles** each carry a "View" button. The tile itself should be the link.
 
 ## D. Empty pages and 40% width
 

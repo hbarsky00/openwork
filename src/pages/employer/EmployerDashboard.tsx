@@ -5,6 +5,7 @@ import { VerificationBadge } from '../../components/VerificationBadge';
 import { ACCESS_FEATURE_BY_ID, COMMUNICATION_REQUIREMENTS, JOB_EVIDENCE_FEATURES, PHYSICAL_REQUIREMENTS, WORKPLACE_EVIDENCE_FEATURES } from '../../lib/access';
 import { DIMENSIONS } from '../../lib/dimensions';
 import { APPLICATION_STATUS_LABEL, longDate } from '../../lib/format';
+import { Link } from 'react-router-dom';
 import { useTitle } from '../../lib/useTitle';
 import { employerVisible, useStore } from '../../state/store';
 
@@ -72,21 +73,14 @@ export function EmployerDashboard() {
                 { label: 'Accommodation requests', value: withRequest.length, to: '/employer/candidates' },
                 { label: 'Candidate questions', value: openQuestions.length, to: '#questions' },
               ].map((m) => (
-                <Card key={m.label}>
-                  <BlockStack gap="100">
-                    <Text as="p" variant="bodySm" tone="subdued">
-                      {m.label}
-                    </Text>
-                    <Text as="p" variant="headingXl">
-                      {m.value}
-                    </Text>
-                    <InlineStack>
-                      <Button url={m.to} size="slim">
-                        View
-                      </Button>
-                    </InlineStack>
-                  </BlockStack>
-                </Card>
+                <Link key={m.label} to={m.to} className="ow-stat" aria-label={`${m.label}: ${m.value}. Open.`}>
+                  <Text as="span" variant="bodySm" tone="subdued">
+                    {m.label}
+                  </Text>
+                  <Text as="span" variant="headingXl">
+                    {m.value}
+                  </Text>
+                </Link>
               ))}
             </InlineGrid>
 

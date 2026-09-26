@@ -1888,3 +1888,14 @@ ol.Polaris-BlockStack {
 /* Pricing */
 .ow-pricecard { height: 100%; }
 .ow-pricecard--featured { border-color: var(--ow-accent); box-shadow: 0 0 0 1px var(--ow-accent) inset; }
+/* Employer overview stat tiles: the tile is the link */
+.ow-stat { display: grid; gap: 4px; padding: 16px 18px; background: #fff; border: 1px solid var(--ow-line); border-radius: var(--ow-radius); color: inherit; text-decoration: none; min-height: 88px; }
+.ow-stat:hover { border-color: var(--ow-line-2); }
+/* Workplace accessibility: area nav and fold-to-summary cards */
+.ow-areanav { display: flex; flex-wrap: wrap; gap: 8px; }
+.ow-areanav__link { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1px solid var(--ow-line); border-radius: 999px; background: #fff; color: var(--ow-ink); text-decoration: none; font-size: 14px; font-weight: 500; }
+.ow-areanav__link span { color: var(--ow-ink-2); font-weight: 400; }
+.ow-areanav__link--done { background: #ecfdf5; border-color: #a7f3d0; }
+.ow-areanav__link:hover { border-color: var(--ow-line-2); }
+.ow-areacard { scroll-margin-top: calc(var(--ow-header-height) + 16px); }
+.ow-areacard__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
