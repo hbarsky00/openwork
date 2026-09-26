@@ -1,5 +1,5 @@
-import { Autocomplete, BlockStack, Icon, InlineStack, Tag, Text } from '@shopify/polaris';
-import { SearchIcon } from '@shopify/polaris-icons';
+import { Autocomplete, BlockStack, Button, Icon, Text } from '@shopify/polaris';
+import { SearchIcon, XIcon } from '@shopify/polaris-icons';
 import { useMemo, useState } from 'react';
 import { STRENGTHS } from '../lib/access';
 
@@ -36,15 +36,22 @@ export function StrengthsPicker({ value, onChange, title = 'What are you good at
         }
         textField={<Autocomplete.TextField label={title} labelHidden={labelHidden} value={query} onChange={setQuery} autoComplete="off" prefix={<Icon source={SearchIcon} />} placeholder="Type a strength — organizing, numbers, fixing things…" />}
       />
-      {value.length > 0 && (
-        <InlineStack gap="200" wrap>
-          {value.map((s) => (
-            <Tag key={s} onRemove={() => onChange(value.filter((v) => v !== s))}>
-              {s}
-            </Tag>
-          ))}
-        </InlineStack>
-      )}
+      <PickedList items={value} label="Your strengths" onRemove={(s) => onChange(value.filter((v) => v !== s))} />
     </BlockStack>
+  );
+}
+
+/** Chosen items as a plain list with one Remove per row. Nothing wraps into a cloud. */
+export function PickedList({ items, label, onRemove }: { items: string[]; label: string; onRemove: (item: string) => void }) {
+  if (items.length === 0) return null;
+  return (
+    <ul className="ow-picked" aria-label={label}>
+      {items.map((s) => (
+        <li key={s} className="ow-picked__row">
+          <Text as="span">{s}</Text>
+          <Button variant="plain" icon={XIcon} accessibilityLabel={`Remove ${s}`} onClick={() => onRemove(s)} />
+        </li>
+      ))}
+    </ul>
   );
 }

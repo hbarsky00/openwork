@@ -1,10 +1,10 @@
-import { Badge, BlockStack, Button, DropZone, FormLayout, Icon, InlineStack, Select, Tag, Text, TextField } from '@shopify/polaris';
+import { Badge, BlockStack, Button, DropZone, FormLayout, Icon, InlineStack, Select, Text, TextField } from '@shopify/polaris';
 import { CheckCircleIcon } from '@shopify/polaris-icons';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChoiceChips } from '../../components/ChoiceChips';
 import { EmployerLogo } from '../../components/EmployerLogo';
-import { StrengthsPicker } from '../../components/StrengthsPicker';
+import { PickedList, StrengthsPicker } from '../../components/StrengthsPicker';
 import { ACCESS_CATEGORIES, HIRING_OPTION_BY_ID, featuresIn } from '../../lib/access';
 import { DIMENSIONS, optionOf } from '../../lib/dimensions';
 import { EMPLOYMENT_TYPE_LABEL, IMPORTANCE_LABEL } from '../../lib/format';
@@ -135,15 +135,7 @@ export function Passport() {
                 </div>
                 <Button onClick={addSkill}>Add</Button>
               </InlineStack>
-              {p.skills.length > 0 && (
-                <InlineStack gap="200" wrap>
-                  {p.skills.map((s) => (
-                    <Tag key={s} onRemove={() => patch({ skills: p.skills.filter((x) => x !== s) })}>
-                      {s}
-                    </Tag>
-                  ))}
-                </InlineStack>
-              )}
+              <PickedList items={p.skills} label="Your skills and tools" onRemove={(s) => patch({ skills: p.skills.filter((x) => x !== s) })} />
             </Section>
 
             <Section title="Experience" action={!newExp && <Button onClick={() => setNewExp({ id: `e-${Date.now()}`, kind: p.firstJob ? 'school' : 'paid', title: '', organization: '', startYear: new Date().getFullYear(), endYear: null, summary: '' })}>Add</Button>}>

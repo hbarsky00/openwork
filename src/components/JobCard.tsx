@@ -89,10 +89,10 @@ export function JobCard({ job, onSelect, selected = false, strengthsUsed }: Prop
           </span>
         </InlineStack>
 
-        <InlineStack gap="150" blockAlign="center" wrap>
-          <Badge>{salary(job)}</Badge>
-          <Badge>{WORK_LOCATION_LABEL[job.environment.workLocation ?? ''] ?? 'On-site'}</Badge>
-          <Badge>{EMPLOYMENT_TYPE_LABEL[job.employmentType]}</Badge>
+        <InlineStack gap="200" blockAlign="center" wrap>
+          <Text as="p" variant="bodySm" fontWeight="medium">
+            {salary(job)} · {WORK_LOCATION_LABEL[job.environment.workLocation ?? ''] ?? 'On-site'} · {EMPLOYMENT_TYPE_LABEL[job.employmentType]}
+          </Text>
           {quick && !applied && <Badge tone="info">Quick apply</Badge>}
           {applied && (
             <Badge tone="success" toneAndProgressLabelOverride="Applied">

@@ -1,4 +1,4 @@
-import { Badge, BlockStack, Button, InlineStack, Text } from '@shopify/polaris';
+import { BlockStack, Button, InlineStack, Text } from '@shopify/polaris';
 import { AlertCircleIcon, CheckCircleIcon, InfoIcon, StarFilledIcon, StarIcon } from '@shopify/polaris-icons';
 import { useNavigate } from 'react-router-dom';
 import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL, postedAgo, salary } from '../lib/format';
@@ -55,12 +55,10 @@ export function MatchCard({ job, hero = false }: { job: Job; hero?: boolean }) {
                 </Text>
               </BlockStack>
             </InlineStack>
-            <InlineStack gap="150" wrap>
-              <Badge>{salary(job)}</Badge>
-              <Badge>{EMPLOYMENT_TYPE_LABEL[job.employmentType]}</Badge>
-              <Badge>{WORK_LOCATION_LABEL[job.environment.workLocation ?? ''] ?? 'On-site'}</Badge>
-              {job.environment.schedulePredictability === 'flexible' && <Badge>Flexible hours</Badge>}
-            </InlineStack>
+            <Text as="p" variant="bodySm" fontWeight="medium">
+              {salary(job)} · {WORK_LOCATION_LABEL[job.environment.workLocation ?? ''] ?? 'On-site'} · {EMPLOYMENT_TYPE_LABEL[job.employmentType]}
+              {job.environment.schedulePredictability === 'flexible' ? ' · Flexible hours' : ''}
+            </Text>
 
             {lines.length > 0 && (
               <div className="ow-why">

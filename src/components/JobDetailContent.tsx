@@ -1,4 +1,4 @@
-import { Badge, Banner, BlockStack, InlineGrid, InlineStack, List, Text } from '@shopify/polaris';
+import { Banner, BlockStack, InlineGrid, InlineStack, List, Text } from '@shopify/polaris';
 import { CheckCircleIcon } from '@shopify/polaris-icons';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -84,10 +84,10 @@ export function JobDetailContent({ job, pane = false }: Props) {
                 <Text as="p" tone="subdued">
                   <Link to={`/companies/${employer.id}`}>{employer.name}</Link> • {job.location}
                 </Text>
-                <InlineStack gap="150" blockAlign="center" wrap>
-                  <Badge>{EMPLOYMENT_TYPE_LABEL[job.employmentType]}</Badge>
-                  <Badge>{salary(job)}</Badge>
-                  <Badge>{WORK_LOCATION_LABEL[job.environment.workLocation ?? ''] ?? 'On-site'}</Badge>
+                <InlineStack gap="200" blockAlign="center" wrap>
+                  <Text as="p" fontWeight="medium">
+                    {salary(job)} · {WORK_LOCATION_LABEL[job.environment.workLocation ?? ''] ?? 'On-site'} · {EMPLOYMENT_TYPE_LABEL[job.employmentType]}
+                  </Text>
                   <VerificationBadge level={employer.verification} />
                   <Text as="span" variant="bodySm" tone="subdued">
                     {postedAgo(job.postedOn)} · {applicants} applicant{applicants === 1 ? '' : 's'}

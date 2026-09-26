@@ -1,6 +1,5 @@
-import { BlockStack, Button, Card, InlineGrid, InlineStack, Text } from '@shopify/polaris';
+import { BlockStack, Button, Card, InlineGrid, InlineStack, Select, Text } from '@shopify/polaris';
 import { useMemo, useState } from 'react';
-import { ChoiceChips } from '../../components/ChoiceChips';
 import { JobCard } from '../../components/JobCard';
 import { StrengthsPicker } from '../../components/StrengthsPicker';
 import { JOB_FAMILIES } from '../../lib/access';
@@ -59,15 +58,15 @@ export function Discover() {
               </span>
               {strengths.length ? ' that use your strengths' : ' on Openwork'}
             </Text>
-            {strengths.length > 0 && (
-              <Button variant="plain" onClick={() => setStrengths([])}>
-                Clear strengths
-              </Button>
-            )}
+            <InlineStack gap="300" blockAlign="center" wrap>
+              {familiesWithJobs.length > 1 && <Select label="Kind of work" labelInline options={[{ value: '__all', label: 'All kinds' }, ...familiesWithJobs.map((f) => ({ value: f.id, label: f.label }))]} value={family ?? '__all'} onChange={(v) => setFamily(v === '__all' ? null : v)} />}
+              {strengths.length > 0 && (
+                <Button variant="plain" onClick={() => setStrengths([])}>
+                  Clear strengths
+                </Button>
+              )}
+            </InlineStack>
           </InlineStack>
-          {familiesWithJobs.length > 1 && (
-            <ChoiceChips label="Kind of work" labelHidden size="slim" options={[{ value: '__all', label: 'All kinds of work' }, ...familiesWithJobs.map((f) => ({ value: f.id, label: f.label }))]} value={family ?? '__all'} allowNone={false} onChange={(v) => setFamily(v === '__all' ? null : (v as string))} />
-          )}
         </BlockStack>
 
         {scored.length === 0 ? (

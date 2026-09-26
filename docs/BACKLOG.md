@@ -14,10 +14,10 @@ Theme is settled (UX Pilot). Items are ranked by how much they hurt, not by effo
 
 ## B. Chip walls (standing rule violations)
 
-7. **Discover**: strength chips with × plus an 8-item category chip row. Replace with the StrengthsPicker list and a single Select for kind of work.
-8. **Employer → Candidates**: status filter is 8 chips in the rail. Make it a Select (or a short OptionCards list on desktop).
-9. **Profile → Strengths / Skills**: two chip clouds. Show as a plain list with a remove control per row, or as compact pills without borders and no more than 2 lines before "Show all".
-10. **Job cards / job detail** carry 3–4 pill badges per card (pay, arrangement, type, verification). Keep pay and arrangement as text in the meta line; keep one badge for verification only.
+7. ✅ **Discover**: strength chips with × plus an 8-item category chip row. Replace with the StrengthsPicker list and a single Select for kind of work.
+8. ✅ **Employer → Candidates**: status filter is 8 chips in the rail. Make it a Select (or a short OptionCards list on desktop).
+9. ✅ **Profile → Strengths / Skills**: two chip clouds. Show as a plain list with a remove control per row, or as compact pills without borders and no more than 2 lines before "Show all".
+10. ✅ **Job cards / job detail** carry 3–4 pill badges per card (pay, arrangement, type, verification). Keep pay and arrangement as text in the meta line; keep one badge for verification only.
 
 ## C. Button walls and control noise (employer)
 
@@ -60,6 +60,11 @@ Still to build, in the order other boards do it:
 4. **ATS feed / import**: paste a Greenhouse, Lever or Workday careers URL and we import open roles, then ask only the accessibility questions. Removes the "retype my job" objection.
 5. **Compliance angle**: US federal contractors must document outreach to people with disabilities (Section 503, OFCCP). Inclusive boards sell posting as documented outreach. One paragraph and a downloadable outreach record per job.
 6. **Employer proof**: response-rate and candidate-quality stats on For employers, and a "posted here" logo row once real employers exist.
+
+## Data and backend decision (2026-09-26)
+
+- **Database: Netlify DB (Neon Postgres)** via `@netlify/neon` in Netlify Functions. Not Supabase. Until it exists, the app stays on localStorage (`openwork.v9`).
+- Order of arrival: 1) link repo to a Netlify site (needs Hiram's OK: push = deploy there), 2) `netlify db init`, 3) tables `candidates`, `employers`, `jobs`, `applications`, `alerts` mirroring `src/lib/types.ts`, 4) functions replace the store's persistence one slice at a time, jobs first (public read), then applications (auth via Clerk user id).
 
 ## Not in scope this round
 - Theme, font, palette (settled).
