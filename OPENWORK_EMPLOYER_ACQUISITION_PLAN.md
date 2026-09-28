@@ -84,4 +84,24 @@ Each step is verified in the browser at 1440 and 375, axe-clean, then pushed.
 
 ## Implementation log
 
-- **2026-09-27** — Steps 1–12 implemented; see the commits on `main`. Details appended below as they land.
+- **2026-09-27** — All twelve steps implemented and verified in the browser at 1440 and 375, axe-clean.
+
+| Step | Where it lives | Note |
+|---|---|---|
+| 1 Employer landing | `/employers` (`/for-employers` redirects) | Hero promise, a real live job with its real readiness review and real match counts, three ways in, Founding Employer block |
+| 2 Import My Jobs | `/import`, `/employer/jobs/import` | Works before an account. `robots.txt` respected, user agent declared, one URL only |
+| 3 Founding Employer | `/employers/founding` | Seven questions, creates an `EmployerLead` at stage `founding`, then offers immediate import |
+| 4 Employer sign-up | `/employers/signup` → `/employer/start` | Company, contact name, work email, password. Then the three-door chooser |
+| 5 Careers-page import architecture | `lib/importJobs.ts`, `netlify/functions/import-jobs.mts`, `Job.origin` | External id, source URL, timestamps, source status, sync status, batch id. Re-import updates, never duplicates |
+| 6 Import review | `/employer/jobs/import/review?batch=` | Imported / ready / needs information, publish the ready ones in one action |
+| 7 Claim Company and Claim Job | `/claim?company=&job=`, entry on every unclaimed job page | Domain match claims and verifies; anything else becomes a `verification` lead for the trust team |
+| 8 Job enrichment | `/employer/jobs/:id/enrich` | Three minutes, live clarity review, ambiguous phrases replaced by employer-chosen concrete requirements |
+| 9 Workplace Accessibility Profile | `/employer/accessibility` | Company-level, reused by every job, already built |
+| 10 Employer dashboard | `/employer` | Needs attention first, derived from real state; tiles; verification and ATS status |
+| 11 Candidate matching | `/employer/jobs/:id/matches` | Only candidates who turned discovery on (`/passport/sharing`). Qualifications only; no access needs, no contact details |
+| 12 ATS architecture | `/connect`, `/employer/connect`, `lib/ats.ts` | Per-provider Coming soon or Request integration. Nothing claims to be connected |
+| 13 Admin onboarding | `/admin/employers` | Lead pipeline with nine stages, notes, and one-click import of a lead's careers page |
+
+**Honesty check.** No ATS is marked available. No count is projected. The import refuses a path `robots.txt` disallows. Claiming needs a matching domain or a human. Candidate discovery is off until the candidate turns it on.
+
+**Still open.** Real database (Netlify DB), `ANTHROPIC_API_KEY` for import and drafting, and the first real ATS integration. Notifications are derived rather than delivered, because there is no mail path yet.

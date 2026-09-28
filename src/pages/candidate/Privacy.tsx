@@ -1,4 +1,4 @@
-import { Badge, BlockStack, Button, Card, DescriptionList, InlineStack, Select, Text } from '@shopify/polaris';
+import { Badge, BlockStack, Button, Card, Checkbox, DescriptionList, InlineStack, Select, Text } from '@shopify/polaris';
 import { ACCESS_FEATURE_BY_ID } from '../../lib/access';
 import { DIMENSIONS, optionOf } from '../../lib/dimensions';
 import { VISIBILITY_HELP, VISIBILITY_LABEL } from '../../lib/format';
@@ -35,6 +35,25 @@ export function Privacy() {
             Three states, one meaning each. Nothing marked “Shared with employer” leaves Openwork until you confirm it on the “What this employer will see” step of an application.
           </Text>
         </BlockStack>
+
+        <div className="ow-sheet">
+          <BlockStack gap="300">
+            <BlockStack gap="050">
+              <Text as="h2" variant="headingLg">
+                Let employers find you
+              </Text>
+              <Text as="p" tone="subdued">
+                Off unless you turn it on. When it is on, an employer with an open job can see that someone with your skills and headline matches it, and can invite you to apply. They never see your access needs, your work preferences, your notes or your contact details until you apply and confirm what to share.
+              </Text>
+            </BlockStack>
+            <Checkbox
+              label="Show me in employer candidate matches"
+              helpText={p.discoverable ? 'Employers with a matching open job can see your headline, location, skills and years of experience.' : 'Employers can only see you after you apply.'}
+              checked={!!p.discoverable}
+              onChange={(v) => dispatch({ type: 'updateCandidate', patch: { discoverable: v } })}
+            />
+          </BlockStack>
+        </div>
 
         <Card>
           <DescriptionList

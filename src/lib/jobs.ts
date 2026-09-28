@@ -21,6 +21,9 @@ export interface ReviewItem {
   text: string;
   /** A vague phrase the employer can make concrete. */
   phrase?: string;
+  /** The question to ask instead of guessing, with the concrete answers to choose from. */
+  ask?: string;
+  options?: string[];
 }
 
 /** Accessibility and clarity review of one job. Deterministic; nothing invented. */
@@ -33,7 +36,7 @@ export function reviewJob(j: Job, employer: Employer): ReviewItem[] {
   const text = [j.summary, ...j.essentialRequirements, ...j.preferredRequirements].join('\n');
   for (const v of findVaguePhrases(text)) {
     const m = text.match(v.pattern);
-    if (m) out.push({ state: 'warn', text: `“${m[0]}” is ambiguous. ${v.ask}`, phrase: m[0] });
+    if (m) out.push({ state: 'warn', text: `“${m[0]}” is ambiguous. ${v.ask}`, phrase: m[0], ask: v.ask, options: v.options });
   }
   if (j.technology.length === 0) out.push({ state: 'unknown', text: 'Software and tools not listed, so digital accessibility is unknown' });
   else {

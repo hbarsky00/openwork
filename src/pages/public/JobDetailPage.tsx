@@ -114,6 +114,11 @@ export function JobDetailPage() {
               <Button url={`/companies/${employer.id}`} variant="plain">
                 View company profile
               </Button>
+              {state.role !== 'employer' && !employer.claimedBy && (
+                <Text as="p" variant="bodySm" tone="subdued">
+                  Hiring for this role? <Link to={`/claim?company=${employer.id}&job=${job.id}`}>Claim this job</Link> and add what candidates need to know.
+                </Text>
+              )}
             </BlockStack>
           </div>
         </aside>

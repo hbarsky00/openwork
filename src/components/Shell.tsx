@@ -38,7 +38,10 @@ const EMPLOYER_NAV: NavItem[] = [
   { label: 'Settings', to: '/employer/settings' },
 ];
 
-const ADMIN_NAV: NavItem[] = [{ label: 'Moderation', to: '/admin', end: true }];
+const ADMIN_NAV: NavItem[] = [
+  { label: 'Moderation', to: '/admin', end: true },
+  { label: 'Employer onboarding', to: '/admin/employers' },
+];
 
 export function Shell({ children }: { children: ReactNode }) {
   const { state } = useStore();

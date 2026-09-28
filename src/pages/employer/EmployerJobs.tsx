@@ -3,6 +3,7 @@ import { MenuHorizontalIcon } from '@shopify/polaris-icons';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { postedAgo, salary } from '../../lib/format';
+import { jobMatchCounts } from '../../lib/employer';
 import { jobCompleteness, jobNeedsInfo, originLabel } from '../../lib/jobs';
 import type { Job } from '../../lib/types';
 import { useTitle } from '../../lib/useTitle';
@@ -114,6 +115,7 @@ export function EmployerJobs() {
             {list.map((j) => {
               const apps = state.applications.filter((a) => employerVisible(a) && a.jobId === j.id && a.status !== 'withdrawn').length;
               const { done, total } = jobCompleteness(j);
+              const m = jobMatchCounts(state, j, employer);
               const needs = jobNeedsInfo(j);
               return (
                 <div key={j.id} className="ow-sheet ow-aside__card">
@@ -129,7 +131,7 @@ export function EmployerJobs() {
                         {needs && j.status !== 'closed' && <Badge tone="warning">Needs information</Badge>}
                       </InlineStack>
                       <Text as="p" variant="bodySm" tone="subdued">
-                        {[j.department, salary(j), postedAgo(j.postedOn), `${apps} applicant${apps === 1 ? '' : 's'}`, `${done} of ${total} answered`, originLabel(j), `auto-apply ${j.acceptsAutoApply ? 'on' : 'off'}`].filter(Boolean).join(' · ')}
+                        {[j.department, salary(j), postedAgo(j.postedOn), `${apps} applicant${apps === 1 ? '' : 's'}`, `${done} of ${total} answered`, j.status === 'published' ? `${m.potential} potential match${m.potential === 1 ? '' : 'es'}` : null, originLabel(j), `auto-apply ${j.acceptsAutoApply ? 'on' : 'off'}`].filter(Boolean).join(' · ')}
                       </Text>
                     </BlockStack>
                     <InlineStack gap="200" blockAlign="center">
@@ -140,6 +142,7 @@ export function EmployerJobs() {
                       ) : (
                         <Button url={`/employer/jobs/${j.id}/edit`}>Edit</Button>
                       )}
+                      {j.status === 'published' && m.potential > 0 && <Button url={`/employer/jobs/${j.id}/matches`}>{`${m.potential} match${m.potential === 1 ? '' : 'es'}`}</Button>}
                       <JobRowActions job={j} />
                     </InlineStack>
                   </InlineStack>

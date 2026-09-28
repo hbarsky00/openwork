@@ -100,6 +100,7 @@ axe (wcag2a/aa, 2.1aa, 2.2aa, best-practice) must report zero violations on ever
 - 2026-09-26 — Jobs page on tablet stacked filters in four rows under 60px of air. Rule 12 added; strip is one row from 768px, container top padding 24px.
 - 2026-09-26 — Display popover rebuilt on option cards; needs typeahead widened to 400px with label/count rows; wizard action row now shares the sheet's 960px and sits 12px above it. Overlay spec added to §4.
 - 2026-09-26 — Density sweep of every form. Apply: readiness panel became a one-line strip and the logo left the header. Résumé: template is a Select in the toolbar. Import intro cut to one sentence. All forms now put the first field under 320px at 1440.
+- 2026-09-27 — Employer acquisition system: `/employers` landing with a live product demo, Founding Employer funnel and lead pipeline, job origin and dedup, import review, claim-this-job, per-job candidate matches behind candidate consent, truthful ATS states, admin onboarding.
 - 2026-09-26 — Log in became a real email + password form; demo accounts demoted to links under it.
 - 2026-09-26 — Redesign directive received; audit at OPENWORK_REDESIGN_AUDIT.md. Steps 1–8 shipped same day on the existing Polaris foundation. Carbon decision pending.
 - 2026-09-26 — Database will be Netlify DB (Neon) via Netlify Functions, not Supabase.

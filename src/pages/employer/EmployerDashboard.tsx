@@ -2,8 +2,9 @@ import { Badge, BlockStack, Button, InlineGrid, InlineStack, Text, TextField } f
 import { useState } from 'react';
 import { VerificationBadge } from '../../components/VerificationBadge';
 import { ACCESS_FEATURE_BY_ID, WORKPLACE_EVIDENCE_FEATURES } from '../../lib/access';
+import { discoverableFor, employerAttention } from '../../lib/employer';
 import { jobNeedsInfo } from '../../lib/jobs';
-import { matchJob, matchTier } from '../../lib/match';
+
 import { APPLICATION_STATUS_LABEL, longDate } from '../../lib/format';
 import { Link } from 'react-router-dom';
 import { useTitle } from '../../lib/useTitle';
@@ -24,13 +25,13 @@ export function EmployerDashboard() {
   const openQuestions = questions.filter((q) => !q.answer);
   const recent = [...apps].sort((a, b) => b.history[b.history.length - 1].on.localeCompare(a.history[a.history.length - 1].on)).slice(0, 5);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const attention = employerAttention(state, employer);
 
   const workplaceDone = WORKPLACE_EVIDENCE_FEATURES.filter((f) => employer.accessibility[f.id]).length;
   const interviews = apps.filter((a) => a.status === 'interview' || a.status === 'assessment');
   const needsInfo = jobs.filter((j) => j.status !== 'closed' && jobNeedsInfo(j));
-  const appliedIds = new Set(apps.map((a) => `${a.candidateId}|${a.jobId}`));
-  // Count only; never a list of people who have not applied.
-  const potential = state.candidates.filter((c) => active.some((j) => !appliedIds.has(`${c.id}|${j.id}`) && ['strong', 'good'].includes(matchTier(matchJob(c, j, employer))))).length;
+  // Only candidates who turned discovery on, so this agrees with each job's own match list.
+  const potential = new Set(active.flatMap((j) => discoverableFor(state, j, employer).map((r) => r.candidate.id))).size;
   const setup = [
     { done: workplaceDone >= 5, label: 'Answer your workplace accessibility questions', to: '/employer/accessibility', why: 'Shown on every job. Four taps per question.' },
     { done: active.length + drafts.length > 0, label: 'Create your first job', to: '/employer/jobs/new', why: 'Seven short steps. Save a draft any time.' },
@@ -85,10 +86,30 @@ export function EmployerDashboard() {
           </div>
         )}
 
+        {attention.length > 0 && (
+          <div className="ow-sheet">
+            <BlockStack gap="300">
+              <Text as="h2" variant="headingLg">
+                Needs attention
+              </Text>
+              <ul className="ow-facts" aria-label="Needs attention">
+                {attention.map((a) => (
+                  <li key={a.id} className={`ow-fact ow-fact--${a.tone === 'urgent' ? 'warn' : a.tone === 'todo' ? 'warn' : 'info'}`}>
+                    <span className={`ow-dot ow-dot--${a.tone}`} aria-hidden="true" />
+                    <Text as="p">
+                      <Link to={a.to}>{a.text}</Link>
+                    </Text>
+                  </li>
+                ))}
+              </ul>
+            </BlockStack>
+          </div>
+        )}
+
         <InlineGrid columns={{ xs: 2, md: 4 }} gap="300">
           {[
             { label: 'Applicants to review', value: newApps.length, to: '/employer/candidates?status=applied' },
-            { label: 'Potential candidate matches', value: potential, to: '/employer/jobs' },
+            { label: 'Candidates open to being found', value: potential, to: '/employer/jobs' },
             { label: 'Interviews and work samples', value: interviews.length, to: '/employer/interviews' },
             { label: 'Active jobs', value: active.length, to: '/employer/jobs' },
             { label: 'Jobs needing information', value: needsInfo.length, to: '/employer/jobs?tab=needs' },

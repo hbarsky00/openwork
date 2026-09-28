@@ -45,6 +45,7 @@ import { InterviewPrep } from './pages/candidate/InterviewPrep';
 import { EnrichJob } from './pages/employer/EnrichJob';
 import { ConnectAts } from './pages/employer/ConnectAts';
 import { ImportReview } from './pages/employer/ImportReview';
+import { JobMatches } from './pages/employer/JobMatches';
 import { EmployerStart } from './pages/employer/EmployerStart';
 import { Pricing } from './pages/public/Pricing';
 import { Employers } from './pages/public/Employers';
@@ -52,6 +53,7 @@ import { FoundingEmployer } from './pages/public/FoundingEmployer';
 import { ClaimCompany } from './pages/public/ClaimCompany';
 
 import { Admin } from './pages/admin/Admin';
+import { EmployerLeads } from './pages/admin/EmployerLeads';
 import { ClerkBridge, useAuthPending } from './auth/clerk';
 
 function RequireRole({ role, children }: { role: Role; children: ReactNode }) {
@@ -138,6 +140,7 @@ export function App() {
         <Route path="/employer/jobs/import/review" element={<E><ImportReview /></E>} />
         <Route path="/employer/start" element={<E><EmployerStart /></E>} />
         <Route path="/employer/jobs/:id/enrich" element={<E><EnrichJob /></E>} />
+        <Route path="/employer/jobs/:id/matches" element={<E><JobMatches /></E>} />
         <Route path="/employer/connect" element={<E><ConnectAts /></E>} />
         <Route path="/employer/jobs/:id/edit" element={<E><JobBuilder /></E>} />
         <Route path="/employer/jobs/:id/preview" element={<E><JobPreview /></E>} />
@@ -149,6 +152,7 @@ export function App() {
         <Route path="/employer/company" element={<E><EmployerCompany /></E>} />
 
         <Route path="/admin" element={<RequireRole role="admin"><Admin /></RequireRole>} />
+        <Route path="/admin/employers" element={<RequireRole role="admin"><EmployerLeads /></RequireRole>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Shell>

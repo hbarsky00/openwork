@@ -2018,3 +2018,8 @@ ol.Polaris-BlockStack {
 @media (min-width: 1024px) { .ow-emphero { grid-template-columns: minmax(0, 1fr) 460px; gap: var(--p-space-800); } }
 .ow-demo { align-self: start; }
 .ow-way--static:hover { border-color: var(--ow-line); }
+/* Needs attention: a dot carries the tone, the words carry the meaning */
+.ow-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 7px; justify-self: center; }
+.ow-dot--urgent { background: #b42318; }
+.ow-dot--todo { background: var(--ow-warning, #f59e0b); }
+.ow-dot--info { background: var(--ow-line-2); }

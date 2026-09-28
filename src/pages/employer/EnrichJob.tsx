@@ -19,6 +19,40 @@ const today = () => new Date().toISOString().slice(0, 10);
 const ICON = { ok: CheckCircleIcon, warn: AlertCircleIcon, unknown: QuestionCircleIcon };
 
 /**
+ * Turns "excellent communication skills" into the things the person will
+ * actually do. The employer chooses; Openwork never guesses an essential
+ * requirement, and the bar is not raised or lowered.
+ */
+function MakeConcrete({ item, onApply }: { item: { phrase?: string; ask?: string; options?: string[] }; onApply: (phrase: string, chosen: string[]) => void }) {
+  const [open, setOpen] = useState(false);
+  const [chosen, setChosen] = useState<string[]>([]);
+  if (!item.phrase || !item.options) return null;
+  return (
+    <BlockStack gap="200">
+      {!open ? (
+        <InlineStack>
+          <Button size="slim" onClick={() => setOpen(true)}>
+            Make it concrete
+          </Button>
+        </InlineStack>
+      ) : (
+        <BlockStack gap="200">
+          <OptionGrid label={item.ask ?? 'What does this actually involve?'} multiple options={item.options.map((o) => ({ value: o, label: o }))} value={chosen} onChange={(v) => setChosen(v as string[])} />
+          <InlineStack gap="200">
+            <Button variant="primary" size="slim" disabled={chosen.length === 0} onClick={() => { onApply(item.phrase!, chosen); setOpen(false); setChosen([]); }}>
+              Use these
+            </Button>
+            <Button variant="plain" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+          </InlineStack>
+        </BlockStack>
+      )}
+    </BlockStack>
+  );
+}
+
+/**
  * The three-minute pass for an imported job: only what an ATS feed never
  * carries. One page, no wizard. The review panel says what is still unclear
  * and can make vague requirements concrete without changing the bar.
@@ -44,6 +78,14 @@ export function EnrichJob() {
   const save = (publish: boolean) => {
     dispatch({ type: 'upsertJob', job: { ...job, status: publish ? 'published' : job.status, postedOn: publish && job.status !== 'published' ? today() : job.postedOn } });
     navigate(publish ? `/employer/jobs/${job.id}/preview?published=1` : '/employer/jobs?tab=imported');
+  };
+  /** Swap the vague line for the concrete ones the employer picked. */
+  const makeConcrete = (phrase: string, chosen: string[]) => {
+    const hit = (r: string) => r.toLowerCase().includes(phrase.toLowerCase());
+    const essential = job.essentialRequirements.filter((r) => !hit(r));
+    const preferred = job.preferredRequirements.filter((r) => !hit(r));
+    const changed = essential.length !== job.essentialRequirements.length || preferred.length !== job.preferredRequirements.length;
+    set({ essentialRequirements: [...essential, ...chosen], preferredRequirements: preferred, summary: changed ? job.summary : job.summary });
   };
   const replaceReq = (from: string, to: string) => set({ essentialRequirements: job.essentialRequirements.map((r) => (r.includes(from) ? r.replace(from, to) : r)), preferredRequirements: job.preferredRequirements.map((r) => (r.includes(from) ? r.replace(from, to) : r)), summary: job.summary.includes(from) ? job.summary.replace(from, to) : job.summary });
 
@@ -187,16 +229,15 @@ export function EnrichJob() {
                   );
                 })}
               </ul>
-              {review.some((r) => r.phrase) && (
-                <BlockStack gap="200">
+              {review.filter((r) => r.phrase).map((r) => (
+                <BlockStack key={r.phrase} gap="200">
                   <Text as="h3" variant="headingSm">
-                    Make it concrete
+                    “{r.phrase}”
                   </Text>
-                  {review.filter((r) => r.phrase).map((r) => (
-                    <SuggestRewrite key={r.phrase} kind="requirement" label={`Rewrite “${r.phrase}”`} text={r.phrase!} context={{ jobTitle: job.title, tasks: job.tasks }} onUse={(v) => replaceReq(r.phrase!, v)} />
-                  ))}
+                  <MakeConcrete item={r} onApply={makeConcrete} />
+                  <SuggestRewrite kind="requirement" label="Or let Openwork draft it" text={r.phrase!} context={{ jobTitle: job.title, tasks: job.tasks }} onUse={(v) => replaceReq(r.phrase!, v)} />
                 </BlockStack>
-              )}
+              ))}
               <Text as="p" variant="bodySm" tone="subdued">
                 Updates as you answer. Skip anything you are not sure about; it shows candidates as “Not provided”, never as a guess. Nothing here changes what the job requires.
               </Text>

@@ -31,6 +31,7 @@ export function EmployerSettings() {
             <InlineStack gap="300">
               <Button url="/employer/company">Company profile</Button>
               <Button url="/employer/accessibility">Workplace accessibility</Button>
+              <Button url="/employer/connect">Integrations</Button>
               <Button variant="plain" tone="critical" onClick={() => dispatch({ type: 'signOut' })}>
                 Sign out
               </Button>

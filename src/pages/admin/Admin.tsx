@@ -14,7 +14,7 @@ export function Admin() {
   const openReports = state.reports.filter((r) => !r.resolved);
 
   return (
-    <Page title="Trust and moderation" subtitle={`${state.employers.length} employers · ${state.jobs.filter((j) => j.status === 'published').length} live jobs · ${openReports.length} open report${openReports.length === 1 ? '' : 's'}`}>
+    <Page title="Trust and moderation" primaryAction={{ content: 'Employer onboarding', url: '/admin/employers' }} subtitle={`${state.employers.length} employers · ${state.jobs.filter((j) => j.status === 'published').length} live jobs · ${openReports.length} open report${openReports.length === 1 ? '' : 's'}`}>
       <Layout>
         <Layout.Section>
           <BlockStack gap="500">
