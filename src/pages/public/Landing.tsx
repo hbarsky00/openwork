@@ -1,5 +1,6 @@
 import { BlockStack, Button, InlineGrid, InlineStack, Text } from '@shopify/polaris';
 import { CheckCircleIcon } from '@shopify/polaris-icons';
+import { Link } from 'react-router-dom';
 import { EmployerLogo } from '../../components/EmployerLogo';
 import { EMPLOYMENT_TYPE_LABEL, WORK_LOCATION_LABEL, salary } from '../../lib/format';
 import { useTitle } from '../../lib/useTitle';
@@ -41,7 +42,7 @@ export function Landing() {
                 </Button>
               </InlineStack>
               <Text as="p" variant="bodySm" tone="subdued">
-                Free for job seekers. Hiring? <a href="/for-employers">For employers</a>.
+                Free for job seekers. Hiring? <Link to="/employers">For employers</Link>.
               </Text>
             </BlockStack>
 

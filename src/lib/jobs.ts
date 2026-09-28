@@ -43,3 +43,18 @@ export function reviewJob(j: Job, employer: Employer): ReviewItem[] {
   out.push(Object.keys(employer.accessibility).length > 0 ? { state: 'ok', text: 'Workplace accessibility profile provided' } : { state: 'unknown', text: 'Workplace accessibility not provided' });
   return out;
 }
+
+/** One line describing where a job came from, for the employer's own list. */
+export function originLabel(j: Job): string | null {
+  const o = j.origin;
+  if (!o || o.kind === 'manual') return null;
+  if (o.kind === 'ats') return o.syncStatus === 'error' ? 'ATS sync error' : 'synced from ATS';
+  if (o.kind === 'careersPage') return 'imported from careers page';
+  if (o.kind === 'feed') return 'from a job feed';
+  return 'imported by Openwork';
+}
+
+/** Stable key for one posting at one employer, so re-importing updates instead of duplicating. */
+export function originKey(employerId: string, externalId: string | undefined, title: string): string {
+  return `${employerId}::${(externalId ?? title).trim().toLowerCase()}`;
+}

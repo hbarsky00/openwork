@@ -9,7 +9,6 @@ import { Jobs } from './pages/public/Jobs';
 import { JobDetailPage } from './pages/public/JobDetailPage';
 import { Company } from './pages/public/Company';
 import { HowItWorks } from './pages/public/HowItWorks';
-import { ForEmployers } from './pages/public/ForEmployers';
 import { Support } from './pages/public/Support';
 import { SignIn } from './pages/public/SignIn';
 import { SignUp } from './pages/public/SignUp';
@@ -45,7 +44,11 @@ import { WhyThisMatches } from './pages/candidate/WhyThisMatches';
 import { InterviewPrep } from './pages/candidate/InterviewPrep';
 import { EnrichJob } from './pages/employer/EnrichJob';
 import { ConnectAts } from './pages/employer/ConnectAts';
+import { ImportReview } from './pages/employer/ImportReview';
+import { EmployerStart } from './pages/employer/EmployerStart';
 import { Pricing } from './pages/public/Pricing';
+import { Employers } from './pages/public/Employers';
+import { FoundingEmployer } from './pages/public/FoundingEmployer';
 import { ClaimCompany } from './pages/public/ClaimCompany';
 
 import { Admin } from './pages/admin/Admin';
@@ -95,7 +98,9 @@ export function App() {
         <Route path="/jobs/:id" element={<JobDetailPage />} />
         <Route path="/companies/:id" element={<Company />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
-        <Route path="/for-employers" element={<ForEmployers />} />
+        <Route path="/employers" element={<Employers />} />
+        <Route path="/employers/founding" element={<FoundingEmployer />} />
+        <Route path="/for-employers" element={<Navigate to="/employers" replace />} />
         <Route path="/support" element={<Support />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/signin/*" element={<SignIn />} />
@@ -130,6 +135,8 @@ export function App() {
         <Route path="/employer/jobs" element={<E><EmployerJobs /></E>} />
         <Route path="/employer/jobs/new" element={<E><JobBuilder /></E>} />
         <Route path="/employer/jobs/import" element={<E><ImportJobs /></E>} />
+        <Route path="/employer/jobs/import/review" element={<E><ImportReview /></E>} />
+        <Route path="/employer/start" element={<E><EmployerStart /></E>} />
         <Route path="/employer/jobs/:id/enrich" element={<E><EnrichJob /></E>} />
         <Route path="/employer/connect" element={<E><ConnectAts /></E>} />
         <Route path="/employer/jobs/:id/edit" element={<E><JobBuilder /></E>} />

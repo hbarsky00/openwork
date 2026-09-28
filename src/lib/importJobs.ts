@@ -11,6 +11,8 @@ export interface ImportedJob {
   tasks: string[];
   essentialRequirements: string[];
   skills: string[];
+  /** The posting's own id or link at the source. Used to update instead of duplicate. */
+  externalId?: string;
 }
 
 export const IMPORT_OFFLINE = 'Importing needs the Openwork server. It is off in this preview.';

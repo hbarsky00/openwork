@@ -102,6 +102,12 @@ export interface CandidateProfile {
   plan: 'free' | 'plus' | 'pro';
   /** Rules Openwork must respect before preparing or sending anything for you. */
   autoRules: AutoRules;
+  /**
+   * Lets employers see you in their candidate matches before you apply.
+   * Off unless you turn it on. Employers never see private or matching-only
+   * answers, whatever this is set to.
+   */
+  discoverable?: boolean;
 }
 
 export interface AutoRules {
@@ -202,9 +208,31 @@ export interface Job {
   decisionTimeframe: string;
   accommodationRoute: string;
   supportAvailable: string[];
-  /** Where the job came from. Absent = written in Openwork. */
-  source?: 'manual' | 'imported' | 'ats';
-  importedFrom?: string;
+  /** Where the job came from and how it stays current. Absent = written in Openwork. */
+  origin?: JobOrigin;
+}
+
+export type JobOriginKind = 'manual' | 'careersPage' | 'ats' | 'feed' | 'adminImport';
+
+/**
+ * Everything needed to bring a job in once and keep it current without
+ * duplicating it. `externalId` is the dedupe key within one employer.
+ */
+export interface JobOrigin {
+  kind: JobOriginKind;
+  /** Stable id at the source. For a careers page, the posting URL or a slug of the title. */
+  externalId?: string;
+  /** Where it came from, shown to the employer. */
+  url?: string;
+  importedOn?: string;
+  lastSyncedOn?: string;
+  /** What the source last said about the posting. */
+  sourceStatus?: 'open' | 'closed' | 'unknown';
+  /** Whether Openwork can keep it current. Careers-page imports are one-off until an ATS is connected. */
+  syncStatus?: 'oneOff' | 'synced' | 'error';
+  lastError?: string;
+  /** Groups everything brought in by one import. */
+  batchId?: string;
 }
 
 export interface SavedJob {
@@ -295,6 +323,27 @@ export interface Report {
 }
 
 export type DisplayMode = 'standard' | 'simplified' | 'largeText';
+
+/** Where an employer is in Openwork's own onboarding pipeline. Internal only. */
+export type LeadStage = 'lead' | 'contacted' | 'interested' | 'founding' | 'verification' | 'jobsImported' | 'profileIncomplete' | 'active' | 'inactive';
+
+/** An employer who has raised their hand. Created by the Founding Employer form or a claim. */
+export interface EmployerLead {
+  id: string;
+  company: string;
+  website: string;
+  careersUrl: string;
+  email: string;
+  /** A band, not a promise: '1', '2-10', '11-50', '51+'. */
+  openJobs: string;
+  ats: string;
+  message: string;
+  stage: LeadStage;
+  createdOn: string;
+  notes: { on: string; text: string }[];
+  /** Set once the lead becomes a real employer account. */
+  employerId?: string | null;
+}
 
 /** "Not for me" on a match: hides the job and feeds ranking. Reasons are labels, never free text about the person. */
 export interface CandidateFeedback {

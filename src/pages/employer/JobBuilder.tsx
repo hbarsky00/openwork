@@ -105,7 +105,7 @@ export function JobBuilder() {
     <div className="ow-container ow-container--tight">
       <div className="ow-wizard">
       <div className="ow-pagehead">
-        <Button variant="plain" url={guest ? '/for-employers' : '/employer/jobs'}>
+        <Button variant="plain" url={guest ? '/employers' : '/employer/jobs'}>
           {guest ? '← For employers' : '← Jobs'}
         </Button>
         <InlineStack gap="200">

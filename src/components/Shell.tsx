@@ -17,7 +17,7 @@ interface NavItem {
 
 const PUBLIC_NAV: NavItem[] = [
   { label: 'Search jobs', to: '/jobs' },
-  { label: 'For employers', to: '/for-employers' },
+  { label: 'For employers', to: '/employers' },
 ];
 
 const CANDIDATE_NAV: NavItem[] = [
@@ -170,7 +170,7 @@ export function Shell({ children }: { children: ReactNode }) {
               <Link to="/about">About</Link>
               <Link to="/how-it-works">How it works</Link>
               <Link to="/support">Support</Link>
-              <Link to="/for-employers">For employers</Link>
+              <Link to="/employers">For employers</Link>
             </InlineStack>
           </InlineStack>
         </div>

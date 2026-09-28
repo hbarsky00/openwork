@@ -60,7 +60,7 @@ export function HowItWorks() {
           <Button url="/jobs" variant="primary" size="large">
             Browse jobs
           </Button>
-          <Button url="/for-employers" size="large">
+          <Button url="/employers" size="large">
             I’m hiring
           </Button>
         </InlineStack>

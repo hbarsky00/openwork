@@ -20,6 +20,7 @@ import type {
   Role,
   SavedJob,
   CandidateFeedback,
+  EmployerLead,
 } from '../lib/types';
 
 export interface AppState {
@@ -44,6 +45,8 @@ export interface AppState {
   displayMode: DisplayMode;
   /** "Not for me" decisions per candidate. */
   feedback: CandidateFeedback[];
+  /** Employers who raised their hand. Internal acquisition pipeline. */
+  leads: EmployerLead[];
 }
 
 // v2: access-needs data model. Older v1 state is intentionally dropped.
@@ -80,6 +83,7 @@ const initialState: AppState = {
   autoRuns: {},
   displayMode: 'standard',
   feedback: [],
+  leads: [],
 };
 
 type Action =
@@ -100,6 +104,9 @@ type Action =
   | { type: 'claimEmployer'; employerId: string; email: string }
   | { type: 'dismissJob'; jobId: string; reasons: string[] }
   | { type: 'requestAts'; provider: string }
+  | { type: 'addLead'; lead: EmployerLead }
+  | { type: 'updateLead'; leadId: string; patch: Partial<EmployerLead> }
+  | { type: 'addLeadNote'; leadId: string; text: string }
   | { type: 'undoDismiss'; jobId: string }
   | { type: 'askQuestion'; question: Question }
   | { type: 'answerQuestion'; questionId: string; answer: string }
@@ -190,6 +197,12 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, feedback: state.feedback.filter((f) => !(state.candidate && f.candidateId === state.candidate.id && f.jobId === action.jobId)) };
     case 'claimEmployer':
       return { ...state, role: 'employer', employerId: action.employerId, candidate: null, employers: state.employers.map((e) => (e.id === action.employerId ? { ...e, claimedBy: action.email, companyVerified: true, plan: e.plan ?? 'founding' } : e)) };
+    case 'addLead':
+      return { ...state, leads: [action.lead, ...state.leads] };
+    case 'updateLead':
+      return { ...state, leads: state.leads.map((l) => (l.id === action.leadId ? { ...l, ...action.patch } : l)) };
+    case 'addLeadNote':
+      return { ...state, leads: state.leads.map((l) => (l.id === action.leadId ? { ...l, notes: [{ on: today(), text: action.text }, ...l.notes] } : l)) };
     case 'requestAts':
       return { ...state, employers: state.employers.map((e) => (e.id === state.employerId ? { ...e, ats: { provider: action.provider, status: 'requested', requestedOn: today() } } : e)) };
     case 'askQuestion':
@@ -252,7 +265,7 @@ function load(): AppState {
       const seed = SAMPLE_APPLICATIONS.find((s) => s.id === a.id);
       return seed?.interview && !a.interview ? { ...a, interview: seed.interview } : a;
     });
-    return { ...initialState, ...parsed, schema: SCHEMA, jobs, employers, applications, feedback: parsed.feedback ?? [] };
+    return { ...initialState, ...parsed, schema: SCHEMA, jobs, employers, applications, feedback: parsed.feedback ?? [], leads: parsed.leads ?? [] };
   } catch {
     return initialState;
   }

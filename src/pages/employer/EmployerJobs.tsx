@@ -3,7 +3,7 @@ import { MenuHorizontalIcon } from '@shopify/polaris-icons';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { postedAgo, salary } from '../../lib/format';
-import { jobCompleteness, jobNeedsInfo } from '../../lib/jobs';
+import { jobCompleteness, jobNeedsInfo, originLabel } from '../../lib/jobs';
 import type { Job } from '../../lib/types';
 import { useTitle } from '../../lib/useTitle';
 import { employerVisible, useStore } from '../../state/store';
@@ -40,7 +40,7 @@ export function EmployerJobs() {
   const jobs = state.jobs.filter((j) => j.employerId === employer.id).sort((a, b) => b.postedOn.localeCompare(a.postedOn));
   const groups: Record<Tab, Job[]> = {
     active: jobs.filter((j) => j.status === 'published'),
-    imported: jobs.filter((j) => j.source === 'imported' || j.source === 'ats'),
+    imported: jobs.filter((j) => j.origin && j.origin.kind !== 'manual'),
     needs: jobs.filter((j) => j.status !== 'closed' && jobNeedsInfo(j)),
     draft: jobs.filter((j) => j.status === 'draft'),
     closed: jobs.filter((j) => j.status === 'closed'),
@@ -129,7 +129,7 @@ export function EmployerJobs() {
                         {needs && j.status !== 'closed' && <Badge tone="warning">Needs information</Badge>}
                       </InlineStack>
                       <Text as="p" variant="bodySm" tone="subdued">
-                        {[j.department, salary(j), postedAgo(j.postedOn), `${apps} applicant${apps === 1 ? '' : 's'}`, `${done} of ${total} answered`, j.source === 'imported' ? 'imported from careers page' : j.source === 'ats' ? 'synced from ATS' : null, `auto-apply ${j.acceptsAutoApply ? 'on' : 'off'}`].filter(Boolean).join(' · ')}
+                        {[j.department, salary(j), postedAgo(j.postedOn), `${apps} applicant${apps === 1 ? '' : 's'}`, `${done} of ${total} answered`, originLabel(j), `auto-apply ${j.acceptsAutoApply ? 'on' : 'off'}`].filter(Boolean).join(' · ')}
                       </Text>
                     </BlockStack>
                     <InlineStack gap="200" blockAlign="center">

@@ -1,23 +1,59 @@
-import { Banner, BlockStack, Button, Checkbox, InlineStack, Text, TextField } from '@shopify/polaris';
+import { Banner, BlockStack, Button, Checkbox, InlineStack, ProgressBar, Text, TextField } from '@shopify/polaris';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { importJobsFrom, type ImportedJob } from '../../lib/importJobs';
+import { originKey } from '../../lib/jobs';
 import { writeImportDraft } from '../../lib/postDraft';
-import { useTitle } from '../../lib/useTitle';
 import type { Job } from '../../lib/types';
+import { useTitle } from '../../lib/useTitle';
 import { useStore } from '../../state/store';
 import { blankJob } from './JobBuilder';
 
-/** Turn one imported posting into a draft job. Everything an ATS never carries stays empty until Enrich. */
-export function importedToJob(j: ImportedJob, employerId: string, accommodationRoute: string, source: string, i: number): Job {
-  const base = blankJob(employerId);
-  return { ...base, id: `${base.id}-${i}`, title: j.title, location: j.location || '', employmentType: j.employmentType || 'fullTime', salaryMin: Number(j.salaryMin) || 0, salaryMax: Number(j.salaryMax) || 0, salaryUnit: j.salaryUnit === 'year' ? 'year' : 'hour', summary: j.summary || '', tasks: j.tasks ?? [], essentialRequirements: j.essentialRequirements ?? [], skills: j.skills ?? [], accommodationRoute, status: 'draft', source: 'imported', importedFrom: source };
+const today = () => new Date().toISOString().slice(0, 10);
+
+/** An imported posting is ready to publish when candidates can judge pay and the work. */
+export function importedIsReady(j: ImportedJob): boolean {
+  return !!j.salaryMax && (j.tasks?.length ?? 0) >= 3 && !!j.summary?.trim();
 }
 
 /**
- * Paste a careers page. Openwork reads the postings; you choose which to
- * import. Works before you have an account: the chosen jobs wait in this
- * browser and land in your account at sign-up.
+ * Turn one posting into a draft job, carrying its origin so a later import of
+ * the same posting updates it instead of creating a second copy.
+ */
+export function importedToJob(j: ImportedJob, employerId: string, accommodationRoute: string, sourceUrl: string, batchId: string, i: number, existing?: Job): Job {
+  const base = existing ?? blankJob(employerId);
+  return {
+    ...base,
+    id: existing?.id ?? `${base.id}-${i}`,
+    title: j.title,
+    location: j.location || '',
+    employmentType: j.employmentType || 'fullTime',
+    salaryMin: Number(j.salaryMin) || 0,
+    salaryMax: Number(j.salaryMax) || 0,
+    salaryUnit: j.salaryUnit === 'year' ? 'year' : 'hour',
+    summary: j.summary || '',
+    tasks: j.tasks ?? [],
+    essentialRequirements: j.essentialRequirements ?? [],
+    skills: j.skills ?? [],
+    accommodationRoute: existing?.accommodationRoute || accommodationRoute,
+    status: existing?.status ?? 'draft',
+    origin: {
+      kind: 'careersPage',
+      externalId: j.externalId ?? j.title,
+      url: sourceUrl,
+      importedOn: existing?.origin?.importedOn ?? today(),
+      lastSyncedOn: today(),
+      sourceStatus: 'open',
+      syncStatus: 'oneOff',
+      batchId,
+    },
+  };
+}
+
+/**
+ * Paste a careers page. Openwork reads the postings; you choose which to bring
+ * in. Works before you have an account: the chosen jobs wait in this browser
+ * and land in your account at sign-up.
  */
 export function ImportJobs() {
   useTitle('Import jobs');
@@ -30,6 +66,10 @@ export function ImportJobs() {
   const [found, setFound] = useState<ImportedJob[]>([]);
   const [picked, setPicked] = useState<Set<number>>(new Set());
 
+  const mine = employer ? state.jobs.filter((j) => j.employerId === employer.id) : [];
+  const byKey = new Map(mine.filter((j) => j.origin?.externalId).map((j) => [originKey(j.employerId, j.origin!.externalId, j.title), j]));
+  const existingFor = (j: ImportedJob) => (employer ? byKey.get(originKey(employer.id, j.externalId, j.title)) : undefined);
+
   const run = async () => {
     setBusy(true);
     setError(null);
@@ -40,14 +80,15 @@ export function ImportJobs() {
       setPicked(new Set(jobs.map((_, i) => i)));
       if (jobs.length === 0) setError('No job postings found on that page.');
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Import is unavailable right now.');
+      setError(e instanceof Error ? e.message : 'Importing is unavailable right now.');
     } finally {
       setBusy(false);
     }
   };
 
   const chosen = found.filter((_, i) => picked.has(i));
-  const readyCount = chosen.filter((j) => j.salaryMax && (j.tasks?.length ?? 0) >= 3).length;
+  const readyCount = chosen.filter(importedIsReady).length;
+  const updates = chosen.filter((j) => existingFor(j)).length;
 
   const add = () => {
     if (!employer) {
@@ -55,30 +96,32 @@ export function ImportJobs() {
       navigate('/employers/signup?from=import');
       return;
     }
-    chosen.forEach((j, i) => dispatch({ type: 'upsertJob', job: importedToJob(j, employer.id, employer.workplace.accommodationRoute, url.trim(), i) }));
-    navigate(`/employer/jobs?tab=imported&imported=${chosen.length}`);
+    const batchId = `b-${Date.now().toString(36)}`;
+    chosen.forEach((j, i) => dispatch({ type: 'upsertJob', job: importedToJob(j, employer.id, employer.workplace.accommodationRoute, url.trim(), batchId, i, existingFor(j)) }));
+    navigate(`/employer/jobs/import/review?batch=${batchId}`);
   };
 
   return (
     <div className="ow-container ow-container--narrow">
       <BlockStack gap="500">
         <div className="ow-pagehead">
-          <Link to={employer ? '/employer/jobs' : '/for-employers'} className="ow-backlink">
+          <Link to={employer ? '/employer/jobs' : '/employers'} className="ow-backlink">
             {employer ? '← Jobs' : '← For employers'}
           </Link>
         </div>
         <BlockStack gap="200">
           <Text as="h1" variant="heading2xl">
-            Import your jobs
+            Import your existing jobs
           </Text>
           <Text as="p" tone="subdued">
-            Paste your careers page. Openwork reads every open role and brings in title, location, pay, tasks and requirements. Then you add only what an ATS never says.
+            Paste your company careers page. Openwork identifies the openings that can be brought into your account, with title, location, pay, tasks and requirements. You add only what a careers page never says.
           </Text>
         </BlockStack>
+
         <div className="ow-sheet">
           <BlockStack gap="400">
-            <TextField label="Company careers URL" type="url" value={url} onChange={setUrl} autoComplete="url" placeholder="careers.yourcompany.com" />
-            <InlineStack gap="200" blockAlign="center" wrap>
+            <TextField label="Careers page URL" type="url" value={url} onChange={setUrl} autoComplete="url" placeholder="https://company.com/careers" disabled={busy} />
+            <InlineStack gap="300" blockAlign="center" wrap>
               <Button variant="primary" size="large" loading={busy} disabled={!url.trim()} onClick={run}>
                 Find my jobs
               </Button>
@@ -88,11 +131,22 @@ export function ImportJobs() {
                 </Text>
               )}
             </InlineStack>
+            {busy && (
+              <BlockStack gap="100">
+                <ProgressBar progress={70} size="small" tone="primary" />
+                <Text as="p" variant="bodySm" tone="subdued">
+                  Finding open positions…
+                </Text>
+              </BlockStack>
+            )}
             {error && (
               <Banner tone={found.length ? 'info' : 'warning'}>
                 <p>{error}</p>
               </Banner>
             )}
+            <Text as="p" variant="bodyXs" tone="subdued">
+              Openwork reads only the address you give it, identifies itself, and stops if the site asks automated readers not to fetch that page. For jobs that should stay in step automatically, <Link to={employer ? '/employer/connect' : '/connect'}>connect your hiring system</Link>.
+            </Text>
           </BlockStack>
         </div>
 
@@ -102,33 +156,29 @@ export function ImportJobs() {
               <InlineStack align="space-between" blockAlign="center" wrap gap="300">
                 <BlockStack gap="050">
                   <Text as="h2" variant="headingLg">
-                    We found {found.length} open position{found.length === 1 ? '' : 's'}.
+                    We found {found.length} job{found.length === 1 ? '' : 's'}.
                   </Text>
                   <Text as="p" variant="bodySm" tone="subdued">
                     {chosen.length} selected · {readyCount} ready to publish · {chosen.length - readyCount} need information
+                    {updates > 0 ? ` · ${updates} already in your account and will be updated, not duplicated` : ''}
                   </Text>
                 </BlockStack>
                 <InlineStack gap="200">
-                  <Button onClick={() => setPicked(new Set(found.map((_, i) => i)))} disabled={picked.size === found.length}>
-                    Select all
-                  </Button>
-                  <Button variant="plain" onClick={() => setPicked(new Set())} disabled={picked.size === 0}>
-                    Clear
-                  </Button>
+                  <Checkbox label="Select all" checked={picked.size === found.length} onChange={(on) => setPicked(on ? new Set(found.map((_, i) => i)) : new Set())} />
                 </InlineStack>
               </InlineStack>
               <ul className="ow-picked ow-picked--stack" aria-label="Postings found">
                 {found.map((j, i) => {
-                  const ready = !!j.salaryMax && (j.tasks?.length ?? 0) >= 3;
+                  const dupe = existingFor(j);
                   return (
-                    <li key={i} className="ow-picked__row ow-picked__row--tall">
+                    <li key={`${j.externalId ?? j.title}-${i}`} className="ow-picked__row ow-picked__row--tall">
                       <Checkbox
                         label={
                           <span>
                             <strong>{j.title}</strong>
                             <br />
                             <Text as="span" variant="bodySm" tone="subdued">
-                              {[j.location, j.salaryMax ? `$${j.salaryMin}–$${j.salaryMax}/${j.salaryUnit === 'year' ? 'yr' : 'hr'}` : 'Pay not stated', ready ? 'Ready' : 'Needs information'].filter(Boolean).join(' · ')}
+                              {[j.location || 'Location not stated', j.salaryMax ? `$${j.salaryMin}–$${j.salaryMax}/${j.salaryUnit === 'year' ? 'yr' : 'hr'}` : 'Pay not stated', importedIsReady(j) ? 'Ready' : 'Needs information', dupe ? 'Already imported — will update' : null].filter(Boolean).join(' · ')}
                             </Text>
                           </span>
                         }
@@ -141,15 +191,12 @@ export function ImportJobs() {
               </ul>
               <InlineStack gap="200">
                 <Button variant="primary" size="large" disabled={picked.size === 0} onClick={add}>
-                  {employer ? `Import ${picked.size}` : `Continue with ${picked.size}`}
+                  {employer ? `Import ${picked.size} job${picked.size === 1 ? '' : 's'}` : `Continue with ${picked.size}`}
                 </Button>
               </InlineStack>
             </BlockStack>
           </div>
         )}
-        <Text as="p" variant="bodySm" tone="subdued">
-          Prefer a live connection? <Link to={employer ? '/employer/connect' : '/connect'}>Connect your ATS</Link>.
-        </Text>
       </BlockStack>
     </div>
   );
